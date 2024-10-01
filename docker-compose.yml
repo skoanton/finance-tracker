@@ -4,7 +4,9 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-
+    ports:
+      - "5000:8080" # HostPort:ContainerPort for HTTP
+      - "5001:8081" # HostPort:ContainerPort for HTTPS (if needed)
 
   mysql:
     image: mysql:8.0
