@@ -2,7 +2,7 @@ import { Account } from "@/models/generated";
 
 export const getAllAccounts = async ():Promise<Account[]> => {
     try {
-        const response = await fetch("https://localhost:59627/api/accounts");
+        const response = await fetch("https://localhost:5001/api/accounts");
 
         if(!response.ok) {
             throw new Error("Failed to fetch accounts");
