@@ -1,6 +1,7 @@
 import { Account } from "@/models/generated";
 import { getAllAccounts } from "@/services/api/accountService";
 import { useEffect, useState } from "react";
+import FileUploader from "./FileUploader";
 
 type TestProps = {};
 
@@ -27,6 +28,7 @@ export default function Test({}: TestProps) {
           <div key={account.id}>
             <h1>{account.name}</h1>
             <p>{account.balance}</p>
+            <FileUploader />
           </div>
         );
       })}
