@@ -1,0 +1,48 @@
+# Ignore node_modules for frontend
+**/node_modules
+
+# Ignore build output for React (Vite)
+**/dist
+
+# Ignore .env files
+**/.env
+**/.env.local
+
+# Ignore npm/yarn/lock files (if not versioned)
+**/yarn.lock
+**/package-lock.json
+
+# Ignore Vite cache
+**/.vite
+
+# Ignore editor directories and files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore ASP.NET build output
+**/bin/
+**/obj/
+
+# Ignore logs
+**/logs/
+*.log
+
+# Ignore published output for ASP.NET
+publish/
+*.Publish.xml
+
+# Ignore ASP.NET user secrets
+**/secrets.json
+
+# Ignore .NET environment settings
+**/.vs/
+**/*.dbmdl
+**/*.jfm
+mysql-data/
+
+**/appsettings.json
+**/appsettings.Development.json
