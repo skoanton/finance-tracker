@@ -14,7 +14,7 @@ export default function Header({}: HeaderProps) {
             <Link to="/home">Hem</Link>
           </li>
           <li className="font-bold text-primary-foreground p-1 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer">
-            Transaktioner
+            <Link to="/accounts">Accounts</Link>
           </li>
         </ul>
       </nav>

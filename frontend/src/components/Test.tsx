@@ -1,7 +1,7 @@
-import { Account } from "@/models/generated";
 import { getAllAccounts } from "@/services/api/accountService";
 import { useEffect, useState } from "react";
 import FileUploader from "./FileUploader";
+import { Account } from "@/models/generatedTypes";
 
 type TestProps = {};
 

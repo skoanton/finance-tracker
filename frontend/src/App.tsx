@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="flex">
       <Header />
-      <main>
+      <main className="w-screen">
         <Outlet />
       </main>
     </div>

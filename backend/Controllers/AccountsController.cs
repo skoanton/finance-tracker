@@ -39,7 +39,7 @@ namespace server.Controllers
             return Ok(account);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
 
         public IActionResult CreateAccount(Account account)
         {

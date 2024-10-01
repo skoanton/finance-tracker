@@ -4,6 +4,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Test from "./components/Test.tsx";
 import App from "./App.tsx";
+import AccountView from "./components/views/AccountView.tsx";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <Test />,
+      },
+      {
+        path: "accounts",
+        element: <AccountView />,
       },
     ],
   },
