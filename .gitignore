@@ -44,5 +44,4 @@ publish/
 **/*.jfm
 mysql-data/
 
-**/appsettings.json
 **/appsettings.Development.json
