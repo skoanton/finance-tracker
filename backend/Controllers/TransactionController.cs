@@ -16,11 +16,11 @@ namespace server.Controllers
         private readonly ITransactionService _transactionService;
         private readonly ICategoryService _categoryService;
         private readonly IAccountService _accountService;
-        public TransactionController(ITransactionService transactionService)
+        public TransactionController(ITransactionService transactionService, ICategoryService categoryService, IAccountService accountService)
         {
             _transactionService = transactionService;
-            _categoryService = _categoryService;
-            _accountService = _accountService;
+            _categoryService = categoryService;
+            _accountService = accountService;
 
         }
 
@@ -44,16 +44,17 @@ namespace server.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateTransaction(List<CsvFile> transactions)
+        public async Task<IActionResult> CreateTransaction([FromBody] List<CsvFile> transactions)
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
             var accounts = await _accountService.GetAllAccountsAsync();
             var results = new List<object>();
             foreach (var transaction in transactions)
             {
-                var categoryId = -1;
-                var categoriesFoundWithDescription = new List<Category>();
-                var accountId = 0;
+                Console.WriteLine("Inside transaction");
+                int? categoryId = null;
+                var categoriesFoundWithDescription = categories.Where(category => category.Description.Contains(transaction.Description)).ToList();
+                int? accountId = null;
                 foreach (var category in categories)
                 {
                     if (category.Description.Contains(transaction.Description))
@@ -107,15 +108,15 @@ namespace server.Controllers
                     accountId = account.Id;
                 }
 
-                if (accountId != -1)
+                if (accountId.HasValue && categoryId.HasValue)
                 {
                     var newTransaction = new Transaction
                     {
                         Amount = transaction.Amount,
                         TransactionDate = transaction.TransactionDate,
                         Description = transaction.Description,
-                        CategoryId = categoryId,
-                        AccountId = accountId
+                        CategoryId = categoryId.Value,
+                        AccountId = accountId.Value
                     };
 
                     await _transactionService.CreateTransactionAsync(newTransaction);
@@ -125,6 +126,11 @@ namespace server.Controllers
                         Message = "Transaction created successfully",
                         Transaction = newTransaction
                     });
+                }
+
+                else
+                {
+                    Console.WriteLine("No transaction created");
                 }
 
             }

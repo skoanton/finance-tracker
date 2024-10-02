@@ -25,6 +25,7 @@ import { createCategory } from "@/services/api/categoryServices";
 const formSchema = z.object({
   categoryName: z.string().min(2).max(50),
   categoryType: z.nativeEnum(CategoryType),
+  budget: z.coerce.number().min(0),
 });
 
 type CreateCategoryCardProps = {
@@ -50,6 +51,7 @@ export default function CreateCategoryCard({
     const newCategory: Category = {
       name: values.categoryName,
       type: values.categoryType as CategoryType,
+      budget: values.budget,
       description: [],
     };
 
@@ -97,6 +99,19 @@ export default function CreateCategoryCard({
                       <SelectItem value="2">Savings</SelectItem>
                     </SelectContent>
                   </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="budget"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Budget</FormLabel>
+                <FormControl>
+                  <Input placeholder="Budget" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

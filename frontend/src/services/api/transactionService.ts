@@ -1,18 +1,20 @@
-import { Transaction } from "@/models/generatedTypes";
+import { CsvFile, Transaction } from "@/models/generatedTypes";
 import axios from "axios";
 
-export const uploadDataToDatabase = async(transactions: Transaction[]) => {
+export const uploadDataToDatabase = async(transactions: CsvFile[]) => {
 
+    console.log(transactions);
 
     try {
-        for(const transaction of transactions) {
-            const response = await axios.post("http://localhost:5000/api/transactions/create", transaction);
+        
+            const response = await axios.post("http://localhost:5000/api/transaction/create", transactions);
 
             if(response.status !== 200) {
                 throw new Error("Error uploading data to database");
             }
-            
-        }
+          
+            console.log(response);
+        
     } catch (error) {
         throw new Error("Error uploading data to database");
     }
