@@ -7,15 +7,14 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Applicatio
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
+        Console.WriteLine("Inside DesignTimeDbContextFactory.CreateDbContext"); // Debugging line
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         // Dummy connection string, since the database is not required for migration creation
-        var connectionString = "Server=localhost;Port=3306;Database=db;User=user;Password=password;";
+        var dummyString = "Server=localhost;Port=3306;Database=db;User=user;Password=password;";
 
+        Console.WriteLine($"Using connection string (DesignTime): {dummyString}"); // For debugging
         // Ange rätt version av MySQL
-        var serverVersion = new MySqlServerVersion(new Version(8, 0, 39)); // Ändra versionen efter behov
-
-        optionsBuilder.UseMySql(connectionString, serverVersion);
-
+        optionsBuilder.UseMySql(dummyString, ServerVersion.AutoDetect(dummyString));
         return new ApplicationDbContext(optionsBuilder.Options);
     }
 }
