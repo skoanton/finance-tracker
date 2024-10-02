@@ -16,11 +16,6 @@ export interface IClient {
      */
     accountsGET(): Promise<void>;
     /**
-     * @param body (optional) 
-     * @return Success
-     */
-    accountsPOST(body: Account | undefined): Promise<void>;
-    /**
      * @return Success
      */
     accountsGET2(id: number): Promise<void>;
@@ -33,6 +28,11 @@ export interface IClient {
      * @return Success
      */
     accountsDELETE(id: number): Promise<void>;
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: Account | undefined): Promise<void>;
     /**
      * @return Success
      */
@@ -60,11 +60,6 @@ export interface IClient {
      */
     transactionGET(): Promise<void>;
     /**
-     * @param body (optional) 
-     * @return Success
-     */
-    transactionPOST(body: Transaction | undefined): Promise<void>;
-    /**
      * @return Success
      */
     transactionGET2(id: number): Promise<void>;
@@ -77,6 +72,11 @@ export interface IClient {
      * @return Success
      */
     transactionDELETE(id: number): Promise<void>;
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create2(body: CsvFile[] | undefined): Promise<void>;
 }
 
 export class Client implements IClient {
@@ -119,58 +119,6 @@ export class Client implements IClient {
     }
 
     protected processAccountsGET(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(null as any);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    accountsPOST(body: Account | undefined, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/Accounts";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processAccountsPOST(_response);
-        });
-    }
-
-    protected processAccountsPOST(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -326,6 +274,58 @@ export class Client implements IClient {
     }
 
     protected processAccountsDELETE(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: Account | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/Accounts/create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCreate(_response);
+        });
+    }
+
+    protected processCreate(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -648,58 +648,6 @@ export class Client implements IClient {
     }
 
     /**
-     * @param body (optional) 
-     * @return Success
-     */
-    transactionPOST(body: Transaction | undefined, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/Transaction";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processTransactionPOST(_response);
-        });
-    }
-
-    protected processTransactionPOST(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(null as any);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
      * @return Success
      */
     transactionGET2(id: number, cancelToken?: CancelToken): Promise<void> {
@@ -853,6 +801,58 @@ export class Client implements IClient {
         }
         return Promise.resolve<void>(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create2(body: CsvFile[] | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/Transaction/create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCreate2(_response);
+        });
+    }
+
+    protected processCreate2(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export interface Account {
@@ -864,14 +864,29 @@ export interface Account {
 
 export interface Category {
     id?: number;
+    description?: string[] | undefined;
     name?: string | undefined;
-    isIncome?: boolean;
+    budget?: number;
+    type?: CategoryType;
+}
+
+export enum CategoryType {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+}
+
+export interface CsvFile {
+    accountName?: string | undefined;
+    transactionDate?: Date;
+    description?: string | undefined;
+    amount?: number;
 }
 
 export interface Transaction {
     id?: number;
-    accountId?: string | undefined;
-    categoryId?: string | undefined;
+    accountId?: number;
+    categoryId?: number;
     amount?: number;
     transactionDate?: Date;
     description?: string | undefined;

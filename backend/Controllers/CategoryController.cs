@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using server.Data;
 using server.Models;
@@ -12,24 +13,24 @@ namespace server.Controllers
     [Route("api/[controller]")]
     public class CategoryController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(ApplicationDbContext context)
+        public  CategoryController(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
-        public IActionResult GetAllCategories()
+        public async  Task<IActionResult> GetAllCategories()
         {
-            var categories = _context.Categories.ToList();
+            var categories = await _categoryService.GetAllCategoriesAsync();
             return Ok(categories);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCategoryById(int id)
+        public async Task<IActionResult> GetCategoryById(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = await _categoryService.GetCategoryByIdAsync(id);
 
             if (category == null)
             {
@@ -39,42 +40,33 @@ namespace server.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCategory(Category category)
+        public async Task<IActionResult> CreateCategory([FromBody]Category category)
         {
-            _context.Categories.Add(category);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, category);
+            var createdCategory = await _categoryService.CreateCategoryAsync(category);
+            return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.Id }, createdCategory);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateCategory(int id, Category updatedCategory)
-        {
-            var category = _context.Categories.Find(id);
+        public async Task<IActionResult> UpdateCategory(int id, Category updatedCategory)
+        { 
+            var category = await _categoryService.UpdateCategoryAsync(id, updatedCategory);
             if (category == null)
             {
                 return NotFound();
             }
-
-            category.Name = updatedCategory.Name;
-            category.IsIncome = updatedCategory.IsIncome;
-
-            _context.Categories.Update(category);
-            _context.SaveChanges();
-            return NoContent();
+            return Ok(category);
         }
+           
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = await _categoryService.DeleteCategoryAsync(id);
             if (category == null)
             {
                 return NotFound();
             }
-
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
-            return NoContent();
+            return Ok(category);
         }
 
     }

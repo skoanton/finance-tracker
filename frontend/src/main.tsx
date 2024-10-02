@@ -2,9 +2,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Test from "./components/Test.tsx";
 import App from "./App.tsx";
 import AccountView from "./components/views/AccountView.tsx";
+import TransactionView from "./components/views/TransactionView.tsx";
+import CategoryView from "./components/views/categoryView.tsx";
 
 const router = createBrowserRouter([
   {
@@ -13,11 +14,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "home",
-        element: <Test />,
+        element: <div>home</div>,
       },
       {
         path: "accounts",
         element: <AccountView />,
+      },
+      {
+        path: "transactions",
+        element: <TransactionView />,
+      },
+      {
+        path: "categories",
+        element: <CategoryView />,
       },
     ],
   },

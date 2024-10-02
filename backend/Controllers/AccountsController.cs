@@ -5,6 +5,7 @@ using System.Linq;
 using server.Data;
 using System.Threading.Tasks;
 using server.Models;
+using backend.Services;
 
 
 namespace server.Controllers
@@ -13,24 +14,24 @@ namespace server.Controllers
     [Route("api/[controller]")]
     public class AccountsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAccountService _context;
 
-        public AccountsController(ApplicationDbContext context)
+        public AccountsController(IAccountService accountService)
         {
-            _context = context;
+            _context = accountService;
         }
 
         [HttpGet]
-        public IActionResult GetAllAccounts()
+        public async Task<IActionResult> GetAllAccounts()
         {
-            var accounts = _context.Accounts.ToList();
+            var accounts = await _context.GetAllAccountsAsync();
             return Ok(accounts);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetAccountById(int id)
+        public async Task<IActionResult> GetAccountById(int id)
         {
-            var account = _context.Accounts.Find(id);
+            var account = await _context.GetAccountByIdAsync(id);
 
             if (account == null)
             {
@@ -41,43 +42,33 @@ namespace server.Controllers
 
         [HttpPost("create")]
 
-        public IActionResult CreateAccount(Account account)
+        public async Task<IActionResult> CreateAccount(Account account)
         {
-            _context.Accounts.Add(account);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(GetAccountById), new { id = account.Id }, account);
+            var createdAccount = await _context.CreateAccountAsync(account);
+            return CreatedAtAction(nameof(GetAccountById), new { id = createdAccount.Id }, createdAccount);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateAccount(int id, Account updatedAccount)
+        public async Task<IActionResult> UpdateAccount(int id, Account updatedAccount)
         {
-            var account = _context.Accounts.Find(id);
+            var account = await _context.UpdateAccountAsync(id, updatedAccount);
             if (account == null)
             {
                 return NotFound();
             }
-
-            account.Name = updatedAccount.Name;
-            account.Type = updatedAccount.Type;
-            account.Balance = updatedAccount.Balance;
-
-            _context.SaveChanges();
-            return NoContent();
+            return Ok(account);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteAccount(int id)
+        public async Task<IActionResult> DeleteAccount(int id)
         {
-            var account = _context.Accounts.Find(id);
+            var account = await _context.DeleteAccountAsync(id);
 
             if (account == null)
             {
                 return NotFound();
             }
-
-            _context.Accounts.Remove(account);
-            _context.SaveChanges();
-            return NoContent();
+            return Ok(account);
         }
 
     }

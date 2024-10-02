@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-type HeaderProps = {};
+type NavbarProps = {};
 
-export default function Header({}: HeaderProps) {
+export default function Navbar({}: NavbarProps) {
   return (
     <header className="bg-primary h-screen">
       <nav className="flex flex-col gap-10 p-5">
@@ -14,7 +14,13 @@ export default function Header({}: HeaderProps) {
             <Link to="/home">Hem</Link>
           </li>
           <li className="font-bold text-primary-foreground p-1 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer">
+            <Link to="/transactions">Transactions</Link>
+          </li>
+          <li className="font-bold text-primary-foreground p-1 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer">
             <Link to="/accounts">Accounts</Link>
+          </li>
+          <li className="font-bold text-primary-foreground p-1 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer">
+            <Link to="/categories">Categories</Link>
           </li>
         </ul>
       </nav>

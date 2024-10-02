@@ -10,9 +10,10 @@ namespace server.Models
     public class Transaction
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string AccountId { get; set; }
-        public string CategoryId { get; set; }
+        public int AccountId { get; set; }
+        public int CategoryId { get; set; }
         public decimal Amount { get; set; }
         public DateTime TransactionDate { get; set; }
         public string Description { get; set; }
@@ -20,5 +21,13 @@ namespace server.Models
         public Account Account { get; set; }
         public Category Category { get; set; }
 
+    }
+
+    public class CsvFile
+    {
+        public string AccountName { get; set; }
+        public DateTime TransactionDate  { get; set; }
+        public string Description  { get; set; }
+        public decimal Amount { get; set; }
     }
 }

@@ -7,13 +7,20 @@ using System.Threading.Tasks;
 
 namespace server.Models
 {
+    public enum CategoryType
+    {
+        Income,
+        Expense,
+        Saving
+    }
     public class Category
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Column("category_name")]
+        public string[] Description { get; set; }
         public string Name { get; set; }
-        [Column("is_Income")]
-        public Boolean IsIncome { get; set; }
+        public int Budget { get; set; } 
+        public CategoryType Type { get; set; }
     }
 }

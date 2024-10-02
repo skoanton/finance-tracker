@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import Papa from "papaparse";
 import { CsvFileType } from "@/types/csvFileType";
+import { uploadDataToDatabase } from "@/services/api/transactionService";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 type FileUploaderProps = {};
 
@@ -12,13 +13,22 @@ export default function FileUploader({}: FileUploaderProps) {
     CsvFileType[] | null
   >([]);
 
+  const uploadTransactionToDatabase = async () => {
+    /*    if (uploadedTransaction) {
+      const newTransactions = await createTransactions(uploadedTransaction);
+      await uploadDataToDatabase(newTransactions);
+    } else {
+      console.log("No transactions to upload");
+    } */
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
     }
   };
 
-  const handleFileUpload = () => {
+  const handleFileUpload = async () => {
     if (file) {
       Papa.parse(file, {
         encoding: "iso-8859-1",
@@ -39,23 +49,13 @@ export default function FileUploader({}: FileUploaderProps) {
         },
       });
     }
+    await uploadTransactionToDatabase();
   };
 
   return (
-    <>
-      <Input type="file" onChange={handleFileChange} />
+    <div className="flex flex-col justify-center items-center gap-2">
+      <Input type="file" onChange={handleFileChange} className="w-48" />
       <Button onClick={handleFileUpload}>Upload file</Button>
-      {uploadedTransaction?.map((transaction, index) => {
-        return (
-          <div key={index}>
-            <h1>{transaction.account}</h1>
-            <p>{transaction.transaction_date.toDateString()}</p>
-            <p>{transaction.reference}</p>
-            <p>{transaction.description}</p>
-            <p>{transaction.amount}</p>
-          </div>
-        );
-      })}
-    </>
+    </div>
   );
 }
