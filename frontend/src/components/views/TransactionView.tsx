@@ -5,7 +5,7 @@ type TransactionViewProps = {};
 export default function TransactionView({}: TransactionViewProps) {
   return (
     <>
-      <div className="flex justify-center">
+      <div className="flex p-5">
         <FileUploader />
       </div>
     </>

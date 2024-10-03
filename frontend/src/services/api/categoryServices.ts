@@ -28,3 +28,17 @@ export const createCategory = async (category: Category):Promise<Category> => {
         throw new Error("Error creating category");
     }
 }
+
+export const updateCategory = async (category: Category):Promise<Category> => {
+    try {
+        const response = await axios.put(`http://localhost:5000/api/category/${category.id}`, category);
+
+        if(response.status !== 200) {
+            throw new Error("Error updating category");
+        }
+        const updatedCategory: Category = response.data;
+        return updatedCategory;
+    } catch (error) {
+        throw new Error("Error updating category");
+    }
+}

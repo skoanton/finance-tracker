@@ -12,30 +12,33 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Account } from "@/models/generatedTypes";
+import { Account, CsvFile } from "@/models/generatedTypes";
 import { createAccount } from "@/services/api/accountService";
 import { useState } from "react";
-import { on } from "events";
 
 const formSchema = z.object({
   accountName: z.string().min(2).max(50),
-  accountType: z.string().min(2).max(50),
+  accountType: z.enum(["Checking Account", "Savings"]),
   startAmount: z.coerce.number().min(0),
 });
 type AccountFormProps = {
-  onSetAccounts: (accounts: Account) => void;
+  account: CsvFile | null;
+  onSetIsOpen: () => void;
 };
-export default function AccountForm({ onSetAccounts }: AccountFormProps) {
+export default function AccountForm({
+  account,
+  onSetIsOpen,
+}: AccountFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      accountName: "",
-      accountType: "",
+      accountName: account?.accountName,
+      accountType: "Checking Account",
       startAmount: 0,
     },
   });
-
+  console.log(account);
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -46,15 +49,14 @@ export default function AccountForm({ onSetAccounts }: AccountFormProps) {
       balance: values.startAmount,
     };
 
-    await createAccount(newAccount).then((response) => {
-      onSetAccounts(response);
+    await createAccount(newAccount).then(() => {
       setIsLoading(false);
+      onSetIsOpen();
     });
   }
 
   return (
-    <div className="p-5 rounded-lg shadow-lg">
-      <h2 className="text-lg font-bold">Create Account</h2>
+    <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
           <FormField
@@ -64,7 +66,7 @@ export default function AccountForm({ onSetAccounts }: AccountFormProps) {
               <FormItem>
                 <FormLabel>Account Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Account name" {...field} />
+                  <Input disabled={true} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

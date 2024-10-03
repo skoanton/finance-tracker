@@ -55,14 +55,6 @@ namespace server.Controllers
                 int? categoryId = null;
                 var categoriesFoundWithDescription = categories.Where(category => category.Description.Contains(transaction.Description)).ToList();
                 int? accountId = null;
-                foreach (var category in categories)
-                {
-                    if (category.Description.Contains(transaction.Description))
-                    {
-                        categoriesFoundWithDescription.Add(category);
-                    }
-
-                }
 
                 if (categoriesFoundWithDescription.Count == 1)
                 {
@@ -72,9 +64,10 @@ namespace server.Controllers
                 {
                     results.Add(new
                     {
-                        Status = "Error",
+                        Status = "Multiple Categories Found",
                         Message = "Multiple categories found with the same description, choose one",
-                        Transaction = transaction
+                        Transaction = transaction,
+                        Categories = categoriesFoundWithDescription
                     });
                     continue;
                 }
@@ -82,9 +75,10 @@ namespace server.Controllers
                 {
                     results.Add(new
                     {
-                        Status = "Error",
-                        Message = "Category not found, create one",
+                        Status = "No Category Found",
+                        Message = "Category not found, Choose one",
                         Transaction = transaction
+                        
                     });
                     continue;
                 }
@@ -133,6 +127,15 @@ namespace server.Controllers
                     Console.WriteLine("No transaction created");
                 }
 
+            }
+            {
+                results.Add(new
+                {
+                    Status = "All Categories",
+                    Messeage = "All available categories",
+                    AllCategories = categories
+
+                });
             }
                 return Ok(results);
         }
