@@ -49,16 +49,30 @@ namespace server.Controllers
             var categories = await _categoryService.GetAllCategoriesAsync();
             var accounts = await _accountService.GetAllAccountsAsync();
             var results = new List<object>();
+            var account = accounts.FirstOrDefault(account => account.Name == transactions.First().AccountName);
+
+            if (account == null)
+            {
+                results.Add(new
+                {
+                    Status = "No account found",
+                    Message = "Account not found, create one",
+                    AccountName = new String(transactions.First().AccountName)
+                });
+                return Ok(results);
+            }
+
             foreach (var transaction in transactions)
             {
                 Console.WriteLine("Inside transaction");
-                int? categoryId = null;
                 var categoriesFoundWithDescription = categories.Where(category => category.Description.Contains(transaction.Description)).ToList();
-                int? accountId = null;
+                Category? category = null;
+
+                
 
                 if (categoriesFoundWithDescription.Count == 1)
                 {
-                    categoryId = categoriesFoundWithDescription[0].Id;
+                    category = categoriesFoundWithDescription[0];
                 }
                 else if (categoriesFoundWithDescription.Count > 1)
                 {
@@ -83,34 +97,19 @@ namespace server.Controllers
                     continue;
                 }
 
-                var account = accounts.FirstOrDefault(account => account.Name == transaction.AccountName);
+               
 
-
-                if (account == null)
-                {
-                    results.Add(new
-                    {
-                        Status = "Error",
-                        Message = "Account not found, create one",
-                        Transaction = transaction
-                    });
-                    continue;
-                }
-
-                else
-                {
-                    accountId = account.Id;
-                }
-
-                if (accountId.HasValue && categoryId.HasValue)
+                if (account != null && category != null)
                 {
                     var newTransaction = new Transaction
                     {
                         Amount = transaction.Amount,
                         TransactionDate = transaction.TransactionDate,
                         Description = transaction.Description,
-                        CategoryId = categoryId.Value,
-                        AccountId = accountId.Value
+                        Account = account,
+                        Category = category,
+                        AccountId = account.Id,
+                        CategoryId = category.Id 
                     };
 
                     await _transactionService.CreateTransactionAsync(newTransaction);

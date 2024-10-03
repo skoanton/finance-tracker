@@ -23,7 +23,10 @@ namespace backend.Services
 
         public async Task<IEnumerable<Transaction>> GetAllTransactionsAsync()
         {
-            return await _context.Transactions.ToListAsync();
+            return await _context.Transactions
+                .Include(t => t.Account)
+                .Include(t => t.Category)
+                .ToListAsync();
         }
         public async Task<Transaction> GetTransactionByIdAsync(int id)
         {

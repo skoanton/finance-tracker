@@ -36,8 +36,7 @@ export default function AccountView({}: AccountViewProps) {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center gap-5">
-      <AccountForm onSetAccounts={onSetAccounts} />
+    <div className="flex flex-col">
       <div className="grid grid-cols-3 gap-5">
         {accounts.map((account) => {
           return (

@@ -2,7 +2,6 @@ import { Category } from "@/models/generatedTypes";
 import { getCategories } from "@/services/api/categoryServices";
 import { useEffect, useState } from "react";
 import CategoryCard from "../categories/CategoryCard";
-import CreateCategoryCard from "../categories/CreateCategoryCard";
 
 type CategoryViewProps = {};
 
@@ -26,11 +25,15 @@ export default function CategoryView({}: CategoryViewProps) {
   };
 
   return (
-    <div className="grid grid-cols-5">
-      <CreateCategoryCard onSetCategories={onSetCategories} />
-      {categories?.map((category) => {
-        return <CategoryCard key={category.id} category={category} />;
-      })}
+    <div className="flex flex-col gap-5">
+      <div className="w-1/2">
+        <CategoryCard onSetCategories={onSetCategories} isCreate={true} />
+      </div>
+      <div className="grid grid-cols-5 gap-5">
+        {categories?.map((category) => {
+          return <CategoryCard key={category.id} category={category} />;
+        })}
+      </div>
     </div>
   );
 }

@@ -5,7 +5,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.tsx";
 import AccountView from "./components/views/AccountView.tsx";
 import TransactionView from "./components/views/TransactionView.tsx";
-import CategoryView from "./components/views/categoryView.tsx";
+import CategoryView from "./components/views/CategoryView.tsx";
+import FileUploader from "./components/transcations/FileUploader.tsx";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,12 @@ const router = createBrowserRouter([
       {
         path: "transactions",
         element: <TransactionView />,
+        children: [
+          {
+            path: "upload",
+            element: <FileUploader />,
+          },
+        ],
       },
       {
         path: "categories",
@@ -33,7 +40,5 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
+  <RouterProvider router={router} />
 );

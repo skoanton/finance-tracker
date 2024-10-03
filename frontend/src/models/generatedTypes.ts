@@ -866,7 +866,6 @@ export interface Category {
     id?: number;
     description?: string[] | undefined;
     name?: string | undefined;
-    budget?: number;
     type?: CategoryType;
 }
 

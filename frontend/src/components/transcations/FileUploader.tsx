@@ -5,9 +5,16 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Category, CsvFile } from "@/models/generatedTypes";
 import UnhandledTransactions from "./UnhandledTransactions";
-import CategorySelectorModal from "../CategorySelectorModal";
 import { uploadTransactions } from "@/services/api/transactionService";
 import AccountModal from "../AccountModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type FileUploaderProps = {};
 
@@ -24,7 +31,8 @@ export default function FileUploader({}: FileUploaderProps) {
     transactionsWithMultipleCategories,
     setTransactionsWithMultipleCategories,
   ] = useState<CsvFile[] | null>(null);
-  const [newAccount, setNewAccount] = useState<CsvFile | null>(null);
+  const [newAccountName, setNewAccountName] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(true);
   const uploadTransactionToDatabase = async (
     transactionsToUpload: CsvFile[]
   ) => {
@@ -41,7 +49,7 @@ export default function FileUploader({}: FileUploaderProps) {
           response.categoriesWithMultipleMatches
         );
         setAllCategories(response.allCategories);
-        setNewAccount(response.newAccount);
+        setNewAccountName(response.newAccountName);
         setIsLoading(false);
       });
     } else {
@@ -98,27 +106,54 @@ export default function FileUploader({}: FileUploaderProps) {
           },
         });
       });
-
+      setTransactions(transactionsToUpload);
       await uploadTransactionToDatabase(transactionsToUpload);
     }
   };
 
+  const handleTransactionUpload = async () => {
+    await uploadTransactionToDatabase(transactions);
+  };
+
   return (
-    <div className="flex flex-col gap-2">
-      <Input type="file" onChange={handleFileChange} className="w-52" />
-      <Button onClick={handleFileUpload}>Upload file</Button>
-      {isLoading && <p className="animate-pulse">Uploading...</p>}
-      {newAccount && <AccountModal newAccount={newAccount} />}
-      <UnhandledTransactions
-        allCategories={allCategories}
-        categoriesWithMultipleMatches={categoriesWithMultipleMatches}
-        transactionsWithoutCategories={transactionsWithoutCategories}
-        transactionsWithMultipleCategories={transactionsWithMultipleCategories}
-        onSetTransactionWithMultipleCategories={
-          onSetTransactionWithMultipleCategories
-        }
-        onSetTransactionWithoutCategories={onSetTransactionWithoutCategories}
-      />
-    </div>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-xl">Upload Transactions</DialogTitle>
+          <DialogDescription>
+            Upload a CSV file with transactions
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-5 items-center">
+            <Input type="file" onChange={handleFileChange} className="w-52" />
+            <Button onClick={handleFileUpload}>Upload file</Button>
+          </div>
+          <div>
+            {isLoading && <p className="animate-pulse">Uploading...</p>}
+            {newAccountName && (
+              <AccountModal
+                newAccountName={newAccountName}
+                handleTransactionUpload={handleTransactionUpload}
+              />
+            )}
+            <UnhandledTransactions
+              allCategories={allCategories}
+              categoriesWithMultipleMatches={categoriesWithMultipleMatches}
+              transactionsWithoutCategories={transactionsWithoutCategories}
+              transactionsWithMultipleCategories={
+                transactionsWithMultipleCategories
+              }
+              onSetTransactionWithMultipleCategories={
+                onSetTransactionWithMultipleCategories
+              }
+              onSetTransactionWithoutCategories={
+                onSetTransactionWithoutCategories
+              }
+            />
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

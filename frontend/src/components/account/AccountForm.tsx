@@ -22,24 +22,24 @@ const formSchema = z.object({
   startAmount: z.coerce.number().min(0),
 });
 type AccountFormProps = {
-  account: CsvFile | null;
+  newAccountName: string | null;
   onSetIsOpen: () => void;
+  handleTransactionUpload: () => void;
 };
 export default function AccountForm({
-  account,
+  newAccountName,
   onSetIsOpen,
+  handleTransactionUpload,
 }: AccountFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      accountName: account?.accountName,
+      accountName: newAccountName!,
       accountType: "Checking Account",
       startAmount: 0,
     },
   });
-  console.log(account);
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     console.log(values);
@@ -52,6 +52,7 @@ export default function AccountForm({
     await createAccount(newAccount).then(() => {
       setIsLoading(false);
       onSetIsOpen();
+      handleTransactionUpload();
     });
   }
 

@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -19,22 +18,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Category, CategoryType } from "@/models/generatedTypes";
+import { useState } from "react";
 import { createCategory } from "@/services/api/categoryServices";
 const formSchema = z.object({
   categoryName: z.string().min(2).max(50),
   categoryType: z.nativeEnum(CategoryType),
-  budget: z.coerce.number().min(0),
 });
 
-type CreateCategoryCardProps = {
+type CreateCategoryFormProps = {
   onSetCategories: (categories: Category) => void;
 };
 
-export default function CreateCategoryCard({
+export default function CreateCategoryForm({
   onSetCategories,
-}: CreateCategoryCardProps) {
+}: CreateCategoryFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,14 +43,12 @@ export default function CreateCategoryCard({
     },
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     console.log(values);
     const newCategory: Category = {
       name: values.categoryName,
       type: values.categoryType as CategoryType,
-      budget: values.budget,
       description: [],
     };
 
@@ -62,8 +59,7 @@ export default function CreateCategoryCard({
   }
 
   return (
-    <div className="p-5 rounded-lg shadow-lg">
-      <h2 className="text-lg font-bold">Create Account</h2>
+    <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
           <FormField
@@ -104,24 +100,11 @@ export default function CreateCategoryCard({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="budget"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Budget</FormLabel>
-                <FormControl>
-                  <Input placeholder="Budget" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <Button type="submit" className="mt-5" disabled={isLoading}>
             Add Category
           </Button>
         </form>
       </Form>
-    </div>
+    </>
   );
 }

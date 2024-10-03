@@ -11,10 +11,14 @@ import AccountForm from "./account/AccountForm";
 import { useState } from "react";
 
 type AccountModalProps = {
-  newAccount: CsvFile | null;
+  newAccountName: string | null;
+  handleTransactionUpload: () => void;
 };
 
-export default function AccountModal({ newAccount }: AccountModalProps) {
+export default function AccountModal({
+  newAccountName,
+  handleTransactionUpload,
+}: AccountModalProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const onSetIsOpen = () => {
@@ -29,7 +33,11 @@ export default function AccountModal({ newAccount }: AccountModalProps) {
             <DialogTitle>Create Account</DialogTitle>
             <DialogDescription>New Account Detected</DialogDescription>
           </DialogHeader>
-          <AccountForm account={newAccount} onSetIsOpen={onSetIsOpen} />
+          <AccountForm
+            newAccountName={newAccountName}
+            onSetIsOpen={onSetIsOpen}
+            handleTransactionUpload={handleTransactionUpload}
+          />
         </DialogContent>
       </Dialog>
     </>

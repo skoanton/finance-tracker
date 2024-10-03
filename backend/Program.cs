@@ -7,7 +7,18 @@ using System;
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString;
+if (environment == "DesignTime")
+{
+    // Anslutningssträng för lokal användning under design time
+    connectionString = "Server=localhost;Port=3306;Database=db;User=user;Password=password;";
+}
+else
+{
+    // Anslutningssträng för andra miljöer (t.ex. Docker)
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+}
+
 Console.WriteLine($"Using connection string: {connectionString}");
 if (environment != "DesignTime")
 {

@@ -20,7 +20,6 @@ namespace server.Models
         public int Id { get; set; }
         public string[] Description { get; set; }
         public string Name { get; set; }
-        public int Budget { get; set; } 
         public CategoryType Type { get; set; }
     }
 }
