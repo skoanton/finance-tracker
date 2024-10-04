@@ -119,6 +119,9 @@ namespace server.Controllers
                         Message = "Transaction created successfully",
                         Transaction = newTransaction
                     });
+                    
+                        account.Balance += newTransaction.Amount;
+
                 }
 
                 else

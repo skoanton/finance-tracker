@@ -24,6 +24,11 @@ export default function CategoryView({}: CategoryViewProps) {
     setCategories([...categories, category]);
   };
 
+  const handleDeleteCategories = (category: Category) => {
+    setCategories(categories.filter((cat) => cat.id !== category.id));
+    console.log("Category deleted");
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <div className="w-1/2">
@@ -31,7 +36,13 @@ export default function CategoryView({}: CategoryViewProps) {
       </div>
       <div className="grid grid-cols-5 gap-5">
         {categories?.map((category) => {
-          return <CategoryCard key={category.id} category={category} />;
+          return (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              handleDeleteCategories={handleDeleteCategories}
+            />
+          );
         })}
       </div>
     </div>

@@ -9,19 +9,28 @@ import { Category } from "@/models/generatedTypes";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import CreateCategoryForm from "./CreateCategoryForm";
+import { deleteCategory } from "@/services/api/categoryServices";
 
 type CategoryCardProps = {
   onSetCategories?: (categories: Category) => void;
   category?: Category;
   isCreate?: boolean;
+  handleDeleteCategories?: (category: Category) => void;
 };
 
 export default function CategoryCard({
   category,
   isCreate = false,
   onSetCategories,
+  handleDeleteCategories,
 }: CategoryCardProps) {
   const [isEditing, setIsEditing] = useState(false);
+
+  const handleDelete = async () => {
+    await deleteCategory(category!.id!).then(() => {
+      handleDeleteCategories!(category!);
+    });
+  };
 
   return (
     <>
@@ -43,7 +52,7 @@ export default function CategoryCard({
               </svg>
             </Button>
           ) : (
-            <Button>
+            <Button onClick={() => handleDelete()}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="1em"

@@ -93,6 +93,7 @@ export default function CreateCategoryForm({
                       <SelectItem value="0">Income</SelectItem>
                       <SelectItem value="1">Expense</SelectItem>
                       <SelectItem value="2">Savings</SelectItem>
+                      <SelectItem value="3">Transfer</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>

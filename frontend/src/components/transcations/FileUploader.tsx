@@ -137,21 +137,38 @@ export default function FileUploader({}: FileUploaderProps) {
                 handleTransactionUpload={handleTransactionUpload}
               />
             )}
-            <UnhandledTransactions
-              allCategories={allCategories}
-              categoriesWithMultipleMatches={categoriesWithMultipleMatches}
-              transactionsWithoutCategories={transactionsWithoutCategories}
-              transactionsWithMultipleCategories={
-                transactionsWithMultipleCategories
-              }
-              onSetTransactionWithMultipleCategories={
-                onSetTransactionWithMultipleCategories
-              }
-              onSetTransactionWithoutCategories={
-                onSetTransactionWithoutCategories
-              }
-            />
+            {(transactionsWithMultipleCategories &&
+              transactionsWithMultipleCategories?.length > 0) ||
+              (transactionsWithoutCategories &&
+                transactionsWithoutCategories?.length > 0 && (
+                  <UnhandledTransactions
+                    allCategories={allCategories}
+                    categoriesWithMultipleMatches={
+                      categoriesWithMultipleMatches
+                    }
+                    transactionsWithoutCategories={
+                      transactionsWithoutCategories
+                    }
+                    transactionsWithMultipleCategories={
+                      transactionsWithMultipleCategories
+                    }
+                    onSetTransactionWithMultipleCategories={
+                      onSetTransactionWithMultipleCategories
+                    }
+                    onSetTransactionWithoutCategories={
+                      onSetTransactionWithoutCategories
+                    }
+                  />
+                ))}
           </div>
+
+          {transactionsWithMultipleCategories?.length === 0 &&
+            transactionsWithoutCategories?.length === 0 &&
+            newAccountName === null && (
+              <Button onClick={() => handleTransactionUpload()}>
+                Complete
+              </Button>
+            )}
         </div>
       </DialogContent>
     </Dialog>

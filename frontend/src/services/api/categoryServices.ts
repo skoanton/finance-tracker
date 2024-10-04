@@ -42,3 +42,15 @@ export const updateCategory = async (category: Category):Promise<Category> => {
         throw new Error("Error updating category");
     }
 }
+
+export const deleteCategory = async (id: number):Promise<void> => {
+    try {
+        const response = await axios.delete(`http://localhost:5000/api/category/${id}`);
+
+        if(response.status !== 200) {
+            throw new Error("Error deleting category");
+        }
+    } catch (error) {
+        throw new Error("Error deleting category");
+    }
+}

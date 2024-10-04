@@ -11,7 +11,8 @@ namespace server.Models
     {
         Income,
         Expense,
-        Saving
+        Saving,
+        Transfer
     }
     public class Category
     {

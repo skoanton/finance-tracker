@@ -1,13 +1,4 @@
 services:
-  backend:
-    image: ${DOCKER_REGISTRY-}backend
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    ports:
-      - "5000:8080" # HostPort:ContainerPort for HTTP
-      - "5001:8081" # HostPort:ContainerPort for HTTPS (if needed)
-
   mysql:
     image: mysql:8.0
     container_name: mysql-db
@@ -20,3 +11,14 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql # Bind mount for persistent data
+
+  backend:
+    image: ${DOCKER_REGISTRY-}backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:8080" # HostPort:ContainerPort for HTTP
+      - "5001:8081" # HostPort:ContainerPort for HTTPS (if needed)
+    depends_on:
+      - mysql

@@ -1,4 +1,5 @@
 import { Account } from "@/models/generatedTypes";
+import axios from "axios";
 export const getAllAccounts = async ():Promise<Account[]> => {
     try {
         const response = await fetch("http://localhost:5000/api/accounts");
@@ -39,13 +40,12 @@ export const createAccount = async (account: Account):Promise<Account> => {
 
 export const deleteAccount = async (id: number):Promise<void> => {
     try {
-        const response = await fetch(`http://localhost:5000/api/accounts/${id}`, {
-            method: "DELETE"
-        });
+        const response = await axios.delete(`http://localhost:5000/api/accounts/${id}`);
 
-        if(!response.ok) {
-            throw new Error("Failed to delete account");
+        if(response.status !== 200) {
+            throw new Error("Error deleting category");
         }
+
     }
     catch (error) {
         console.log(error);
