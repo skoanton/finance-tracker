@@ -3,6 +3,7 @@ import PieChartView from "../dashboard/PieChartView";
 import DateRangePicker from "../DateRangePicker";
 import { useState } from "react";
 import { addDays } from "date-fns";
+import { CategoryType } from "@/models/generatedTypes";
 
 type DashboardViewProps = {};
 
@@ -25,10 +26,13 @@ export default function DashboardView({}: DashboardViewProps) {
 
   return (
     <>
-      <div>
-        <h1>Dashboard</h1>
+      <div className="flex flex-col gap-5">
         <DateRangePicker date={date} setDate={setDate} />
-        <PieChartView date={date} />
+        <div className="grid grid-cols-3">
+          <PieChartView date={date} type={CategoryType._0} title={"Expense"} />
+          <PieChartView date={date} type={CategoryType._1} title={"Income"} />
+          <PieChartView date={date} type={CategoryType._2} title={"Savings"} />
+        </div>
       </div>
     </>
   );

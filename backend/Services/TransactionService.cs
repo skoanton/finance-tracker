@@ -13,7 +13,7 @@ namespace backend.Services
         Task<Transaction> UpdateTransactionAsync(int id, Transaction updatedTransaction);
         Task<Transaction> DeleteTransactionAsync(int id);
         Task<Transaction> GetTransactionsThisMonthAsync();
-        Task<List<CategorySummary>> GetMonthlyCategorySumsAsync(DateTime startDate, DateTime endDate);
+        Task<List<CategorySummary>> GetMonthlyCategorySumsAsync(DateTime startDate, DateTime endDate, CategoryType type);
     }
     public class TransactionService : ITransactionService
     {

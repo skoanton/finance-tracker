@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="flex">
       <Navbar />
-      <main className="w-screen p-5">
+      <main className="w-screen p-5 ml-64">
         <Outlet />
         <Toaster />
       </main>

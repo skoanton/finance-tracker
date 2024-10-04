@@ -1,4 +1,4 @@
-import { Category, CategorySummary, CsvFile, Transaction } from "@/models/generatedTypes";
+import { Category, CategorySummary, CategoryType, CsvFile, Transaction } from "@/models/generatedTypes";
 import axios from "axios";
 
 export const uploadTransactions = async(transactions: CsvFile[]) => {
@@ -48,9 +48,9 @@ export const deleteTransaction = async(id: number) => {
     }
 }
 
-export const getTransactionsThisMonth = async(startDate:Date,endDate:Date):Promise<CategorySummary[]> => {
+export const getTransactionsThisMonth = async(startDate:Date,endDate:Date,type:CategoryType):Promise<CategorySummary[]> => {
     try {
-        const response = await axios.get("http://localhost:5000/api/transaction/summaryMonth",{params:{startDate,endDate}});
+        const response = await axios.get("http://localhost:5000/api/transaction/summaryMonth",{params:{startDate,endDate,type}});
         if(response.status !== 200) {
             throw new Error("Error fetching data from database");
         }

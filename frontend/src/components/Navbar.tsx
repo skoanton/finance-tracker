@@ -10,6 +10,7 @@ import {
 import { Button } from "./ui/button";
 import {
   ArrowLeftRight,
+  Banknote,
   Coins,
   CreditCard,
   LayoutDashboard,
@@ -24,10 +25,11 @@ export default function Navbar({}: NavbarProps) {
   const isTransactions = location.pathname === "/transactions";
   const isCategories = location.pathname === "/categories";
   const isUpload = location.pathname === "/upload";
+  const isBudget = location.pathname === "/budgets";
 
   return (
     <>
-      <header className="bg-primary h-screen">
+      <header className=" bg-primary w-64 fixed h-full">
         <nav className="flex flex-col gap-10 p-5 h-full">
           <h1 className="text-2xl font-bold text-primary-foreground text-center mt-5 cursor-pointer">
             <Link to="/">Finance Tracker</Link>
@@ -80,6 +82,18 @@ export default function Navbar({}: NavbarProps) {
                 >
                   <Coins />
                   Kategorier
+                </li>
+              </Link>
+              <Link to="/budgets">
+                <li
+                  className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
+                    isBudget
+                      ? "bg-primary-foreground text-primary "
+                      : "text-primary-foreground"
+                  }`}
+                >
+                  <Banknote />
+                  Budget
                 </li>
               </Link>
             </ul>

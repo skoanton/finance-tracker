@@ -31,21 +31,23 @@ export default function CategoryView({}: CategoryViewProps) {
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="w-1/2">
-        <CategoryModal onSetCategories={onSetCategories} />
-      </div>
+    <>
       <div className="flex flex-col gap-5">
-        {categories?.map((category) => {
-          return (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              handleDeleteCategories={handleDeleteCategories}
-            />
-          );
-        })}
+        <div>
+          <CategoryModal onSetCategories={onSetCategories} />
+        </div>
+        <div className="flex flex-col gap-5">
+          {categories?.map((category) => {
+            return (
+              <CategoryCard
+                key={category.id}
+                category={category}
+                handleDeleteCategories={handleDeleteCategories}
+              />
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

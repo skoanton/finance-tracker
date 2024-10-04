@@ -46,7 +46,7 @@ export default function CategoryCard({
         <div className="flex flex-col ">
           <p className="font-bold text-xl">{category.name} </p>
           <p className="text-sm text-gray-500">
-            {categoryTypeMap[category.type]}
+            {/* {categoryTypeMap[category.type]} */}
           </p>
         </div>
         <div

@@ -8,6 +8,7 @@ import TransactionView from "./components/views/TransactionView.tsx";
 import CategoryView from "./components/views/CategoryView.tsx";
 import FileUploader from "./components/transcations/FileUploader.tsx";
 import DashboardView from "./components/views/DashboardView.tsx";
+import BudgetView from "./components/views/BudgetView.tsx";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "upload",
         element: <FileUploader />,
+      },
+      {
+        path: "budgets",
+        element: <BudgetView />,
       },
     ],
   },

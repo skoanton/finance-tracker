@@ -40,7 +40,7 @@ export default function AccountView({}: AccountViewProps) {
     <>
       {accounts.length > 0 ? (
         <div className="flex flex-col">
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-5">
             {accounts.map((account) => {
               return (
                 <AccountCard

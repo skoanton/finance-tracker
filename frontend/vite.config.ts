@@ -10,8 +10,9 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0', // Allows access from outside the container
+    port: 8080,      // Port inside the container
     watch: {
-      // Use polling to watch for changes if necessary
       usePolling: true,
     },
   },

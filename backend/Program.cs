@@ -29,6 +29,7 @@ if (environment != "DesignTime")
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -41,7 +42,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
+        policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
     });
 });
 

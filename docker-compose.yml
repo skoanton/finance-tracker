@@ -20,5 +20,22 @@ services:
     ports:
       - "5000:8080" # HostPort:ContainerPort for HTTP
       - "5001:8081" # HostPort:ContainerPort for HTTPS (if needed)
+    volumes:
+      - ./backend:/app # Mount the local code into the container
+    command: dotnet watch run # Ensure live reloading
     depends_on:
       - mysql
+
+  frontend:
+    build:
+       context: ./frontend # Adjust the context to your frontend directory
+       dockerfile: Dockerfile
+    ports:
+       - "3000:8080" # Expose the frontend port on the host
+    volumes:
+        - ./frontend:/app # Mount the local code into the container
+        - /app/node_modules # Prevent overwriting node_modules
+    environment:
+        REACT_APP_API_URL: "http://localhost:5000/api"
+    depends_on:
+     - backend

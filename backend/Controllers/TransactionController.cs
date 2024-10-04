@@ -167,9 +167,9 @@ namespace server.Controllers
         }
 
         [HttpGet("summaryMonth")]
-        public async Task<ActionResult<List<CategorySummary>>> GetTransactionsThisMonth(DateTime startDate, DateTime endDate)
+        public async Task<ActionResult<List<CategorySummary>>> GetTransactionsThisMonth(DateTime startDate, DateTime endDate, CategoryType type)
         {
-            var transactions = await _transactionService.GetMonthlyCategorySumsAsync(startDate, endDate);
+            var transactions = await _transactionService.GetMonthlyCategorySumsAsync(startDate, endDate,type);
             return Ok(transactions);
         }
     }
