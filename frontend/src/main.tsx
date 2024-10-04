@@ -24,16 +24,14 @@ const router = createBrowserRouter([
       {
         path: "transactions",
         element: <TransactionView />,
-        children: [
-          {
-            path: "upload",
-            element: <FileUploader />,
-          },
-        ],
       },
       {
         path: "categories",
         element: <CategoryView />,
+      },
+      {
+        path: "upload",
+        element: <FileUploader />,
       },
     ],
   },

@@ -2,6 +2,7 @@ import { Category } from "@/models/generatedTypes";
 import { getCategories } from "@/services/api/categoryServices";
 import { useEffect, useState } from "react";
 import CategoryCard from "../categories/CategoryCard";
+import CategoryModal from "../categories/CategoryModal";
 
 type CategoryViewProps = {};
 
@@ -32,7 +33,7 @@ export default function CategoryView({}: CategoryViewProps) {
   return (
     <div className="flex flex-col gap-5">
       <div className="w-1/2">
-        <CategoryCard onSetCategories={onSetCategories} isCreate={true} />
+        <CategoryModal onSetCategories={onSetCategories} />
       </div>
       <div className="grid grid-cols-5 gap-5">
         {categories?.map((category) => {

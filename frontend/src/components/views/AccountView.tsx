@@ -4,6 +4,7 @@ import { deleteAccount, getAllAccounts } from "@/services/api/accountService";
 import { Account } from "@/models/generatedTypes";
 import AccountForm from "../account/AccountForm";
 import AccountCard from "../account/AccountCard";
+import { Link } from "react-router-dom";
 
 type AccountViewProps = {};
 
@@ -36,18 +37,31 @@ export default function AccountView({}: AccountViewProps) {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="grid grid-cols-3 gap-5">
-        {accounts.map((account) => {
-          return (
-            <AccountCard
-              key={account.id}
-              account={account}
-              onDeleteAccount={onDeleteAccount}
-            />
-          );
-        })}
-      </div>
-    </div>
+    <>
+      {accounts.length > 0 ? (
+        <div className="flex flex-col">
+          <div className="grid grid-cols-3 gap-5">
+            {accounts.map((account) => {
+              return (
+                <AccountCard
+                  key={account.id}
+                  account={account}
+                  onDeleteAccount={onDeleteAccount}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className="flex justify-center items-center w-full h-full">
+          <p className="text-xl font-bold">
+            No Accounts added, please upload some{" "}
+            <Link to="/upload" className="underline cursor-pointer">
+              transactions
+            </Link>{" "}
+          </p>
+        </div>
+      )}
+    </>
   );
 }

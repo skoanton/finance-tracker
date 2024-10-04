@@ -46,6 +46,9 @@ export default function CreateCategoryForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     console.log(values);
+    const firstLetter = values.categoryName.charAt(0).toUpperCase();
+    const restOfName = values.categoryName.slice(1).toLowerCase();
+    values.categoryName = firstLetter + restOfName;
     const newCategory: Category = {
       name: values.categoryName,
       type: values.categoryType as CategoryType,
@@ -61,7 +64,10 @@ export default function CreateCategoryForm({
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-5"
+        >
           <FormField
             control={form.control}
             name="categoryName"

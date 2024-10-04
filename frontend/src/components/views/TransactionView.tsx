@@ -47,7 +47,6 @@ export default function TransactionView({}: TransactionViewProps) {
         data={transactions}
         handleDeleteTransactions={handleDeleteTransactions}
       />
-      <Outlet />
     </>
   );
 }
