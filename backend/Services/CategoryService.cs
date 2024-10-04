@@ -12,6 +12,7 @@ namespace backend.Services
         Task<Category> GetCategoryByNameAsync(string name);
         Task<Category> UpdateCategoryAsync(int id, Category updatedCategory);
         Task<Category> DeleteCategoryAsync(int id);
+        Task<Category> GetOrCreateUncategorized();
     }
     public class CategoryService : ICategoryService
     {
@@ -51,6 +52,7 @@ namespace backend.Services
             category.Description = updatedCategory.Description;
             category.Name = updatedCategory.Name;
             category.Type = updatedCategory.Type;
+            category.Color = updatedCategory.Color;
 
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
@@ -63,9 +65,35 @@ namespace backend.Services
             {
                 return null;
             }
+            var unCategorized = await GetOrCreateUncategorized();
+            var transactionsToUpdate = await _context.Transactions.Where(t => t.CategoryId == category.Id).ToListAsync();
+
+            foreach (var transaction in transactionsToUpdate)
+            {
+                transaction.CategoryId = unCategorized.Id;
+            }
+  
+           
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return category;
+        }
+
+        public async Task<Category> GetOrCreateUncategorized()
+        {
+            var uncategorized = await _context.Categories.FirstOrDefaultAsync(c => c.Name == "Uncategorized");
+            if (uncategorized == null)
+            {
+                uncategorized = new Category
+                {
+                    Name = "Uncategorized",
+                    Description = ["Uncategorized"],
+                    Type = CategoryType.Uncategorized,
+                    Color = "#000000"
+                };
+                await CreateCategoryAsync(uncategorized);
+            }
+            return uncategorized;
         }
 
     }

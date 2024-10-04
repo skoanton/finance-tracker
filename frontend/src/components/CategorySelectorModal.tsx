@@ -96,24 +96,24 @@ export default function CategorySelectorModal({
             </DialogTitle>
             <DialogDescription>Pick a category</DialogDescription>
             <>
-              <ul className="text-gray-500 text-sm">
-                <li>
-                  <span className="font-bold">Account: </span>
-                  {transaction.accountName}
-                </li>
-                <li>
-                  <span className="font-bold">Date: </span>
-                  {new Date(transaction.transactionDate!).toLocaleDateString()}
-                </li>
-                <li>
-                  <span className="font-bold">Description: </span>{" "}
-                  {transaction.description}
-                </li>
-                <li>
-                  <span className="font-bold">Amount: </span>
-                  {transaction.amount} SEK
-                </li>
-              </ul>
+              <div>
+                <p className="text-sm">
+                  <strong>Account:</strong> {transaction.accountName}{" "}
+                </p>
+                <p className="text-sm">
+                  {" "}
+                  <strong>Date:</strong>{" "}
+                  {new Date(transaction.transactionDate!).toLocaleDateString()}{" "}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm">
+                  <strong>Description: </strong> {transaction.description}
+                </p>{" "}
+                <p className="text-sm">
+                  <strong>Amount:</strong> {transaction.amount} kr{" "}
+                </p>
+              </div>
             </>
           </DialogHeader>
           <Form {...form}>

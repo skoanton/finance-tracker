@@ -35,7 +35,7 @@ export default function CategoryView({}: CategoryViewProps) {
       <div className="w-1/2">
         <CategoryModal onSetCategories={onSetCategories} />
       </div>
-      <div className="grid grid-cols-5 gap-5">
+      <div className="flex flex-col gap-5">
         {categories?.map((category) => {
           return (
             <CategoryCard

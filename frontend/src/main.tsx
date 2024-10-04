@@ -7,6 +7,7 @@ import AccountView from "./components/views/AccountView.tsx";
 import TransactionView from "./components/views/TransactionView.tsx";
 import CategoryView from "./components/views/CategoryView.tsx";
 import FileUploader from "./components/transcations/FileUploader.tsx";
+import DashboardView from "./components/views/DashboardView.tsx";
 
 const router = createBrowserRouter([
   {
@@ -14,8 +15,8 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "home",
-        element: <div>home</div>,
+        index: true,
+        element: <DashboardView />,
       },
       {
         path: "accounts",

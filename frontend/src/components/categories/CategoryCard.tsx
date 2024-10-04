@@ -8,10 +8,16 @@ import {
 } from "@/components/ui/card";
 import { Category } from "@/models/generatedTypes";
 import { Button } from "../ui/button";
-import { useState } from "react";
-import CreateCategoryForm from "./CreateCategoryForm";
 import { deleteCategory } from "@/services/api/categoryServices";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EllipsisVertical } from "lucide-react";
 type CategoryCardProps = {
   category: Category;
   handleDeleteCategories: (category: Category) => void;
@@ -28,8 +34,6 @@ export default function CategoryCard({
   category,
   handleDeleteCategories,
 }: CategoryCardProps) {
-  const [isEditing, setIsEditing] = useState(false);
-
   const handleDelete = async () => {
     await deleteCategory(category!.id!).then(() => {
       handleDeleteCategories!(category!);
@@ -37,30 +41,35 @@ export default function CategoryCard({
   };
 
   return (
-    <>
-      <Card>
-        <CardHeader className="flex-row justify-between">
-          <CardTitle>{category.name}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CardDescription>{categoryTypeMap[category.type!]}</CardDescription>
-        </CardContent>
-        <CardFooter>
-          <Button onClick={() => handleDelete()}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="1em"
-              height="1em"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"
-              />
-            </svg>
+    <div className="w-1/2 shadow-mg rounded-md border p-3 flex items-center justify-between">
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col ">
+          <p className="font-bold text-xl">{category.name} </p>
+          <p className="text-sm text-gray-500">
+            {categoryTypeMap[category.type]}
+          </p>
+        </div>
+        <div
+          className="w-16 h-2 rounded-xl shadow-md"
+          style={{ backgroundColor: category.color }}
+        ></div>
+      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          {" "}
+          <Button variant={"ghost"} onClick={() => handleDelete()}>
+            <EllipsisVertical size={20} />
           </Button>
-        </CardFooter>
-      </Card>
-    </>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="right">
+          <DropdownMenuItem>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleDelete()}>
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
+
+/*  */

@@ -25,6 +25,7 @@ import { createCategory } from "@/services/api/categoryServices";
 const formSchema = z.object({
   categoryName: z.string().min(2).max(50),
   categoryType: z.nativeEnum(CategoryType),
+  color: z.string(),
 });
 
 type CreateCategoryFormProps = {
@@ -40,6 +41,7 @@ export default function CreateCategoryForm({
     defaultValues: {
       categoryName: "",
       categoryType: 0,
+      color: "#000000",
     },
   });
 
@@ -53,6 +55,7 @@ export default function CreateCategoryForm({
       name: values.categoryName,
       type: values.categoryType as CategoryType,
       description: [],
+      color: values.color,
     };
 
     await createCategory(newCategory).then((response) => {
@@ -107,6 +110,24 @@ export default function CreateCategoryForm({
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="color"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Account Type</FormLabel>
+                <FormControl>
+                  <Input
+                    type="color"
+                    className="w-12 h-12 border-none"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button type="submit" className="mt-5" disabled={isLoading}>
             Add Category
           </Button>

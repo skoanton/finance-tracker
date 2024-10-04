@@ -32,7 +32,7 @@ import { after } from "node:test";
 import { Transaction } from "@/models/generatedTypes";
 import { deleteTransaction } from "@/services/api/transactionService";
 import { TransactionTableData } from "./Columns";
-import { CodeSquare } from "lucide-react";
+import { CodeSquare, Loader } from "lucide-react";
 import { on } from "events";
 
 interface DataTableProps<TData, TValue> {
@@ -69,7 +69,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
-  const handleDelete = async () => {
+  const handleMassDelete = async () => {
     setIsLoading(true);
 
     const selectedRows = table.getFilteredSelectedRowModel().rows;
@@ -103,67 +103,73 @@ export function DataTable<TData, TValue>({
     }
   };
 
+  const handleMassEdit = () => {};
+
   return (
     <div>
-      <div className="flex flex-row items-start gap-5 mb-5">
-        <Input
-          placeholder="Search description.."
-          value={
-            (table.getColumn("description")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("description")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">Columns</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Button
-          variant="outline"
-          onClick={handleDelete}
-          disabled={
-            !table.getFilteredSelectedRowModel().rows.length || isLoading
-          }
-        >
-          {isLoading ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="1em"
-              height="1em"
-              viewBox="0 0 256 256"
-              className="animate-spin"
-            >
-              <path
-                fill="currentColor"
-                d="M136 32v32a8 8 0 0 1-16 0V32a8 8 0 0 1 16 0m37.25 58.75a8 8 0 0 0 5.66-2.35l22.63-22.62a8 8 0 0 0-11.32-11.32L167.6 77.09a8 8 0 0 0 5.65 13.66M224 120h-32a8 8 0 0 0 0 16h32a8 8 0 0 0 0-16m-45.09 47.6a8 8 0 0 0-11.31 11.31l22.62 22.63a8 8 0 0 0 11.32-11.32ZM128 184a8 8 0 0 0-8 8v32a8 8 0 0 0 16 0v-32a8 8 0 0 0-8-8m-50.91-16.4l-22.63 22.62a8 8 0 0 0 11.32 11.32l22.62-22.63a8 8 0 0 0-11.31-11.31M72 128a8 8 0 0 0-8-8H32a8 8 0 0 0 0 16h32a8 8 0 0 0 8-8m-6.22-73.54a8 8 0 0 0-11.32 11.32L77.09 88.4A8 8 0 0 0 88.4 77.09Z"
-              />
-            </svg>
-          ) : (
-            "Delete"
-          )}
-        </Button>
+      <div className="flex justify-between">
+        <div className="flex flex-row items-start gap-5 mb-5">
+          <Input
+            placeholder="Search description.."
+            value={
+              (table.getColumn("description")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("description")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Columns</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div>
+          {isLoading && <Loader className="animate-spin" />}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Edit</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuCheckboxItem
+                onClick={() => handleMassEdit()}
+                disabled={
+                  !table.getFilteredSelectedRowModel().rows.length || isLoading
+                }
+              >
+                Mass Edit
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                onClick={() => handleMassDelete()}
+                disabled={
+                  !table.getFilteredSelectedRowModel().rows.length || isLoading
+                }
+              >
+                Mass Delete
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>

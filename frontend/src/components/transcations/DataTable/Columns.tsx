@@ -21,6 +21,18 @@ export type TransactionTableData = {
   date: Date;
 };
 
+const handleEdit = (transactionId: number) => {
+  console.log("Edit transaction", transactionId);
+};
+
+const handleDelete = (transactionId: number) => {
+  console.log("Delete transaction", transactionId);
+};
+
+const handleView = (transactionId: number) => {
+  console.log("View transaction");
+};
+
 export const columns: ColumnDef<TransactionTableData>[] = [
   {
     id: "select",
@@ -153,10 +165,16 @@ export const columns: ColumnDef<TransactionTableData>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit {transaction.id}</DropdownMenuItem>
-            <DropdownMenuItem>Delete {transaction.id}</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEdit(transaction.id)}>
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDelete(transaction.id)}>
+              Delete
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleView(transaction.id)}>
+              View
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

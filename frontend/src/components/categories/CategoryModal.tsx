@@ -17,7 +17,7 @@ export default function CategoryModal({ onSetCategories }: CategoryModalProps) {
   return (
     <>
       <Dialog>
-        <DialogTrigger>
+        <DialogTrigger asChild>
           <Button>Skapa ny kategori</Button>
         </DialogTrigger>
         <DialogContent>

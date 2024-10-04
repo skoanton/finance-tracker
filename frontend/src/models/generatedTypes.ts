@@ -77,6 +77,12 @@ export interface IClient {
      * @return Success
      */
     create2(body: CsvFile[] | undefined): Promise<void>;
+    /**
+     * @param startDate (optional) 
+     * @param endDate (optional) 
+     * @return Success
+     */
+    summaryMonth(startDate: Date | undefined, endDate: Date | undefined): Promise<CategorySummary[]>;
 }
 
 export class Client implements IClient {
@@ -853,20 +859,89 @@ export class Client implements IClient {
         }
         return Promise.resolve<void>(null as any);
     }
+
+    /**
+     * @param startDate (optional) 
+     * @param endDate (optional) 
+     * @return Success
+     */
+    summaryMonth(startDate: Date | undefined, endDate: Date | undefined, cancelToken?: CancelToken): Promise<CategorySummary[]> {
+        let url_ = this.baseUrl + "/api/Transaction/summaryMonth?";
+        if (startDate === null)
+            throw new Error("The parameter 'startDate' cannot be null.");
+        else if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toISOString() : "") + "&";
+        if (endDate === null)
+            throw new Error("The parameter 'endDate' cannot be null.");
+        else if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toISOString() : "") + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSummaryMonth(_response);
+        });
+    }
+
+    protected processSummaryMonth(response: AxiosResponse): Promise<CategorySummary[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<CategorySummary[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<CategorySummary[]>(null as any);
+    }
 }
 
 export interface Account {
     id?: number;
     name: string;
-    type?: string | undefined;
-    balance?: number;
+    type: string;
+    balance: number;
 }
 
 export interface Category {
     id?: number;
-    description?: string[] | undefined;
-    name?: string | undefined;
-    type?: CategoryType;
+    description: string[];
+    name: string;
+    type: CategoryType;
+    color: string;
+}
+
+export interface CategorySummary {
+    id: number;
+    name: string;
+    amount: number;
+    color: string;
 }
 
 export enum CategoryType {
@@ -874,24 +949,25 @@ export enum CategoryType {
     _1 = 1,
     _2 = 2,
     _3 = 3,
+    _4 = 4,
 }
 
 export interface CsvFile {
-    accountName?: string | undefined;
-    transactionDate?: Date;
-    description?: string | undefined;
-    amount?: number;
+    accountName: string;
+    transactionDate: Date;
+    description: string;
+    amount: number;
 }
 
 export interface Transaction {
     id?: number;
-    accountId?: number;
-    categoryId?: number;
-    amount?: number;
-    transactionDate?: Date;
-    description?: string | undefined;
-    account?: Account;
-    category?: Category;
+    accountId: number;
+    categoryId: number;
+    amount: number;
+    transactionDate: Date;
+    description: string;
+    account: Account;
+    category: Category;
 }
 
 export class ApiException extends Error {

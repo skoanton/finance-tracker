@@ -24,7 +24,7 @@ const formSchema = z.object({
 type AccountFormProps = {
   newAccountName: string | null;
   onSetIsOpen: () => void;
-  handleTransactionUpload: () => void;
+  handleTransactionUpload: (message: string) => void;
 };
 export default function AccountForm({
   newAccountName,
@@ -52,7 +52,7 @@ export default function AccountForm({
     await createAccount(newAccount).then(() => {
       setIsLoading(false);
       onSetIsOpen();
-      handleTransactionUpload();
+      handleTransactionUpload("Account has been created");
     });
   }
 

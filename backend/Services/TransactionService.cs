@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using backend.Models;
+using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.Models;
 
@@ -11,6 +12,8 @@ namespace backend.Services
         Task<Transaction> CreateTransactionAsync(Transaction transactions);
         Task<Transaction> UpdateTransactionAsync(int id, Transaction updatedTransaction);
         Task<Transaction> DeleteTransactionAsync(int id);
+        Task<Transaction> GetTransactionsThisMonthAsync();
+        Task<List<CategorySummary>> GetMonthlyCategorySumsAsync(DateTime startDate, DateTime endDate);
     }
     public class TransactionService : ITransactionService
     {
@@ -67,5 +70,35 @@ namespace backend.Services
             return transaction;
         }
 
+        public async Task<Transaction> GetTransactionsThisMonthAsync()
+        {
+            var today = DateTime.Today;
+            var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+            return await _context.Transactions
+                .Where(t => t.TransactionDate >= firstDayOfMonth && t.TransactionDate <= lastDayOfMonth)
+                .Include(t => t.Account)
+                .Include(t => t.Category)
+                .FirstOrDefaultAsync();
+
+        }
+
+        public async Task<List<CategorySummary>> GetMonthlyCategorySumsAsync(DateTime startDate, DateTime endDate, CategoryType type )
+        {
+
+            return await _context.Transactions
+                .Where(t => t.TransactionDate >= startDate && t.TransactionDate <= endDate)
+                .Include(t => t.Category).Where(t => t.Category.Type == type)
+                .GroupBy(t => t.CategoryId)
+                .Select(g => new CategorySummary
+                {
+                    Id = g.Key,
+                    Name = g.First().Category.Name,
+                    Amount = Math.Abs(g.Sum(t => t.Amount)),
+                    Color = g.First().Category.Color
+                })
+                .ToListAsync();
+        }
     }
 }

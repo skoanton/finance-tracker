@@ -12,7 +12,7 @@ import { useState } from "react";
 
 type AccountModalProps = {
   newAccountName: string | null;
-  handleTransactionUpload: () => void;
+  handleTransactionUpload: (message: string) => void;
 };
 
 export default function AccountModal({

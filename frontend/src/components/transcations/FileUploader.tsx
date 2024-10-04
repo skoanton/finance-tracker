@@ -15,10 +15,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { set } from "date-fns";
 
 type FileUploaderProps = {};
 
 export default function FileUploader({}: FileUploaderProps) {
+  const [isFileUploaded, setIsFileUploaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [transactions, setTransactions] = useState<CsvFile[]>([]);
   const [file, setFile] = useState<File | null>(null);
@@ -33,6 +37,8 @@ export default function FileUploader({}: FileUploaderProps) {
   ] = useState<CsvFile[] | null>(null);
   const [newAccountName, setNewAccountName] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const uploadTransactionToDatabase = async (
     transactionsToUpload: CsvFile[]
   ) => {
@@ -106,13 +112,29 @@ export default function FileUploader({}: FileUploaderProps) {
           },
         });
       });
+      setIsFileUploaded(true);
+      setFile(null);
       setTransactions(transactionsToUpload);
       await uploadTransactionToDatabase(transactionsToUpload);
     }
   };
 
-  const handleTransactionUpload = async () => {
+  const handleTransactionUpload = async (message: string) => {
     await uploadTransactionToDatabase(transactions);
+    toast({
+      description: message,
+    });
+  };
+
+  const handleCompletion = async () => {
+    setIsLoading(true);
+    await uploadTransactionToDatabase(transactions);
+    setIsLoading(false);
+    setIsOpen(false);
+    navigate(-1);
+    toast({
+      description: "Transactions has been added.",
+    });
   };
 
   return (
@@ -124,52 +146,58 @@ export default function FileUploader({}: FileUploaderProps) {
             Upload a CSV file with transactions
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-5 items-center">
-            <Input type="file" onChange={handleFileChange} className="w-52" />
-            <Button onClick={handleFileUpload}>Upload file</Button>
-          </div>
-          <div>
-            {isLoading && <p className="animate-pulse">Uploading...</p>}
-            {newAccountName && (
-              <AccountModal
-                newAccountName={newAccountName}
-                handleTransactionUpload={handleTransactionUpload}
-              />
-            )}
-            {(transactionsWithMultipleCategories &&
-              transactionsWithMultipleCategories?.length > 0) ||
-              (transactionsWithoutCategories &&
-                transactionsWithoutCategories?.length > 0 && (
-                  <UnhandledTransactions
-                    allCategories={allCategories}
-                    categoriesWithMultipleMatches={
-                      categoriesWithMultipleMatches
-                    }
-                    transactionsWithoutCategories={
-                      transactionsWithoutCategories
-                    }
-                    transactionsWithMultipleCategories={
-                      transactionsWithMultipleCategories
-                    }
-                    onSetTransactionWithMultipleCategories={
-                      onSetTransactionWithMultipleCategories
-                    }
-                    onSetTransactionWithoutCategories={
-                      onSetTransactionWithoutCategories
-                    }
-                  />
-                ))}
-          </div>
-
-          {transactionsWithMultipleCategories?.length === 0 &&
-            transactionsWithoutCategories?.length === 0 &&
-            newAccountName === null && (
-              <Button onClick={() => handleTransactionUpload()}>
-                Complete
+        {!isFileUploaded && (
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-5 items-center">
+              <Input type="file" onChange={handleFileChange} className="w-52" />
+              <Button
+                disabled={isLoading || file === null}
+                onClick={handleFileUpload}
+              >
+                Submit File
               </Button>
-            )}
+            </div>
+          </div>
+        )}
+        <div>
+          {isLoading && <p className="animate-pulse">Uploading...</p>}
+          {newAccountName && (
+            <AccountModal
+              newAccountName={newAccountName}
+              handleTransactionUpload={handleTransactionUpload}
+            />
+          )}
+          {(transactionsWithMultipleCategories &&
+            transactionsWithMultipleCategories?.length > 0) ||
+            (transactionsWithoutCategories &&
+              transactionsWithoutCategories?.length > 0 && (
+                <UnhandledTransactions
+                  allCategories={allCategories}
+                  categoriesWithMultipleMatches={categoriesWithMultipleMatches}
+                  transactionsWithoutCategories={transactionsWithoutCategories}
+                  transactionsWithMultipleCategories={
+                    transactionsWithMultipleCategories
+                  }
+                  onSetTransactionWithMultipleCategories={
+                    onSetTransactionWithMultipleCategories
+                  }
+                  onSetTransactionWithoutCategories={
+                    onSetTransactionWithoutCategories
+                  }
+                />
+              ))}
         </div>
+
+        {transactionsWithMultipleCategories?.length === 0 &&
+          transactionsWithoutCategories?.length === 0 &&
+          newAccountName === null && (
+            <>
+              <p>Everything taken care of, please complete</p>
+              <Button onClick={() => handleCompletion()}>
+                Complete upload
+              </Button>
+            </>
+          )}
       </DialogContent>
     </Dialog>
   );

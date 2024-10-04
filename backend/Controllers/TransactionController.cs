@@ -6,6 +6,7 @@ using server.Models;
 using Microsoft.AspNetCore.Mvc;
 using server.Data;
 using backend.Services;
+using backend.Models;
 
 namespace server.Controllers
 {
@@ -163,6 +164,13 @@ namespace server.Controllers
                 return NotFound();
             }
             return Ok(transaction);
+        }
+
+        [HttpGet("summaryMonth")]
+        public async Task<ActionResult<List<CategorySummary>>> GetTransactionsThisMonth(DateTime startDate, DateTime endDate)
+        {
+            var transactions = await _transactionService.GetMonthlyCategorySumsAsync(startDate, endDate);
+            return Ok(transactions);
         }
     }
 }

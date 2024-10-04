@@ -12,15 +12,21 @@ namespace server.Models
         Income,
         Expense,
         Saving,
-        Transfer
+        Transfer,
+        Uncategorized
     }
     public class Category
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [Required]
         public string[] Description { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public CategoryType Type { get; set; }
+        [Required]
+        public string Color { get; set; }
     }
 }
