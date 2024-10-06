@@ -1,3 +1,4 @@
+"use client";
 import { Category, CsvFile } from "@/models/generatedTypes";
 import { useState } from "react";
 import CategorySelectorModal from "../CategorySelectorModal";

@@ -2,12 +2,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package.json .
-
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
+COPY next.config.mjs ./next.config.mjs
 
-EXPOSE 8080
+EXPOSE 3000
 
-CMD [ "npm", "run", "dev" ]
+CMD ["npm", "run", "dev"]

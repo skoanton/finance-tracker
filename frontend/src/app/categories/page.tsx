@@ -1,12 +1,13 @@
+"use client";
+import CategoryCard from "@/components/categories/CategoryCard";
+import CategoryModal from "@/components/categories/CategoryModal";
 import { Category } from "@/models/generatedTypes";
 import { getCategories } from "@/services/api/categoryServices";
 import { useEffect, useState } from "react";
-import CategoryCard from "../categories/CategoryCard";
-import CategoryModal from "../categories/CategoryModal";
 
-type CategoryViewProps = {};
+type CategoriesViewProps = {};
 
-export default function CategoryView({}: CategoryViewProps) {
+export default function CategoriesView({}: CategoriesViewProps) {
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
