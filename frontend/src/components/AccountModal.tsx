@@ -1,3 +1,4 @@
+"use client";
 import { CsvFile } from "@/models/generatedTypes";
 import {
   Dialog,

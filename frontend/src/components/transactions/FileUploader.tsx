@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import Papa from "papaparse";
 
@@ -16,7 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { set } from "date-fns";
 
 type FileUploaderProps = {};
@@ -37,7 +38,7 @@ export default function FileUploader({}: FileUploaderProps) {
   ] = useState<CsvFile[] | null>(null);
   const [newAccountName, setNewAccountName] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(true);
-  const navigate = useNavigate();
+  const router = useRouter();
   const { toast } = useToast();
   const uploadTransactionToDatabase = async (
     transactionsToUpload: CsvFile[]
@@ -131,7 +132,7 @@ export default function FileUploader({}: FileUploaderProps) {
     await uploadTransactionToDatabase(transactions);
     setIsLoading(false);
     setIsOpen(false);
-    navigate(-1);
+    router.back();
     toast({
       description: "Transactions has been added.",
     });

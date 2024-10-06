@@ -1,15 +1,14 @@
-import { DataTable } from "../transcations/DataTable/DataTable";
-
+"use client";
 import { useEffect, useState } from "react";
 import { getTransactions } from "@/services/api/transactionService";
 import {
-  columns,
   TransactionTableData,
-} from "../transcations/DataTable/Columns";
-import { Outlet } from "react-router-dom";
-type TransactionViewProps = {};
+  columns,
+} from "@/components/transactions/DataTable/Columns";
+import { DataTable } from "@/components/transactions/DataTable/DataTable";
+type TransactionsViewProps = {};
 
-export default function TransactionView({}: TransactionViewProps) {
+export default function TransactionsView({}: TransactionsViewProps) {
   const [transactions, setTransactions] = useState<TransactionTableData[]>([]);
   useEffect(() => {
     const getData = async () => {

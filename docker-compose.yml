@@ -27,15 +27,19 @@ services:
       - mysql
 
   frontend:
+    container_name: frontend
     build:
-       context: ./frontend # Adjust the context to your frontend directory
-       dockerfile: Dockerfile
-    ports:
-       - "3000:8080" # Expose the frontend port on the host
-    volumes:
-        - ./frontend:/app # Mount the local code into the container
-        - /app/node_modules # Prevent overwriting node_modules
+      context: ./frontend #if your Dockerfile is not at the same level change the path here (./frontend)
+      dockerfile: Dockerfile
+    command: npm run dev
     environment:
-        REACT_APP_API_URL: "http://localhost:5000/api"
+      - REACT_APP_API_URL="http://localhost:5000/api"
+      #if you’re using Windows, you may need to uncomment the next line - Sol from @Kobe E
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
     depends_on:
      - backend

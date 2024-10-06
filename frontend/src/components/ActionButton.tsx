@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import {
@@ -5,18 +6,18 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 type ActionButtonProps = {};
 
 export default function ActionButton({}: ActionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
 
   const handleUpload = () => {
-    navigate("/transactions/upload");
+    router.push("/transactions/upload");
   };
 
   return (

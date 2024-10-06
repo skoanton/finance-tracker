@@ -1,4 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,24 +21,24 @@ import {
 type NavbarProps = {};
 
 export default function Navbar({}: NavbarProps) {
-  const location = useLocation();
-  const isDashboard = location.pathname === "/";
-  const isAccounts = location.pathname === "/accounts";
-  const isTransactions = location.pathname === "/transactions";
-  const isCategories = location.pathname === "/categories";
-  const isUpload = location.pathname === "/upload";
-  const isBudget = location.pathname === "/budgets";
+  const pathname = usePathname();
 
+  const isDashboard = pathname === "/";
+  const isAccounts = pathname === "/accounts";
+  const isTransactions = pathname === "/transactions";
+  const isCategories = pathname === "/categories";
+  const isUpload = pathname === "/upload";
+  const isBudget = pathname === "/budgets";
   return (
     <>
       <header className=" bg-primary w-64 fixed h-full">
         <nav className="flex flex-col gap-10 p-5 h-full">
           <h1 className="text-2xl font-bold text-primary-foreground text-center mt-5 cursor-pointer">
-            <Link to="/">Finance Tracker</Link>
+            <Link href="/">Finance Tracker</Link>
           </h1>
           <div className="flex flex-col h-full">
             <ul className="flex flex-col gap-5">
-              <Link to="/">
+              <Link href="/">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
                     isDashboard
@@ -48,7 +50,7 @@ export default function Navbar({}: NavbarProps) {
                   Dashboard
                 </li>
               </Link>
-              <Link to="/accounts">
+              <Link href="/accounts">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
                     isAccounts
@@ -60,7 +62,7 @@ export default function Navbar({}: NavbarProps) {
                   Konton
                 </li>
               </Link>
-              <Link to="/transactions">
+              <Link href="/transactions">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
                     isTransactions
@@ -72,7 +74,7 @@ export default function Navbar({}: NavbarProps) {
                   Transaktioner
                 </li>
               </Link>
-              <Link to="/categories">
+              <Link href="/categories">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
                     isCategories
@@ -84,7 +86,7 @@ export default function Navbar({}: NavbarProps) {
                   Kategorier
                 </li>
               </Link>
-              <Link to="/budgets">
+              <Link href="/budgets">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
                     isBudget
@@ -98,7 +100,7 @@ export default function Navbar({}: NavbarProps) {
               </Link>
             </ul>
             <ul className="flex flex-col gap-5 mt-auto">
-              <Link to="/upload" className="">
+              <Link href="/upload" className="">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
                     isUpload

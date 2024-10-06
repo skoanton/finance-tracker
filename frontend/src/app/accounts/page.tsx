@@ -1,14 +1,13 @@
+"use client";
 import { useEffect, useState } from "react";
 
 import { deleteAccount, getAllAccounts } from "@/services/api/accountService";
 import { Account } from "@/models/generatedTypes";
-import AccountForm from "../account/AccountForm";
-import AccountCard from "../account/AccountCard";
-import { Link } from "react-router-dom";
+import AccountCard from "@/components/account/AccountCard";
+import Link from "next/link";
+type AccountPageProps = {};
 
-type AccountViewProps = {};
-
-export default function AccountView({}: AccountViewProps) {
+export default function AccountPage({}: AccountPageProps) {
   const [accounts, setAccounts] = useState<Account[]>([]);
 
   useEffect(() => {
@@ -56,9 +55,9 @@ export default function AccountView({}: AccountViewProps) {
         <div className="flex justify-center items-center w-full h-full">
           <p className="text-xl font-bold">
             No Accounts added, please upload some{" "}
-            <Link to="/upload" className="underline cursor-pointer">
+            <Link href="/upload" className="underline cursor-pointer">
               transactions
-            </Link>{" "}
+            </Link>
           </p>
         </div>
       )}
