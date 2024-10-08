@@ -12,6 +12,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
+import EditTransactionModal from "../EditTransactionModal";
+import { after } from "node:test";
+import { Transaction } from "@/models/generatedTypes";
 
 export type TransactionTableData = {
   id: number;
@@ -20,18 +24,6 @@ export type TransactionTableData = {
   category: string;
   amount: number;
   date: Date;
-};
-
-const handleEdit = (transactionId: number) => {
-  console.log("Edit transaction", transactionId);
-};
-
-const handleDelete = (transactionId: number) => {
-  console.log("Delete transaction", transactionId);
-};
-
-const handleView = (transactionId: number) => {
-  console.log("View transaction");
 };
 
 export const columns: ColumnDef<TransactionTableData>[] = [
@@ -156,28 +148,77 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     cell: ({ row }) => {
       const transaction = row.original;
 
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      const [selectedTransactionId, setSelectedTransactionId] = useState<
+        number | null
+      >(null);
+      const [transactions, setTransactions] = useState<TransactionTableData[]>(
+        []
+      );
+      const onModalClose = () => {
+        setSelectedTransactionId(null);
+        setIsModalOpen(false);
+      };
+
+      const handleEdit = (transactionId: number) => {
+        setSelectedTransactionId(transactionId);
+        setIsModalOpen(true);
+      };
+
+      const handleDelete = (transactionId: number) => {
+        console.log("Delete transaction", transactionId);
+      };
+
+      const handleView = (transactionId: number) => {
+        console.log("View transaction");
+      };
+
+      const handleTransactionSave = (updatedTransaction: Transaction) => {
+        console.log("Save transaction", transaction);
+        const newTransaction: TransactionTableData = {
+          id: transaction.id!,
+          account: transaction.account,
+          description: transaction.description,
+          amount: updatedTransaction.amount,
+          category: updatedTransaction.category.name!,
+          date: new Date(updatedTransaction.transactionDate),
+        };
+        console.log("New transaction", newTransaction);
+      };
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => handleEdit(transaction.id)}>
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDelete(transaction.id)}>
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleView(transaction.id)}>
-              View
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleEdit(transaction.id)}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDelete(transaction.id)}>
+                Delete
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleView(transaction.id)}>
+                View
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {isModalOpen && selectedTransactionId && (
+            <EditTransactionModal
+              isModalOpen={isModalOpen}
+              transactionId={selectedTransactionId} // Pass the selected transaction ID
+              onModalClose={onModalClose}
+              onSave={handleTransactionSave}
+            />
+          )}
+        </>
       );
     },
   },

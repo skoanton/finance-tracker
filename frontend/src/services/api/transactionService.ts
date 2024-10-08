@@ -59,3 +59,28 @@ export const getTransactionsThisMonth = async(startDate:Date,endDate:Date,type:C
         throw new Error("Error fetching data from database");
     }
 }
+
+
+export const getTransactionById = async(id: number):Promise<Transaction> => {
+    try {
+        const response = await axios.get(`http://localhost:5000/api/transaction/${id}`);
+        if(response.status !== 200) {
+            throw new Error("Error fetching data from database");
+        }
+        return response.data;
+    } catch (error) {
+        throw new Error("Error fetching data from database");
+    }
+}
+
+export const updateTransaction = async(transaction: Transaction):Promise<Transaction> => {
+    try {
+        const response = await axios.put(`http://localhost:5000/api/transaction/${transaction.id}`, transaction);
+        if(response.status !== 200) {
+            throw new Error("Error updating transaction");
+        }
+        return response.data;
+    } catch (error) {
+        throw new Error("Error updating transaction");
+    }
+}

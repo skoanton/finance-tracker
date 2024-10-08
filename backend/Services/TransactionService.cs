@@ -33,7 +33,10 @@ namespace backend.Services
         }
         public async Task<Transaction> GetTransactionByIdAsync(int id)
         {
-            return await _context.Transactions.FindAsync(id);
+            return await _context.Transactions
+         .Include(t => t.Account)
+         .Include(t => t.Category)
+         .FirstOrDefaultAsync(t => t.Id == id);
         }
         public async Task<Transaction> CreateTransactionAsync(Transaction transaction)
         {
@@ -56,7 +59,10 @@ namespace backend.Services
 
             _context.Transactions.Update(transaction);
             await _context.SaveChangesAsync();
-            return transaction;
+            return await _context.Transactions
+         .Include(t => t.Account)
+         .Include(t => t.Category)
+         .FirstOrDefaultAsync(t => t.Id == id);
         }
         public async Task<Transaction> DeleteTransactionAsync(int id)
         {
