@@ -5,7 +5,7 @@
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class changedCategoryType : Migration
+    public partial class initalCreate2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

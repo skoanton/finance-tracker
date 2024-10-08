@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Data;
 
@@ -11,9 +12,11 @@ using server.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241008135725_initalCreate")]
+    partial class initalCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +62,7 @@ namespace backend.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<int>("BudgetId")
+                    b.Property<int?>("BudgetId")
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
@@ -162,19 +165,15 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Models.BudgetCategory", b =>
                 {
-                    b.HasOne("backend.Models.Budget", "Budget")
+                    b.HasOne("backend.Models.Budget", null)
                         .WithMany("BudgetCategories")
-                        .HasForeignKey("BudgetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BudgetId");
 
                     b.HasOne("server.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Budget");
 
                     b.Navigation("Category");
                 });

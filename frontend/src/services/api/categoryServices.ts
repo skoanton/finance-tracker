@@ -19,14 +19,19 @@ export const createCategory = async (category: Category):Promise<Category> => {
     try {
         const response = await axios.post("http://localhost:5000/api/category", category);
 
-        if(response.status !== 201) {
-            throw new Error("Error creating category");
+        if(response.status !== 200) {
+            throw new Error("Error creating budget category");
         }
         const newCategory: Category = response.data;
         return newCategory;
-    } catch (error) {
-        throw new Error("Error creating category");
-    }
+    } catch (error: any) {
+        // More detailed error handling
+        if (error.response) {
+          throw new Error(`Error creating Budget Category: ${error.response.data.message || error.message}`);
+        } else {
+          throw new Error(`Error creating Budget Category: ${error.message}`);
+        }
+      }
 }
 
 export const updateCategory = async (category: Category):Promise<Category> => {

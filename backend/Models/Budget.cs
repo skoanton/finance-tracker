@@ -9,17 +9,20 @@ namespace backend.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
         [Required]
-        public int CategoryId { get; set; }
+        public string Name { get; set; }
+
         [Required]
-        public decimal Amount { get; set; }
+        public decimal TotalBudget { get; set; }
+
         [Required]
         public DateTime StartDate { get; set; }
+
         [Required]
         public DateTime EndDate { get; set; }
-        [ForeignKey("CategoryId")]
-        public Category category { get; set; }
 
-
+        // One-to-many relationship with BudgetCategory
+        public List<BudgetCategory> BudgetCategories { get; set; } = new List<BudgetCategory>();  // Initialize as an empty list
     }
 }
