@@ -63,5 +63,16 @@ namespace backend.Controllers
             return Ok(budget);
         }
 
+        [HttpPost("{id}/activate")]
+        public async Task<IActionResult> ActivateBudgetCategory(int id)
+        {
+            var budgetCategory = await _budgetService.ActivateBudgetAsync(id);
+            if (budgetCategory == null)
+            {
+                return NotFound();
+            }
+            return Ok(budgetCategory);
+        }
+
     }
 }

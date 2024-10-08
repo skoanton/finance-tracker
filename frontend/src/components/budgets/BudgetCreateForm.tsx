@@ -12,14 +12,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Value } from "@radix-ui/react-select";
 import { useEffect, useState } from "react";
-import { get } from "http";
 import { getCategories } from "@/services/api/categoryServices";
-import { Budget, BudgetCategory, Category } from "@/models/generatedTypes";
+import { Budget, Category } from "@/models/generatedTypes";
 import { Checkbox } from "../ui/checkbox";
 import BudgetSetForm from "./BudgetSetForm";
-import { getRandomValues } from "crypto";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -35,9 +32,15 @@ const formSchema = z.object({
     }),
 });
 
-type BudgetCreateFormProps = {};
+type BudgetCreateFormProps = {
+  onSetBudgets: (budget: Budget) => void;
+  onModalClose: () => void;
+};
 
-export default function BudgetCreateForm({}: BudgetCreateFormProps) {
+export default function BudgetCreateForm({
+  onSetBudgets,
+  onModalClose,
+}: BudgetCreateFormProps) {
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [showNextForm, setShowNextForm] = useState(false);
   const [categoriesToAdd, setCategoriesToAdd] = useState<
@@ -154,7 +157,8 @@ export default function BudgetCreateForm({}: BudgetCreateFormProps) {
         <BudgetSetForm
           categories={categoriesToAdd}
           name={budgetName}
-          allCategories={categories}
+          onSetBudgets={onSetBudgets}
+          onModalClose={onModalClose}
         />
       )}
     </>

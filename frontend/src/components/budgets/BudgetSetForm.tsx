@@ -17,6 +17,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Budget, BudgetCategory, Category } from "@/models/generatedTypes";
 import { createBudgetCategory } from "@/services/api/budgetCategory";
 import { createNewBudget } from "@/services/api/budget";
+import { toast } from "@/hooks/use-toast";
 const formSchema = z.object({
   budget: z.array(
     z.object({
@@ -27,14 +28,16 @@ const formSchema = z.object({
 });
 type BudgetSetFormProps = {
   categories: Partial<Category>[] | null;
-  allCategories: Category[] | null;
   name: string;
+  onSetBudgets: (budget: Budget) => void;
+  onModalClose: () => void;
 };
 
 export default function BudgetSetForm({
   categories,
   name,
-  allCategories,
+  onModalClose,
+  onSetBudgets,
 }: BudgetSetFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,8 +84,11 @@ export default function BudgetSetForm({
         createBudgetCategory(category)
       )
     );
-    console.log("New budgetCategories with budgetId:", hej);
-    console.log("added new budget:", newBudget);
+    onSetBudgets(createdBudget);
+    toast({
+      description: "Budget created",
+    });
+    onModalClose();
   }
 
   return (

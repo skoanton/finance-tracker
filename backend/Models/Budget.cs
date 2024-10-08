@@ -21,6 +21,7 @@ namespace backend.Models
 
         [Required]
         public DateTime EndDate { get; set; }
+        public bool IsActive { get; set; }  // New field for activation status
 
         // One-to-many relationship with BudgetCategory
         public List<BudgetCategory> BudgetCategories { get; set; } = new List<BudgetCategory>();  // Initialize as an empty list
