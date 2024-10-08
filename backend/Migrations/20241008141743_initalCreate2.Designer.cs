@@ -12,8 +12,8 @@ using server.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241004174541_addedBudget")]
-    partial class addedBudget
+    [Migration("20241008141743_initalCreate2")]
+    partial class initalCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,23 +33,48 @@ namespace backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<decimal>("TotalBudget")
+                        .HasColumnType("decimal(65,30)");
+
                     b.HasKey("Id");
+
+                    b.ToTable("Budgets");
+                });
+
+            modelBuilder.Entity("backend.Models.BudgetCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int?>("BudgetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BudgetId");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Budgets");
+                    b.ToTable("BudgetCategories");
                 });
 
             modelBuilder.Entity("server.Models.Account", b =>
@@ -138,15 +163,19 @@ namespace backend.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("backend.Models.Budget", b =>
+            modelBuilder.Entity("backend.Models.BudgetCategory", b =>
                 {
-                    b.HasOne("server.Models.Category", "category")
+                    b.HasOne("backend.Models.Budget", null)
+                        .WithMany("BudgetCategories")
+                        .HasForeignKey("BudgetId");
+
+                    b.HasOne("server.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("category");
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("server.Models.Transaction", b =>
@@ -166,6 +195,11 @@ namespace backend.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("backend.Models.Budget", b =>
+                {
+                    b.Navigation("BudgetCategories");
                 });
 #pragma warning restore 612, 618
         }

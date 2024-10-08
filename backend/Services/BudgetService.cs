@@ -7,11 +7,12 @@ namespace backend.Services
 {
     public interface IBudgetService
     {
-        Task<Budget> CreateBudgetAsync(Budget budget);
-        Task<List<Budget>> GetAllBudgetsAsync();
-        Task<Budget> GetBudgetByIdAsync(int id);
-        Task<Budget> UpdateBudgetAsync(int id, Budget updatedBudget);
-        Task<Budget> DeleteBudgetAsync(int id);
+        public Task<Budget> CreateBudgetAsync(Budget budget);
+        public Task<List<Budget>> GetAllBudgetsAsync();
+        public Task<Budget> GetBudgetByIdAsync(int id);
+        public Task<Budget> UpdateBudgetAsync(int id, Budget updatedBudget);
+        public Task<Budget> DeleteBudgetAsync(int id);
+        public Task<Budget> ActivateBudgetAsync(int id);  // New method for activating a budget
     }
     public class BudgetService: IBudgetService
     {
@@ -41,8 +42,8 @@ namespace backend.Services
             {
                 return null;
             }
-            budget.Amount = updatedBudget.Amount;
-            budget.CategoryId = updatedBudget.CategoryId;
+            budget.TotalBudget = updatedBudget.TotalBudget;
+            budget.BudgetCategories = updatedBudget.BudgetCategories;
             budget.StartDate = updatedBudget.StartDate;
             budget.EndDate = updatedBudget.EndDate;
 
@@ -61,6 +62,30 @@ namespace backend.Services
             await _context.SaveChangesAsync();
             return budget;
         }
+        public async Task<Budget> ActivateBudgetAsync(int id)
+        {
+            // Hämta den budget som ska aktiveras
+            var budgetToActivate = await _context.Budgets.FindAsync(id);
+
+            if (budgetToActivate == null)
+            {
+                return null;
+            }
+
+            // Deaktivera alla andra aktiva budgetar
+            var activeBudgets = await _context.Budgets.Where(b => b.IsActive).ToListAsync();
+            foreach (var budget in activeBudgets)
+            {
+                budget.IsActive = false;
+            }
+
+            // Aktivera den nya budgeten
+            budgetToActivate.IsActive = true;
+
+            await _context.SaveChangesAsync();
+            return budgetToActivate;
+        }
+    
 
     }
 }

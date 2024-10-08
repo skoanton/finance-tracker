@@ -17,5 +17,6 @@ namespace server.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Models.Transaction> Transactions { get; set; }
         public DbSet<Budget> Budgets { get; set; }
+        public DbSet<BudgetCategory> BudgetCategories { get; set; }
     }
 }
