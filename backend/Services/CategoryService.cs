@@ -13,6 +13,7 @@ namespace backend.Services
         Task<Category> UpdateCategoryAsync(int id, Category updatedCategory);
         Task<Category> DeleteCategoryAsync(int id);
         Task<Category> GetOrCreateUncategorized();
+        Task<Category> GetCategoryByTypeAsync(CategoryType type); // New method for getting a category by type
     }
     public class CategoryService : ICategoryService
     {
@@ -94,6 +95,11 @@ namespace backend.Services
                 await CreateCategoryAsync(uncategorized);
             }
             return uncategorized;
+        }
+
+        public async Task<Category> GetCategoryByTypeAsync(CategoryType type)
+        {
+            return await _context.Categories.FirstOrDefaultAsync(c => c.Type == type);
         }
 
     }

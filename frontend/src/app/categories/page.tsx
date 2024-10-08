@@ -5,15 +5,21 @@ import { Category } from "@/models/generatedTypes";
 import { getCategories } from "@/services/api/categoryServices";
 import { useEffect, useState } from "react";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 type CategoriesViewProps = {};
 
 export default function CategoriesView({}: CategoriesViewProps) {
   const [categories, setCategories] = useState<Category[]>([]);
-
   useEffect(() => {
     const getData = async () => {
       try {
         const response = await getCategories();
+
         setCategories(response);
       } catch (error) {
         console.log(error);
@@ -31,6 +37,13 @@ export default function CategoriesView({}: CategoriesViewProps) {
     console.log("Category deleted");
   };
 
+  const categoryTypeMap: Record<number, string> = {
+    0: "Income",
+    1: "Expense",
+    2: "Savings",
+    3: "Transfers",
+  };
+
   return (
     <>
       <div className="flex flex-col gap-5">
@@ -38,13 +51,31 @@ export default function CategoriesView({}: CategoriesViewProps) {
           <CategoryModal onSetCategories={onSetCategories} />
         </div>
         <div className="flex flex-col gap-5">
-          {categories?.map((category) => {
+          {Object.keys(categoryTypeMap).map((typeKey) => {
+            const type = parseInt(typeKey, 10); // Convert the key back to a number
             return (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                handleDeleteCategories={handleDeleteCategories}
-              />
+              <div key={type}>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger className="font-bold">
+                      {categoryTypeMap[type]} (
+                      {categories.filter((c) => c.type === type).length})
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {/* Display the title for each type */}
+                      {categories
+                        ?.filter((c) => c.type === type)
+                        .map((category) => (
+                          <CategoryCard
+                            key={category.id}
+                            category={category}
+                            handleDeleteCategories={handleDeleteCategories}
+                          />
+                        ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
             );
           })}
         </div>
