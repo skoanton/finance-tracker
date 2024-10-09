@@ -84,3 +84,18 @@ export const updateTransaction = async(transaction: Transaction):Promise<Transac
         throw new Error("Error updating transaction");
     }
 }
+
+export const getLastTenTransactions = async():Promise<Transaction[]> => {
+    try {
+            const response = await axios.get("http://localhost:5000/api/transaction/lastTen");
+            if(response.status !== 200) {
+                throw new Error("Error fetching data from database");
+            }
+            const transactions:Transaction[] = response.data;
+            return transactions;
+
+    } catch (error) {
+        throw new Error("Error fetching data from database");
+        
+    }
+}

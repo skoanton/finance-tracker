@@ -20,4 +20,6 @@ namespace server.Models
         [Required]
         public decimal Balance { get; set; }
     }
+
+
 }

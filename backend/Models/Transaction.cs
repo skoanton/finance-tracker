@@ -40,4 +40,5 @@ namespace server.Models
         [Required]
         public decimal Amount { get; set; }
     }
+
 }

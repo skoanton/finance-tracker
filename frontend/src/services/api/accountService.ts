@@ -1,4 +1,4 @@
-import { Account } from "@/models/generatedTypes";
+import { Account, AccountsBalanceSummary } from "@/models/generatedTypes";
 import axios from "axios";
 export const getAllAccounts = async ():Promise<Account[]> => {
     try {
@@ -46,6 +46,54 @@ export const deleteAccount = async (id: number):Promise<void> => {
             throw new Error("Error deleting category");
         }
 
+    }
+    catch (error) {
+        console.log(error);
+        throw error; 
+    }
+}
+
+export const getAccountBalanceSummaryByWeek = async ():Promise<AccountsBalanceSummary[]> => {
+    try {
+        const response = await axios.get("http://localhost:5000/api/accounts/balance/week");
+
+        if(response.status !== 200) {
+            throw new Error("Error deleting category");
+        }
+        const accounts : AccountsBalanceSummary[] = response.data;
+        return accounts;
+    }
+    catch (error) {
+        console.log(error);
+        throw error; 
+    }
+}
+
+export const getAccountBalanceSummaryByMonth = async ():Promise<AccountsBalanceSummary[]> => {
+    try {
+        const response = await axios.get("http://localhost:5000/api/accounts/balance/month");
+
+        if(response.status !== 200) {
+            throw new Error("Error deleting category");
+        }
+        const accounts : AccountsBalanceSummary[] = response.data;
+        return accounts;
+    }
+    catch (error) {
+        console.log(error);
+        throw error; 
+    }
+}
+
+export const getAccountBalanceSummaryByYear = async ():Promise<AccountsBalanceSummary[]> => {
+    try {
+        const response = await axios.get("http://localhost:5000/api/accounts/balance/year");
+
+        if(response.status !== 200) {
+            throw new Error("Error deleting category");
+        }
+        const accounts : AccountsBalanceSummary[] = response.data;
+        return accounts;
     }
     catch (error) {
         console.log(error);

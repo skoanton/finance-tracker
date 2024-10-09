@@ -172,5 +172,12 @@ namespace server.Controllers
             var transactions = await _transactionService.GetMonthlyCategorySumsAsync(startDate, endDate,type);
             return Ok(transactions);
         }
+
+        [HttpGet("lastTen")]
+        public async Task<ActionResult<List<Transaction>>> GetLastTenTransactions()
+        {
+            var transactions = await _transactionService.GetLastTenTransactions();
+            return Ok(transactions);
+        }
     }
 }

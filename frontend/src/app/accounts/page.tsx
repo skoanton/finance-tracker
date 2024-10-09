@@ -5,17 +5,26 @@ import { deleteAccount, getAllAccounts } from "@/services/api/accountService";
 import { Account } from "@/models/generatedTypes";
 import AccountCard from "@/components/account/AccountCard";
 import Link from "next/link";
+import AccountBalanceCard from "@/components/account/AccountBalanceChard";
+import AccountBalanceChart from "@/components/account/AccountBalanceChart";
+import AccountRecentTransactions from "@/components/account/AccontRecentTransactions";
 type AccountPageProps = {};
 
 export default function AccountPage({}: AccountPageProps) {
   const [accounts, setAccounts] = useState<Account[]>([]);
-
+  const [totalBalance, setTotalBalance] = useState<number>(0);
   useEffect(() => {
     const getData = async () => {
       try {
         const response = await getAllAccounts();
         console.log(response);
-        setAccounts(response);
+        const accounts = response;
+        setAccounts(accounts);
+
+        const total = accounts.reduce((acc, account) => {
+          return acc + account.balance;
+        }, 0);
+        setTotalBalance(total);
       } catch (error) {
         console.log(error);
       }
@@ -36,31 +45,15 @@ export default function AccountPage({}: AccountPageProps) {
   };
 
   return (
-    <>
-      {accounts.length > 0 ? (
-        <div className="flex flex-col">
-          <div className="grid grid-cols-5">
-            {accounts.map((account) => {
-              return (
-                <AccountCard
-                  key={account.id}
-                  account={account}
-                  onDeleteAccount={onDeleteAccount}
-                />
-              );
-            })}
-          </div>
-        </div>
-      ) : (
-        <div className="flex justify-center items-center w-full h-full">
-          <p className="text-xl font-bold">
-            No Accounts added, please upload some{" "}
-            <Link href="/upload" className="underline cursor-pointer">
-              transactions
-            </Link>
-          </p>
-        </div>
-      )}
-    </>
+    <div className="flex- flex-col gap-2">
+      <div className="mb-5">
+        <h3 className="text-sm">Total Balance</h3>
+        <p className="text-xl font-bold">{totalBalance} SEK</p>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <AccountBalanceChart />
+        <AccountRecentTransactions />
+      </div>
+    </div>
   );
 }

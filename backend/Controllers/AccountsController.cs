@@ -6,6 +6,7 @@ using server.Data;
 using System.Threading.Tasks;
 using server.Models;
 using backend.Services;
+using backend.Models;
 
 
 namespace server.Controllers
@@ -70,6 +71,26 @@ namespace server.Controllers
             }
             return Ok(account);
         }
+
+        [HttpGet("balance/week")]
+        public async Task<ActionResult<List<AccountsBalanceSummary>>> GetAccountsBalancePastWeek()
+        {
+            var accounts = await _context.GetAccountsBalancePastWeekAsync();
+            return Ok(accounts);
+        }
+        [HttpGet("balance/month")]
+        public async Task<ActionResult<List<AccountsBalanceSummary>>> GetAccountsBalancePastMonth()
+        {
+            var accounts = await _context.GetAccountsBalancePastMonthAsync();
+            return Ok(accounts);
+        }
+        [HttpGet("balance/year")]
+        public async Task<ActionResult<List<AccountsBalanceSummary>>> GetAccountsBalancePastYear()
+        {
+            var accounts = await _context.GetAccountsBalancePastYearAsync();
+            return Ok(accounts);
+        }
+
 
     }
 }

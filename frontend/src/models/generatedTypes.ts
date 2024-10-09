@@ -36,6 +36,18 @@ export interface IClient {
     /**
      * @return Success
      */
+    week(): Promise<AccountsBalanceSummary[]>;
+    /**
+     * @return Success
+     */
+    month(): Promise<AccountsBalanceSummary[]>;
+    /**
+     * @return Success
+     */
+    year(): Promise<AccountsBalanceSummary[]>;
+    /**
+     * @return Success
+     */
     budgetGET(): Promise<void>;
     /**
      * @param body (optional) 
@@ -103,6 +115,11 @@ export interface IClient {
      * @return Success
      */
     categoryDELETE(id: number): Promise<void>;
+    /**
+     * @param type (optional) 
+     * @return Success
+     */
+    type(type: CategoryType | undefined, id: string): Promise<void>;
     /**
      * @return Success
      */
@@ -399,6 +416,159 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    week( cancelToken?: CancelToken): Promise<AccountsBalanceSummary[]> {
+        let url_ = this.baseUrl + "/api/Accounts/balance/week";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWeek(_response);
+        });
+    }
+
+    protected processWeek(response: AxiosResponse): Promise<AccountsBalanceSummary[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<AccountsBalanceSummary[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<AccountsBalanceSummary[]>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    month( cancelToken?: CancelToken): Promise<AccountsBalanceSummary[]> {
+        let url_ = this.baseUrl + "/api/Accounts/balance/month";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processMonth(_response);
+        });
+    }
+
+    protected processMonth(response: AxiosResponse): Promise<AccountsBalanceSummary[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<AccountsBalanceSummary[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<AccountsBalanceSummary[]>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    year( cancelToken?: CancelToken): Promise<AccountsBalanceSummary[]> {
+        let url_ = this.baseUrl + "/api/Accounts/balance/year";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processYear(_response);
+        });
+    }
+
+    protected processYear(response: AxiosResponse): Promise<AccountsBalanceSummary[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<AccountsBalanceSummary[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<AccountsBalanceSummary[]>(null as any);
     }
 
     /**
@@ -1214,6 +1384,61 @@ export class Client implements IClient {
     }
 
     /**
+     * @param type (optional) 
+     * @return Success
+     */
+    type(type: CategoryType | undefined, id: string, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/Category/type/{id}?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (type === null)
+            throw new Error("The parameter 'type' cannot be null.");
+        else if (type !== undefined)
+            url_ += "type=" + encodeURIComponent("" + type) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processType(_response);
+        });
+    }
+
+    protected processType(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
      * @return Success
      */
     transactionGET( cancelToken?: CancelToken): Promise<void> {
@@ -1538,6 +1763,11 @@ export interface Account {
     id?: number;
     name: string;
     type: string;
+    balance: number;
+}
+
+export interface AccountsBalanceSummary {
+    interval: string;
     balance: number;
 }
 

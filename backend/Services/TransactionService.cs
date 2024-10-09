@@ -14,6 +14,7 @@ namespace backend.Services
         Task<Transaction> DeleteTransactionAsync(int id);
         Task<Transaction> GetTransactionsThisMonthAsync();
         Task<List<CategorySummary>> GetMonthlyCategorySumsAsync(DateTime startDate, DateTime endDate, CategoryType type);
+        Task<List<Transaction>> GetLastTenTransactions();
     }
     public class TransactionService : ITransactionService
     {
@@ -104,6 +105,16 @@ namespace backend.Services
                     Amount = Math.Abs(g.Sum(t => t.Amount)),
                     Color = g.First().Category.Color
                 })
+                .ToListAsync();
+        }
+
+        public async Task<List<Transaction>> GetLastTenTransactions()
+        {
+            return await _context.Transactions
+                .Include(t => t.Account)
+                .Include(t => t.Category)
+                .OrderByDescending(t => t.TransactionDate)
+                .Take(10)
                 .ToListAsync();
         }
     }
