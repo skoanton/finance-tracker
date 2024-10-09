@@ -5,6 +5,7 @@ import { addDays } from "date-fns";
 import { CategoryType } from "@/models/generatedTypes";
 import PieChartView from "@/components/dashboard/PieChartView";
 import DateRangePicker from "@/components/DateRangePicker";
+import BudgetCompareChart from "@/components/Charts/BudgetCompareChart";
 
 type DashboardProps = {};
 
@@ -30,10 +31,11 @@ export default function Dashboard({}: DashboardProps) {
       <div className="flex flex-col gap-5">
         <DateRangePicker date={date} setDate={setDate} />
         <div className="grid grid-cols-3">
-          <PieChartView date={date} type={CategoryType._0} title={"Expense"} />
-          <PieChartView date={date} type={CategoryType._1} title={"Income"} />
-          <PieChartView date={date} type={CategoryType._2} title={"Savings"} />
+          <PieChartView date={date} type={CategoryType._0} title={"Income"} />
+          <PieChartView date={date} type={CategoryType._1} title={"Expense"} />
+          <BudgetCompareChart />
         </div>
+        <div></div>
       </div>
     </>
   );

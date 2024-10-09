@@ -1,6 +1,7 @@
 ﻿using server.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace backend.Models
 {
@@ -26,4 +27,13 @@ namespace backend.Models
         // One-to-many relationship with BudgetCategory
         public List<BudgetCategory> BudgetCategories { get; set; } = new List<BudgetCategory>();  // Initialize as an empty list
     }
+
+    public class BudgetChartData
+    {
+        public string Category { get; set; }
+        public decimal CategorySum { get; set; }
+        public decimal BudgetSum { get; set; }
+        public string Color { get; set; }
+    }
+
 }

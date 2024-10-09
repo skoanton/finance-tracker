@@ -74,5 +74,11 @@ namespace backend.Controllers
             return Ok(budgetCategory);
         }
 
+        [HttpGet("month/chart")]
+        public async Task<ActionResult<List<BudgetChartData>>> GetBudgetChartData()
+        {
+            var chartData = await _budgetService.GetBudgetChartDataAsync();
+            return Ok(chartData);
+        }
     }
 }

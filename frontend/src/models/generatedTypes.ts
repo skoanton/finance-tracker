@@ -74,6 +74,10 @@ export interface IClient {
     /**
      * @return Success
      */
+    chart(): Promise<BudgetChartData[]>;
+    /**
+     * @return Success
+     */
     budgetCategoryGET(): Promise<void>;
     /**
      * @param body (optional) 
@@ -149,6 +153,10 @@ export interface IClient {
      * @return Success
      */
     summaryMonth(startDate: Date | undefined, endDate: Date | undefined, type: CategoryType | undefined): Promise<CategorySummary[]>;
+    /**
+     * @return Success
+     */
+    lastTen(): Promise<Transaction[]>;
 }
 
 export class Client implements IClient {
@@ -873,6 +881,57 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    chart( cancelToken?: CancelToken): Promise<BudgetChartData[]> {
+        let url_ = this.baseUrl + "/api/Budget/budget/month/chart";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processChart(_response);
+        });
+    }
+
+    protected processChart(response: AxiosResponse): Promise<BudgetChartData[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<BudgetChartData[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BudgetChartData[]>(null as any);
     }
 
     /**
@@ -1757,6 +1816,57 @@ export class Client implements IClient {
         }
         return Promise.resolve<CategorySummary[]>(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    lastTen( cancelToken?: CancelToken): Promise<Transaction[]> {
+        let url_ = this.baseUrl + "/api/Transaction/lastTen";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLastTen(_response);
+        });
+    }
+
+    protected processLastTen(response: AxiosResponse): Promise<Transaction[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<Transaction[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<Transaction[]>(null as any);
+    }
 }
 
 export interface Account {
@@ -1787,6 +1897,13 @@ export interface BudgetCategory {
     amount: number;
     budgetId?: number;
     category?: Category;
+}
+
+export interface BudgetChartData {
+    category?: string | undefined;
+    categorySum?: number;
+    budgetSum?: number;
+    color?: string | undefined;
 }
 
 export interface Category {

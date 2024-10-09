@@ -1,4 +1,4 @@
-import { Budget } from "@/models/generatedTypes";
+import { Budget, BudgetChartData } from "@/models/generatedTypes";
 import axios from "axios";
 
 export const createNewBudget = async (newBudget: Budget) => {
@@ -43,5 +43,18 @@ export const activateBudget = async (id: number) => {
 
     } catch (error) {
         throw new Error("Error activating budget");
+    }
+}
+
+export const getBudgetChartMonthData = async ():Promise<BudgetChartData[]> => {
+    try {
+        const response = await axios.get("http://localhost:5000/api/budget/month/chart");
+        if (response.status !== 200) {
+            throw new Error("Error fetching data from database");
+        }
+        const chartData: BudgetChartData[] = response.data;
+        return chartData;
+    } catch (error) {
+        throw new Error("Error fetching data from database");
     }
 }

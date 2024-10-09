@@ -13,12 +13,15 @@ namespace backend.Services
         public Task<Budget> UpdateBudgetAsync(int id, Budget updatedBudget);
         public Task<Budget> DeleteBudgetAsync(int id);
         public Task<Budget> ActivateBudgetAsync(int id);  // New method for activating a budget
+        public Task<List<BudgetChartData>> GetBudgetChartDataAsync();
     }
     public class BudgetService: IBudgetService
     {
         private readonly ApplicationDbContext _context;
-        public BudgetService(ApplicationDbContext context) { 
-               _context = context;
+        private readonly TransactionService _transactionService;
+        public BudgetService(ApplicationDbContext context)
+        {
+            _context = context;
         }
 
         public async Task<List<Budget>> GetAllBudgetsAsync()
@@ -85,7 +88,44 @@ namespace backend.Services
             await _context.SaveChangesAsync();
             return budgetToActivate;
         }
-    
+
+        public async Task<List<BudgetChartData>> GetBudgetChartDataAsync()
+        {
+            var currentDate = DateTime.Now;
+            var startOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+
+            // Fetch budgets for the current month
+            var budgets = await _context.Budgets
+                .Include(b => b.BudgetCategories)
+                .ThenInclude(bc => bc.Category) // Include the category name
+                .Where(b => b.IsActive)
+                .ToListAsync();
+
+            var budgetChartData = new List<BudgetChartData>();
+
+            foreach (var budget in budgets)
+            {
+                foreach (var budgetCategory in budget.BudgetCategories)
+                {
+                    // Calculate the sum of transactions for this category in the current month
+                    var transactionSum = await _context.Transactions
+                        .Where(t => t.CategoryId == budgetCategory.CategoryId && t.TransactionDate >= startOfMonth && t.TransactionDate <= endOfMonth)
+                        .SumAsync(t => t.Amount);
+
+                    budgetChartData.Add(new BudgetChartData
+                    {
+                        Category = budgetCategory.Category.Name, // Category name
+                        CategorySum = Math.Abs(transactionSum), // Assuming 'Amount' represents the budgeted sum for this category
+                        BudgetSum = budgetCategory.Amount, // The sum of transactions for this category in the current month
+                        Color = budgetCategory.Category.Color
+                    });
+                }
+            }
+
+            return budgetChartData;
+        }
+
 
     }
 }
