@@ -73,6 +73,13 @@ export default function BudgetCreateForm({
     setShowNextForm(true);
   }
 
+  const categoryTypeMap: Record<number, string> = {
+    0: "Income",
+    1: "Expense",
+    2: "Savings",
+    /*     3: "Transfers", */
+  };
+
   return (
     <>
       {!showNextForm && (
@@ -91,64 +98,74 @@ export default function BudgetCreateForm({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="categoriesChoices"
-              render={() => (
-                <FormItem>
-                  {categories &&
-                    categories.map((category) => (
-                      <FormField
-                        key={category.id!}
-                        control={form.control}
-                        name="categoriesChoices"
-                        render={({ field }) => {
-                          return (
-                            <FormItem
+            {Object.keys(categoryTypeMap).map((typeKey) => {
+              const type = parseInt(typeKey, 10);
+              return (
+                <FormField
+                  control={form.control}
+                  name="categoriesChoices"
+                  render={() => (
+                    <FormItem>
+                      <h1 className="font-bold">{categoryTypeMap[type]}</h1>
+                      {categories &&
+                        categories
+                          .filter((c) => c.type === type)
+                          .map((category) => (
+                            <FormField
                               key={category.id!}
-                              className="flex flex-row items-start space-x-3 space-y-0"
-                            >
-                              <FormControl>
-                                <Checkbox
-                                  name="categoriesChoices"
-                                  checked={field.value?.some(
-                                    (value: { id: number; name: string }) =>
-                                      value.id === category.id &&
-                                      value.name === category.name
-                                  )}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([
-                                          ...field.value,
-                                          {
-                                            id: category.id!,
-                                            name: category.name,
-                                          },
-                                        ])
-                                      : field.onChange(
-                                          field.value?.filter(
-                                            (value: {
-                                              id: number;
-                                              name: string;
-                                            }) => value.id !== category.id
-                                          )
-                                        );
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                {category.name}
-                              </FormLabel>
-                            </FormItem>
-                          );
-                        }}
-                      />
-                    ))}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+                              control={form.control}
+                              name="categoriesChoices"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={category.id!}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        name="categoriesChoices"
+                                        checked={field.value?.some(
+                                          (value: {
+                                            id: number;
+                                            name: string;
+                                          }) =>
+                                            value.id === category.id &&
+                                            value.name === category.name
+                                        )}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([
+                                                ...field.value,
+                                                {
+                                                  id: category.id!,
+                                                  name: category.name,
+                                                },
+                                              ])
+                                            : field.onChange(
+                                                field.value?.filter(
+                                                  (value: {
+                                                    id: number;
+                                                    name: string;
+                                                  }) => value.id !== category.id
+                                                )
+                                              );
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      {category.name}
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              );
+            })}
             <Button type="submit">Confirm</Button>
           </form>
         </Form>
