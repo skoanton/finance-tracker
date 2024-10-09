@@ -21,7 +21,7 @@ namespace server.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public string[] Description { get; set; }
+        public List<string> Description { get; set; } = new List<string>();
         [Required]
         public string Name { get; set; }
         [Required]

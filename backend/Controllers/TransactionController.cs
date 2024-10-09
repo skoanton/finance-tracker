@@ -117,7 +117,7 @@ namespace server.Controllers
                     await _transactionService.CreateTransactionAsync(newTransaction);
                     results.Add(new
                     {
-                        Status = "Success",
+                        Status = "Transaction Uploaded",
                         Message = "Transaction created successfully",
                         Transaction = newTransaction
                     });

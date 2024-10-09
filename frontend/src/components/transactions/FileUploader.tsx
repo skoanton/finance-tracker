@@ -4,7 +4,7 @@ import Papa from "papaparse";
 
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Category, CsvFile } from "@/models/generatedTypes";
+import { Category, CsvFile, Transaction } from "@/models/generatedTypes";
 import UnhandledTransactions from "./UnhandledTransactions";
 import { uploadTransactions } from "@/services/api/transactionService";
 import AccountModal from "../AccountModal";
@@ -19,13 +19,17 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { set } from "date-fns";
+import UploadedTransactionsPreview from "./UploadedTransactionsPreview";
 
 type FileUploaderProps = {};
 
 export default function FileUploader({}: FileUploaderProps) {
+  const [uploadedTransactions, setUploadedTransactions] = useState<
+    Transaction[]
+  >([]);
   const [isFileUploaded, setIsFileUploaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [transactions, setTransactions] = useState<CsvFile[]>([]);
+  const [transactions, setTransactions] = useState<CsvFile[] | null>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isFirstUpload, setIsFirstUpload] = useState(false);
   const [categoriesWithMultipleMatches, setCategoriesWithMultipleMatches] =
@@ -40,8 +44,10 @@ export default function FileUploader({}: FileUploaderProps) {
   const [startBalance, setStartBalance] = useState<number | null>(null);
   const [newAccountName, setNewAccountName] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(true);
+  const [showNextForm, setShowNextForm] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
   const uploadTransactionToDatabase = async (
     transactionsToUpload: CsvFile[],
     isFirstUpload = false
@@ -62,7 +68,12 @@ export default function FileUploader({}: FileUploaderProps) {
           setAllCategories(response.allCategories);
           setNewAccountName(response.newAccountName);
           setStartBalance(response.startingBalance);
+          setUploadedTransactions(response.uploadedTransactions);
           setIsLoading(false);
+
+          if (response.uploadedTransactions.length > 0) {
+            setTransactions(null);
+          }
         }
       );
     } else {
@@ -96,7 +107,6 @@ export default function FileUploader({}: FileUploaderProps) {
   };
 
   const handleFileUpload = async () => {
-    console.log("Uploading file", file);
     if (file) {
       const transactionsToUpload = await new Promise<CsvFile[]>((resolve) => {
         let transactions: CsvFile[] = [];
@@ -129,7 +139,7 @@ export default function FileUploader({}: FileUploaderProps) {
 
   const handleTransactionUpload = async (message: string) => {
     setIsFirstUpload(true);
-    await uploadTransactionToDatabase(transactions, true);
+    await uploadTransactionToDatabase(transactions!, true);
     toast({
       description: message,
     });
@@ -137,78 +147,119 @@ export default function FileUploader({}: FileUploaderProps) {
 
   const handleCompletion = async () => {
     setIsLoading(true);
-    await uploadTransactionToDatabase(transactions, isFirstUpload);
+    await uploadTransactionToDatabase(transactions!, isFirstUpload);
     setIsLoading(false);
     setIsOpen(false);
-    router.back();
+    setShowNextForm(true);
     toast({
       description: "Transactions has been added.",
     });
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-xl">Upload Transactions</DialogTitle>
-          <DialogDescription>
-            Upload a CSV file with transactions
-          </DialogDescription>
-        </DialogHeader>
-        {!isFileUploaded && (
-          <div className="flex flex-col gap-2">
-            <div className="flex gap-5 items-center">
-              <Input type="file" onChange={handleFileChange} className="w-52" />
-              <Button
-                disabled={isLoading || file === null}
-                onClick={handleFileUpload}
-              >
-                Submit File
-              </Button>
-            </div>
-          </div>
-        )}
-        <div>
-          {isLoading && <p className="animate-pulse">Uploading...</p>}
-          {newAccountName && (
-            <AccountModal
-              newAccountName={newAccountName}
-              startBalance={startBalance}
-              handleTransactionUpload={handleTransactionUpload}
-            />
-          )}
-          {(transactionsWithMultipleCategories &&
-            transactionsWithMultipleCategories?.length > 0) ||
-            (transactionsWithoutCategories &&
-              transactionsWithoutCategories?.length > 0 && (
-                <UnhandledTransactions
-                  allCategories={allCategories}
-                  categoriesWithMultipleMatches={categoriesWithMultipleMatches}
-                  transactionsWithoutCategories={transactionsWithoutCategories}
-                  transactionsWithMultipleCategories={
-                    transactionsWithMultipleCategories
-                  }
-                  onSetTransactionWithMultipleCategories={
-                    onSetTransactionWithMultipleCategories
-                  }
-                  onSetTransactionWithoutCategories={
-                    onSetTransactionWithoutCategories
-                  }
-                />
-              ))}
-        </div>
+  const onOpenChange = () => {
+    setShowNextForm(false);
+  };
 
-        {transactionsWithMultipleCategories?.length === 0 &&
+  return (
+    <>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-xl">Upload Transactions</DialogTitle>
+            <DialogDescription>Upload transactions</DialogDescription>
+          </DialogHeader>
+          {!isFileUploaded && (
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-5 items-center">
+                <Input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="w-52"
+                />
+                <Button
+                  disabled={isLoading || file === null}
+                  onClick={handleFileUpload}
+                >
+                  Submit File
+                </Button>
+              </div>
+            </div>
+          )}
+          <div>
+            {isLoading && <p className="animate-pulse">Uploading...</p>}
+            {newAccountName && (
+              <AccountModal
+                newAccountName={newAccountName}
+                startBalance={startBalance}
+                handleTransactionUpload={handleTransactionUpload}
+              />
+            )}
+            {(transactionsWithMultipleCategories &&
+              transactionsWithMultipleCategories?.length > 0) ||
+              (transactionsWithoutCategories &&
+                transactionsWithoutCategories?.length > 0 && (
+                  <UnhandledTransactions
+                    allCategories={allCategories}
+                    categoriesWithMultipleMatches={
+                      categoriesWithMultipleMatches
+                    }
+                    transactionsWithoutCategories={
+                      transactionsWithoutCategories
+                    }
+                    transactionsWithMultipleCategories={
+                      transactionsWithMultipleCategories
+                    }
+                    onSetTransactionWithMultipleCategories={
+                      onSetTransactionWithMultipleCategories
+                    }
+                    onSetTransactionWithoutCategories={
+                      onSetTransactionWithoutCategories
+                    }
+                  />
+                ))}
+          </div>
+
+          {transactions === null &&
           transactionsWithoutCategories?.length === 0 &&
-          newAccountName === null && (
+          transactionsWithMultipleCategories?.length === 0 &&
+          newAccountName === null ? (
             <>
-              <p>Everything taken care of, please complete</p>
-              <Button onClick={() => handleCompletion()}>
-                Complete upload
+              <p>Transactions uploaded</p>
+              <Button
+                onClick={() => {
+                  setShowNextForm(true), setIsOpen(false);
+                }}
+              >
+                Confirm
               </Button>
             </>
+          ) : (
+            uploadTransactions.length > 0 &&
+            transactions !== null &&
+            transactionsWithoutCategories?.length === 0 &&
+            transactionsWithMultipleCategories?.length === 0 &&
+            newAccountName === null && (
+              <>
+                <p>
+                  <span className="font-bold">{transactions.length} </span>
+                  Transactions ready to be uploaded{" "}
+                </p>
+                <Button onClick={() => handleCompletion()}>
+                  Upload Transactions
+                </Button>
+              </>
+            )
           )}
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      {uploadTransactions && uploadTransactions.length > 0 && (
+        <UploadedTransactionsPreview
+          transactions={uploadedTransactions}
+          isOpen={showNextForm}
+          onOpenChange={onOpenChange}
+        />
+      )}
+    </>
   );
 }

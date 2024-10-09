@@ -16,15 +16,15 @@ export const uploadTransactions = async(transactions: CsvFile[],isFirst: boolean
                 throw new Error("Error uploading data to database");
             }
             
-            console.log(response);
             const transactionsWithoutCategories:CsvFile[] | null = response.data.filter((d:any) => d.status === "No Category Found").map((d: any) => d.transaction);
             const transactionsWithMultipleCategories:CsvFile[] | null = response.data.filter((d:any) => d.status === "Multiple Categories Found").map((d: any) => d.transaction);
             const categoriesWithMultipleMatches:Category[] | null = response.data.filter((d:any) => d.status === "Multiple Categories Found").map((d: any) => d.categories);
             const allCategories:Category[] | null = response.data.filter((d:any) => d.status === "All Categories").flatMap((d: any) => d.allCategories);
             const newAccountName: string | null = response.data.filter((d: any) => d.status === "No account found")[0]?.accountName || null;
             const startingBalance: number | null = response.data.filter((d: any) => d.status === "No account found")[0]?.startBalance || null;
-            console.log({transactionsWithoutCategories,transactionsWithMultipleCategories, categoriesWithMultipleMatches, allCategories,newAccountName});
-            return {transactionsWithoutCategories,transactionsWithMultipleCategories, categoriesWithMultipleMatches, allCategories,newAccountName,startingBalance};
+            const uploadedTransactions:Transaction[] = response.data.filter((d:any) => d.status === "Transaction Uploaded").map((d: any) => d.transaction);
+            console.log("Data returned:",{transactionsWithoutCategories,transactionsWithMultipleCategories, categoriesWithMultipleMatches, allCategories,newAccountName,startingBalance,uploadedTransactions});
+            return {transactionsWithoutCategories,transactionsWithMultipleCategories, categoriesWithMultipleMatches, allCategories,newAccountName,startingBalance,uploadedTransactions};
     } catch (error) {
         throw new Error("Error uploading data to database");
     }

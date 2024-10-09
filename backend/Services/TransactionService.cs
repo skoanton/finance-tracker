@@ -48,10 +48,17 @@ namespace backend.Services
         public async Task<Transaction> UpdateTransactionAsync(int id, Transaction updatedTransaction)
         {
             var transaction = await _context.Transactions.FindAsync(id);
+            
             if (transaction == null)
             {
                 return null;
             }
+
+            var category = await _context.Categories.FindAsync(updatedTransaction.CategoryId);
+            if (category != null) {
+                category.Description.Add(updatedTransaction.Description);
+            }
+
             transaction.Amount = updatedTransaction.Amount;
             transaction.TransactionDate = updatedTransaction.TransactionDate;
             transaction.Description = updatedTransaction.Description;
@@ -61,9 +68,9 @@ namespace backend.Services
             _context.Transactions.Update(transaction);
             await _context.SaveChangesAsync();
             return await _context.Transactions
-         .Include(t => t.Account)
-         .Include(t => t.Category)
-         .FirstOrDefaultAsync(t => t.Id == id);
+            .Include(t => t.Account)
+            .Include(t => t.Category)
+            .FirstOrDefaultAsync(t => t.Id == id);
         }
         public async Task<Transaction> DeleteTransactionAsync(int id)
         {
