@@ -58,3 +58,14 @@ export const getBudgetChartMonthData = async ():Promise<BudgetChartData[]> => {
         throw new Error("Error fetching data from database");
     }
 }
+
+export const deleteBudget = async (id: number):Promise<void> => {
+    try {
+        const response = await axios.delete(`http://localhost:5000/api/budget/${id}`);
+        if (response.status !== 200) {
+            throw new Error("Error deleting budget");
+        }
+    } catch (error) {
+        throw new Error("Error deleting budget");
+    }
+}

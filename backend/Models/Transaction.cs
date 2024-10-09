@@ -39,6 +39,8 @@ namespace server.Models
         public string Description  { get; set; }
         [Required]
         public decimal Amount { get; set; }
+        [Required]
+        public decimal StartBalance { get; set; }
     }
 
 }

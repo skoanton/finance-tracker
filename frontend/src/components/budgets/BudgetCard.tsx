@@ -8,18 +8,20 @@ import {
 } from "@/components/ui/card";
 import { Budget } from "@/models/generatedTypes";
 import { Button } from "../ui/button";
-import { activateBudget } from "@/services/api/budget";
+import { activateBudget, deleteBudget } from "@/services/api/budget";
 import { useState } from "react";
 import { on } from "events";
 
 type BudgetCardProps = {
   budget: Budget;
   onUpdateBudgets: (budget: Budget) => void;
+  onRemoveBudget: (budget: Budget) => void;
 };
 
 export default function BudgetCard({
   budget,
   onUpdateBudgets,
+  onRemoveBudget,
 }: BudgetCardProps) {
   const [isActive, setIsActive] = useState(budget.isActive);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +41,11 @@ export default function BudgetCard({
       setIsLoading(false);
       onUpdateBudgets({ ...budget, isActive: true });
     }
+  };
+
+  const handleDelete = async () => {
+    await deleteBudget(budget.id!);
+    onRemoveBudget(budget);
   };
 
   return (
@@ -63,6 +70,7 @@ export default function BudgetCard({
               ? "Activating..."
               : "Activate Budget"}
           </Button>
+          <Button onClick={() => handleDelete()}>Delete</Button>
         </CardFooter>
       </Card>
     </>

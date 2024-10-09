@@ -887,7 +887,7 @@ export class Client implements IClient {
      * @return Success
      */
     chart( cancelToken?: CancelToken): Promise<BudgetChartData[]> {
-        let url_ = this.baseUrl + "/api/Budget/budget/month/chart";
+        let url_ = this.baseUrl + "/api/Budget/month/chart";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -1934,6 +1934,7 @@ export interface CsvFile {
     transactionDate: Date;
     description: string;
     amount: number;
+    startBalance: number;
 }
 
 export interface Transaction {

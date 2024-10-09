@@ -27,6 +27,7 @@ export default function FileUploader({}: FileUploaderProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [transactions, setTransactions] = useState<CsvFile[]>([]);
   const [file, setFile] = useState<File | null>(null);
+  const [isFirstUpload, setIsFirstUpload] = useState(false);
   const [categoriesWithMultipleMatches, setCategoriesWithMultipleMatches] =
     useState<Category[] | null>(null);
   const [allCategories, setAllCategories] = useState<Category[] | null>(null);
@@ -36,29 +37,34 @@ export default function FileUploader({}: FileUploaderProps) {
     transactionsWithMultipleCategories,
     setTransactionsWithMultipleCategories,
   ] = useState<CsvFile[] | null>(null);
+  const [startBalance, setStartBalance] = useState<number | null>(null);
   const [newAccountName, setNewAccountName] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(true);
   const router = useRouter();
   const { toast } = useToast();
   const uploadTransactionToDatabase = async (
-    transactionsToUpload: CsvFile[]
+    transactionsToUpload: CsvFile[],
+    isFirstUpload = false
   ) => {
     if (transactionsToUpload) {
       setIsLoading(true);
-      await uploadTransactions(transactionsToUpload).then((response) => {
-        setTransactionsWithMultipleCategories(
-          response.transactionsWithMultipleCategories
-        );
-        setTransactionsWithoutCategories(
-          response.transactionsWithoutCategories
-        );
-        setCategoriesWithMultipleMatches(
-          response.categoriesWithMultipleMatches
-        );
-        setAllCategories(response.allCategories);
-        setNewAccountName(response.newAccountName);
-        setIsLoading(false);
-      });
+      await uploadTransactions(transactionsToUpload, isFirstUpload).then(
+        (response) => {
+          setTransactionsWithMultipleCategories(
+            response.transactionsWithMultipleCategories
+          );
+          setTransactionsWithoutCategories(
+            response.transactionsWithoutCategories
+          );
+          setCategoriesWithMultipleMatches(
+            response.categoriesWithMultipleMatches
+          );
+          setAllCategories(response.allCategories);
+          setNewAccountName(response.newAccountName);
+          setStartBalance(response.startingBalance);
+          setIsLoading(false);
+        }
+      );
     } else {
       console.log("No transactions to upload");
     }
@@ -105,6 +111,7 @@ export default function FileUploader({}: FileUploaderProps) {
                   transactionDate: new Date((data[i] as any[])[6]),
                   description: (data[i] as unknown as any[])[9].toString(),
                   amount: parseFloat((data[i] as any[])[10].toString()),
+                  startBalance: parseFloat((data[i] as any[])[11].toString()),
                 };
                 transactions.push(transaction);
               }
@@ -121,7 +128,8 @@ export default function FileUploader({}: FileUploaderProps) {
   };
 
   const handleTransactionUpload = async (message: string) => {
-    await uploadTransactionToDatabase(transactions);
+    setIsFirstUpload(true);
+    await uploadTransactionToDatabase(transactions, true);
     toast({
       description: message,
     });
@@ -129,7 +137,7 @@ export default function FileUploader({}: FileUploaderProps) {
 
   const handleCompletion = async () => {
     setIsLoading(true);
-    await uploadTransactionToDatabase(transactions);
+    await uploadTransactionToDatabase(transactions, isFirstUpload);
     setIsLoading(false);
     setIsOpen(false);
     router.back();
@@ -165,6 +173,7 @@ export default function FileUploader({}: FileUploaderProps) {
           {newAccountName && (
             <AccountModal
               newAccountName={newAccountName}
+              startBalance={startBalance}
               handleTransactionUpload={handleTransactionUpload}
             />
           )}

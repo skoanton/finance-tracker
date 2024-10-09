@@ -26,19 +26,22 @@ type AccountFormProps = {
   newAccountName: string | null;
   onSetIsOpen: () => void;
   handleTransactionUpload: (message: string) => void;
+  startBalance: number | null;
 };
 export default function AccountForm({
   newAccountName,
   onSetIsOpen,
   handleTransactionUpload,
+  startBalance,
 }: AccountFormProps) {
+  console.log("Startbalance:", startBalance);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       accountName: newAccountName!,
       accountType: "Checking Account",
-      startAmount: 0,
+      startAmount: startBalance!,
     },
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -92,9 +95,9 @@ export default function AccountForm({
             name="startAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start Amount</FormLabel>
+                <FormLabel>Starting balance</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input disabled={true} type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -1,11 +1,16 @@
 import { Category, CategorySummary, CategoryType, CsvFile, Transaction } from "@/models/generatedTypes";
 import axios from "axios";
 
-export const uploadTransactions = async(transactions: CsvFile[]) => {
+export const uploadTransactions = async(transactions: CsvFile[],isFirst: boolean = false) => {
     
     try {
-        
-            const response = await axios.post("http://localhost:5000/api/transaction/create", transactions);
+            console.log("Transactions in upload:",transactions);
+            const response = await axios.post("http://localhost:5000/api/transaction/create",  transactions,  // Pass only transactions in the body
+                {
+                  params: {
+                    isFirst  // Send isFirst as a query parameter
+                  }
+                });
 
             if(response.status !== 200) {
                 throw new Error("Error uploading data to database");
@@ -17,8 +22,9 @@ export const uploadTransactions = async(transactions: CsvFile[]) => {
             const categoriesWithMultipleMatches:Category[] | null = response.data.filter((d:any) => d.status === "Multiple Categories Found").map((d: any) => d.categories);
             const allCategories:Category[] | null = response.data.filter((d:any) => d.status === "All Categories").flatMap((d: any) => d.allCategories);
             const newAccountName: string | null = response.data.filter((d: any) => d.status === "No account found")[0]?.accountName || null;
+            const startingBalance: number | null = response.data.filter((d: any) => d.status === "No account found")[0]?.startBalance || null;
             console.log({transactionsWithoutCategories,transactionsWithMultipleCategories, categoriesWithMultipleMatches, allCategories,newAccountName});
-            return {transactionsWithoutCategories,transactionsWithMultipleCategories, categoriesWithMultipleMatches, allCategories,newAccountName};
+            return {transactionsWithoutCategories,transactionsWithMultipleCategories, categoriesWithMultipleMatches, allCategories,newAccountName,startingBalance};
     } catch (error) {
         throw new Error("Error uploading data to database");
     }

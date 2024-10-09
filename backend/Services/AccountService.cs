@@ -78,61 +78,61 @@ namespace backend.Services
             // Calculate the start of the current week (Monday)
             var startDate = currentDate.AddDays(-(int)currentDate.DayOfWeek + (int)DayOfWeek.Monday);
 
-            // Get the total balance up to the current date (current balance across all transactions)
-            decimal totalBalance = await _context.Transactions
-                .Where(t => t.TransactionDate <= currentDate)
-                .SumAsync(t => t.Amount);
+            // Fetch all accounts
+            var accounts = await _context.Accounts.ToListAsync();
 
-            // Get the transactions for the current week grouped by day of the week
-            var accountsBalance = await _context.Transactions
-                .Where(t => t.TransactionDate >= startDate && t.TransactionDate <= currentDate)
-                .GroupBy(t => t.TransactionDate.DayOfWeek) // Group by DayOfWeek
-                .Select(g => new AccountsBalanceSummary
-                {
-                    Interval = g.Key.ToString(), // Use DayOfWeek as Interval
-                    Balance = g.Sum(t => t.Amount) // Sum the balance for all accounts on that day
-                })
-                .ToListAsync();
+            var allAccountsBalanceSummary = new List<AccountsBalanceSummary>();
 
-            // Create a list of days from Monday to today
-            var daysOfWeek = Enum.GetValues(typeof(DayOfWeek))
-                .Cast<DayOfWeek>()
-                .Where(d => d >= DayOfWeek.Monday && d <= currentDate.DayOfWeek)
-                .ToList();
-
-            // Sort the transactions to process them in the correct order
-            accountsBalance = accountsBalance
-                .OrderBy(a => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), a.Interval))
-                .ToList();
-
-            // Add missing days with a running balance
-            decimal runningBalance = totalBalance;
-            foreach (var day in daysOfWeek)
+            foreach (var account in accounts)
             {
-                var existingEntry = accountsBalance.FirstOrDefault(a => a.Interval == day.ToString());
-                if (existingEntry == null)
+                // Step 1: Get the current balance for the account (total sum of all transactions for the account)
+                decimal currentBalance = account.Balance;
+
+                // Step 2: Get the transactions for the current week (we will subtract these from the current balance)
+                var weeklyTransactions = await _context.Transactions
+                    .Where(t => t.AccountId == account.Id && t.TransactionDate >= startDate && t.TransactionDate <= currentDate)
+                    .GroupBy(t => t.TransactionDate.DayOfWeek) // Group by DayOfWeek
+                    .Select(g => new
+                    {
+                        DayOfWeek = g.Key,
+                        Sum = g.Sum(t => t.Amount) // Sum the transactions for that day
+                    })
+                    .ToListAsync();
+
+                // Step 3: Create a list of days from Monday to today
+                var daysOfWeek = Enum.GetValues(typeof(DayOfWeek))
+                    .Cast<DayOfWeek>()
+                    .Where(d => d >= DayOfWeek.Monday && d <= currentDate.DayOfWeek)
+                    .ToList();
+
+                // Step 4: Iterate through the days in reverse to subtract the transactions and calculate the running balance
+                decimal runningBalance = currentBalance;
+
+                foreach (var day in daysOfWeek.OrderByDescending(d => d))
                 {
-                    // No transactions for this day, use the running balance from the previous day
-                    accountsBalance.Add(new AccountsBalanceSummary
+                    var transactionForDay = weeklyTransactions.FirstOrDefault(wt => wt.DayOfWeek == day);
+
+                    // Subtract the transaction for the current day from the running balance
+                    if (transactionForDay != null)
+                    {
+                        runningBalance -= transactionForDay.Sum;
+                    }
+
+                    // Add the balance for this day to the result
+                    allAccountsBalanceSummary.Add(new AccountsBalanceSummary
                     {
                         Interval = day.ToString(),
                         Balance = runningBalance
                     });
                 }
-                else
-                {
-                    // If transactions exist for the day, update the running balance
-                    runningBalance += existingEntry.Balance;
-                    existingEntry.Balance = runningBalance;
-                }
             }
 
             // Sort the final list by DayOfWeek to maintain correct order (Monday to today)
-            accountsBalance = accountsBalance
+            allAccountsBalanceSummary = allAccountsBalanceSummary
                 .OrderBy(a => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), a.Interval))
                 .ToList();
 
-            return accountsBalance;
+            return allAccountsBalanceSummary;
         }
 
         public async Task<List<AccountsBalanceSummary>> GetAccountsBalancePastMonthAsync()
@@ -142,74 +142,118 @@ namespace backend.Services
             // Set the start of the current month (1st day of the current month)
             var startDate = new DateTime(currentDate.Year, currentDate.Month, 1);
 
-            // Get the total balance up to the current date
-            decimal totalBalance = await _context.Transactions
-                .Where(t => t.TransactionDate <= currentDate)
-                .SumAsync(t => t.Amount);
+            // Fetch all accounts
+            var accounts = await _context.Accounts.ToListAsync();
 
-            // Get the transactions for the current month, grouped by day
-            var accountsBalance = await _context.Transactions
-                .Where(t => t.TransactionDate >= startDate && t.TransactionDate <= currentDate)
-                .GroupBy(t => t.TransactionDate.Day) // Group by Day of the month
-                .Select(g => new AccountsBalanceSummary
-                {
-                    Interval = g.Key.ToString(), // Use Day as Interval
-                    Balance = g.Sum(t => t.Amount) // Sum the balance for all accounts on that day
-                })
-                .ToListAsync();
+            var allAccountsBalanceSummary = new List<AccountsBalanceSummary>();
 
-            // Create a list of all days in the current month up to today
-            var daysInCurrentMonth = Enumerable.Range(1, currentDate.Day).ToList();
-
-            // Sort the transactions to process them by day in ascending order
-            accountsBalance = accountsBalance.OrderBy(a => int.Parse(a.Interval)).ToList();
-
-            // Add missing days and carry forward the running balance
-            decimal runningBalance = totalBalance;
-            foreach (var day in daysInCurrentMonth)
+            foreach (var account in accounts)
             {
-                var existingEntry = accountsBalance.FirstOrDefault(a => int.Parse(a.Interval) == day);
-                if (existingEntry == null)
+                // Step 1: Get the current balance for the account (total sum of all transactions for the account)
+                decimal currentBalance = account.Balance;
+
+                // Step 2: Get the transactions for the current month (we will subtract these from the current balance)
+                var monthlyTransactions = await _context.Transactions
+                    .Where(t => t.AccountId == account.Id && t.TransactionDate >= startDate && t.TransactionDate <= currentDate)
+                    .GroupBy(t => t.TransactionDate.Day) // Group by Day of the month
+                    .Select(g => new
+                    {
+                        DayOfMonth = g.Key,
+                        Sum = g.Sum(t => t.Amount) // Sum the transactions for that day
+                    })
+                    .ToListAsync();
+
+                // Step 3: Create a list of days from the 1st to today
+                var daysInCurrentMonth = Enumerable.Range(1, currentDate.Day).ToList();
+
+                // Step 4: Iterate through the days in reverse to subtract the transactions and calculate the running balance
+                decimal runningBalance = currentBalance;
+
+                foreach (var day in daysInCurrentMonth.OrderByDescending(d => d))
                 {
-                    // If no transactions exist for this day, use the running balance from the previous day
-                    accountsBalance.Add(new AccountsBalanceSummary
+                    var transactionForDay = monthlyTransactions.FirstOrDefault(mt => mt.DayOfMonth == day);
+
+                    // Subtract the transaction for the current day from the running balance
+                    if (transactionForDay != null)
+                    {
+                        runningBalance -= transactionForDay.Sum;
+                    }
+
+                    // Add the balance for this day to the result
+                    allAccountsBalanceSummary.Add(new AccountsBalanceSummary
                     {
                         Interval = day.ToString(),
-                        Balance = runningBalance
+                        Balance = runningBalance,
                     });
-                }
-                else
-                {
-                    // If transactions exist for the day, update the running balance
-                    runningBalance += existingEntry.Balance;
-                    existingEntry.Balance = runningBalance;
                 }
             }
 
-            // Sort the final list by day to maintain correct order
-            accountsBalance = accountsBalance.OrderBy(a => int.Parse(a.Interval)).ToList();
+            // Sort the final list by Day of the month to maintain correct order (1st to today)
+            allAccountsBalanceSummary = allAccountsBalanceSummary
+                .OrderBy(a => int.Parse(a.Interval))
+                .ToList();
 
-            return accountsBalance;
+            return allAccountsBalanceSummary;
         }
         public async Task<List<AccountsBalanceSummary>> GetAccountsBalancePastYearAsync()
         {
-            var currentDate = System.DateTime.Now;
-            var startDate = currentDate.AddYears(-10); // Change this as needed for the number of years you want
+            var currentDate = DateTime.Now;
 
-            var accountsBalance = await _context.Transactions
-                .Where(t => t.TransactionDate >= startDate && t.TransactionDate <= currentDate)
-                .GroupBy(t => t.TransactionDate.Year) // Group by Year only
-                .Select(g => new AccountsBalanceSummary
+            // Set the start date to the beginning of the range (e.g., 10 years ago)
+            var startDate = currentDate.AddYears(-10);
+
+            // Fetch all accounts
+            var accounts = await _context.Accounts.ToListAsync();
+
+            var allAccountsBalanceSummary = new List<AccountsBalanceSummary>();
+
+            foreach (var account in accounts)
+            {
+                // Step 1: Get the current balance for the account (total sum of all transactions for the account)
+                decimal currentBalance = account.Balance;
+
+                // Step 2: Get the transactions for the past years (grouped by year)
+                var yearlyTransactions = await _context.Transactions
+                    .Where(t => t.AccountId == account.Id && t.TransactionDate >= startDate && t.TransactionDate <= currentDate)
+                    .GroupBy(t => t.TransactionDate.Year) // Group by Year
+                    .Select(g => new
+                    {
+                        Year = g.Key,
+                        Sum = g.Sum(t => t.Amount) // Sum of transactions for that year
+                    })
+                    .ToListAsync();
+
+                // Step 3: Create a list of years from the starting year to the current year
+                var yearsInRange = Enumerable.Range(startDate.Year, currentDate.Year - startDate.Year + 1).ToList();
+
+                // Step 4: Iterate through the years in reverse to subtract the transactions and calculate the running balance
+                decimal runningBalance = currentBalance;
+
+                foreach (var year in yearsInRange.OrderByDescending(y => y))
                 {
-                    Interval = g.Key.ToString(), // Use Year as Interval
-                    Balance = g.Sum(t => t.Amount) // Sum the balance for all accounts
-                })
-                .ToListAsync();
+                    var transactionForYear = yearlyTransactions.FirstOrDefault(yt => yt.Year == year);
 
-            // Sort by Year (already an integer)
-            accountsBalance = accountsBalance.OrderBy(a => int.Parse(a.Interval)).ToList();
+                    // Subtract the transaction for the current year from the running balance
+                    if (transactionForYear != null)
+                    {
+                        runningBalance -= transactionForYear.Sum;
+                    }
 
-            return accountsBalance;
+                    // Add the balance for this year to the result
+                    allAccountsBalanceSummary.Add(new AccountsBalanceSummary
+                    {
+                        Interval = year.ToString(),
+                        Balance = runningBalance,
+                    });
+                }
+            }
+
+            // Sort the final list by Year to maintain correct order (Oldest to newest)
+            allAccountsBalanceSummary = allAccountsBalanceSummary
+                .OrderBy(a => int.Parse(a.Interval))
+                .ToList();
+
+            return allAccountsBalanceSummary;
         }
     }
 }

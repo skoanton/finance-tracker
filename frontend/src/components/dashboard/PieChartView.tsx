@@ -53,7 +53,7 @@ export default function PieChartView({ date, type, title }: PieChartViewProps) {
     const newChartData = categories.map((category) => ({
       key: category.id,
       category: category.name,
-      amount: category.amount,
+      amount: Math.round(category.amount),
       fill: category.color,
     }));
     setChartData(newChartData);
@@ -89,6 +89,7 @@ export default function PieChartView({ date, type, title }: PieChartViewProps) {
         <CardDescription className="text-center mt-5">
           Total: {totalAmount}
         </CardDescription>
+        {isLoading && <p className="animate-pulse">Loading...</p>}
         {categories.length === 0 ? (
           <div className="text-center font-bold my-5">No data available</div>
         ) : (

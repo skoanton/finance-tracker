@@ -19,7 +19,7 @@ export const createCategory = async (category: Category):Promise<Category> => {
     try {
         const response = await axios.post("http://localhost:5000/api/category", category);
 
-        if(response.status !== 200) {
+        if(response.status !== 201) {
             throw new Error("Error creating budget category");
         }
         const newCategory: Category = response.data;

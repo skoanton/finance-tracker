@@ -1,4 +1,4 @@
-import { TrendingUp } from "lucide-react";
+import { Divide, TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 import {
   Card,
@@ -76,16 +76,25 @@ export default function BudgetCompareChart({}: BudgetCompareChartProps) {
 
   return (
     <>
-      <Card className="border-none">
-        <CardHeader>
+      <Card className="border-none shadow-none flex flex-col">
+        <CardHeader className="items-center pb-0">
           <CardTitle>Budget</CardTitle>
-          <CardDescription>This month</CardDescription>
+          <CardDescription className="text-center mt-5">
+            This month
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="shadow-none">
           {isLoading && <p className="animate-pulse">Loading...</p>}
-          {chartData && (
-            <ChartContainer config={customChartConfig}>
-              <BarChart accessibilityLayer data={chartData!}>
+          {chartData.length === 0 && !isLoading && (
+            <div className="text-center font-bold my-5">No data available</div>
+          )}
+          {chartData && chartData.length !== 0 && (
+            <ChartContainer className="shadow-none" config={customChartConfig}>
+              <BarChart
+                className="shadow-none"
+                accessibilityLayer
+                data={chartData!}
+              >
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="category"

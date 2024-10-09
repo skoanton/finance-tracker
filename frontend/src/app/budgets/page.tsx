@@ -38,6 +38,13 @@ export default function BudgetPage({}: BudgetPageProps) {
     }
   };
 
+  const onRemoveBudget = (budget: Budget) => {
+    if (!budgets) return;
+
+    const updatedBudgets = budgets.filter((b) => b.id !== budget.id);
+    setBudgets(updatedBudgets);
+  };
+
   const onUpdateBudgets = (updatedBudget: Budget) => {
     if (!budgets) return;
 
@@ -78,6 +85,7 @@ export default function BudgetPage({}: BudgetPageProps) {
               key={budget.id}
               budget={budget}
               onUpdateBudgets={onUpdateBudgets}
+              onRemoveBudget={onRemoveBudget}
             />
           ))}
       </div>
