@@ -11,17 +11,9 @@ import {
 import AccountForm from "./account/AccountForm";
 import { useState } from "react";
 
-type AccountModalProps = {
-  newAccountName: string | null;
-  handleTransactionUpload: (message: string) => void;
-  startBalance: number | null;
-};
+type AccountModalProps = {};
 
-export default function AccountModal({
-  newAccountName,
-  handleTransactionUpload,
-  startBalance,
-}: AccountModalProps) {
+export default function AccountModal({}: AccountModalProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const onSetIsOpen = () => {
@@ -36,12 +28,7 @@ export default function AccountModal({
             <DialogTitle>Create Account</DialogTitle>
             <DialogDescription>New Account Detected</DialogDescription>
           </DialogHeader>
-          <AccountForm
-            newAccountName={newAccountName}
-            startBalance={startBalance}
-            onSetIsOpen={onSetIsOpen}
-            handleTransactionUpload={handleTransactionUpload}
-          />
+          <AccountForm onSetIsOpen={onSetIsOpen} />
         </DialogContent>
       </Dialog>
     </>

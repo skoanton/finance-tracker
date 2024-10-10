@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Account, CsvFile } from "@/models/generatedTypes";
 import { createAccount } from "@/services/api/accountService";
 import { useState } from "react";
+import { useUploadToDatabase } from "@/hooks/useUploadToDatabase";
+import { useAccountStore } from "@/stores/useAccountStore";
 
 const formSchema = z.object({
   accountName: z.string().min(2).max(50),
@@ -23,27 +25,22 @@ const formSchema = z.object({
   startAmount: z.coerce.number().min(0),
 });
 type AccountFormProps = {
-  newAccountName: string | null;
   onSetIsOpen: () => void;
-  handleTransactionUpload: (message: string) => void;
-  startBalance: number | null;
 };
-export default function AccountForm({
-  newAccountName,
-  onSetIsOpen,
-  handleTransactionUpload,
-  startBalance,
-}: AccountFormProps) {
-  console.log("Startbalance:", startBalance);
+export default function AccountForm({ onSetIsOpen }: AccountFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { uploadTransactionToDatabase } = useUploadToDatabase();
+  const newAccountInfo = useAccountStore((state) => state.newAccountInfo);
+  console.log(newAccountInfo.name);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      accountName: newAccountName!,
+      accountName: newAccountInfo.name ? newAccountInfo.name : "NaN",
       accountType: "Checking Account",
-      startAmount: startBalance!,
+      startAmount: newAccountInfo.balance ? newAccountInfo.balance : 0,
     },
   });
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     console.log(values);
@@ -53,11 +50,16 @@ export default function AccountForm({
       balance: values.startAmount,
     };
 
-    await createAccount(newAccount).then(() => {
+    try {
+      setIsLoading(true);
+      await createAccount(newAccount);
+    } catch (error) {
+      console.error("Error creating account", error);
+    } finally {
       setIsLoading(false);
       onSetIsOpen();
-      handleTransactionUpload("Account has been created");
-    });
+      uploadTransactionToDatabase(true);
+    }
   }
 
   return (

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -31,12 +31,15 @@ namespace server.Models
 
     public class CsvFile
     {
+        [Key]
+        [Required]
+        public int Id { get; set; }
         [Required]
         public string AccountName { get; set; }
         [Required]
-        public DateTime TransactionDate  { get; set; }
+        public DateTime TransactionDate { get; set; }
         [Required]
-        public string Description  { get; set; }
+        public string Description { get; set; }
         [Required]
         public decimal Amount { get; set; }
         [Required]

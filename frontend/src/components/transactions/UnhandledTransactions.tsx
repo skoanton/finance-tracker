@@ -1,28 +1,28 @@
 "use client";
-import { Category, CsvFile } from "@/models/generatedTypes";
+import { CsvFile } from "@/models/generatedTypes";
 import { useState } from "react";
 import CategorySelectorModal from "../CategorySelectorModal";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useTransactionStore } from "@/stores/useTransactionsStore";
 
-type UnhandledTransactionsProps = {
-  allCategories: Category[] | null;
-  categoriesWithMultipleMatches: Category[] | null;
-  transactionsWithoutCategories: CsvFile[] | null;
-  transactionsWithMultipleCategories: CsvFile[] | null;
-  onSetTransactionWithMultipleCategories: (transaction: CsvFile) => void;
-  onSetTransactionWithoutCategories: (transaction: CsvFile) => void;
-};
+type UnhandledTransactionsProps = {};
 
-export default function UnhandledTransactions({
-  allCategories,
-  categoriesWithMultipleMatches,
-  transactionsWithMultipleCategories,
-  transactionsWithoutCategories,
-  onSetTransactionWithMultipleCategories,
-  onSetTransactionWithoutCategories,
-}: UnhandledTransactionsProps) {
+export default function UnhandledTransactions({}: UnhandledTransactionsProps) {
+  const noCategoryTransactions = useTransactionStore(
+    (state) => state.noCategoryTransactions
+  );
+  const multiCategoriesTransactions = useTransactionStore(
+    (state) => state.multiCategoryTransactions
+  );
+  const removeNoCategoryTransactions = useTransactionStore(
+    (state) => state.removeNoCategoryTransactions
+  );
+  const removeMultiCategoryTransactions = useTransactionStore(
+    (state) => state.removeMultiCategoryTransactions
+  );
   const [selectedTransaction, setSelectedTransaction] =
     useState<CsvFile | null>();
+
   const [transactionType, setTransactionType] = useState<string>("");
 
   const onSetSelectedTransactionToNull = () => {
@@ -32,47 +32,44 @@ export default function UnhandledTransactions({
   const onSetSelectedTransaction = (transaction: CsvFile) => {
     setSelectedTransaction(null);
     if (transactionType === "No Category") {
-      onSetTransactionWithoutCategories(transaction);
+      removeNoCategoryTransactions(transaction.id);
     } else {
-      onSetTransactionWithMultipleCategories(transaction);
+      removeMultiCategoryTransactions(transaction.id);
     }
   };
   return (
     <>
-      {transactionsWithMultipleCategories &&
-        transactionsWithMultipleCategories.length > 0 && (
-          <div>
-            <h1 className="text-xl font-bold">
-              Transactions with multiple categories
-            </h1>
-            <ScrollArea className="h-[300px] w-[300px] rounded-md border p-4">
-              <ul>
-                {transactionsWithMultipleCategories.map(
-                  (transaction, index) => (
-                    <li
-                      key={index}
-                      onClick={() => {
-                        setSelectedTransaction(transaction);
-                        setTransactionType("Multiple Categories Found");
-                      }}
-                      className="hover:underline cursor-pointer"
-                    >
-                      {transaction.description}
-                    </li>
-                  )
-                )}
-              </ul>
-            </ScrollArea>
-          </div>
-        )}
-      {transactionsWithoutCategories && (
+      {multiCategoriesTransactions.length > 0 && (
+        <div>
+          <h1 className="text-xl font-bold">
+            Transactions with multiple categories
+          </h1>
+          <ScrollArea className="h-[300px] w-[300px] rounded-md border p-4">
+            <ul>
+              {multiCategoriesTransactions.map((transaction) => (
+                <li
+                  key={transaction.id}
+                  onClick={() => {
+                    setSelectedTransaction(transaction);
+                    setTransactionType("Multiple Categories Found");
+                  }}
+                  className="hover:underline cursor-pointer"
+                >
+                  {transaction.description}
+                </li>
+              ))}
+            </ul>
+          </ScrollArea>
+        </div>
+      )}
+      {noCategoryTransactions.length > 0 && (
         <div>
           <h1 className="text-xl font-bold">Transactions without Categories</h1>
           <ScrollArea className="h-[300px] w-[350px] rounded-md border p-4 overflow-hidden">
             <ul>
-              {transactionsWithoutCategories.map((transaction, index) => (
+              {noCategoryTransactions.map((transaction) => (
                 <li
-                  key={index}
+                  key={transaction.id}
                   onClick={() => {
                     setSelectedTransaction(transaction);
                     setTransactionType("No Category");
@@ -90,10 +87,8 @@ export default function UnhandledTransactions({
 
       {selectedTransaction && (
         <CategorySelectorModal
-          transaction={selectedTransaction}
+          selectedTransaction={selectedTransaction}
           transactionType={transactionType}
-          allCategories={allCategories}
-          categoriesWithMultipleMatches={categoriesWithMultipleMatches}
           onSetSelectedTransaction={onSetSelectedTransaction}
           onSetSelectedTransactionToNull={onSetSelectedTransactionToNull}
         />

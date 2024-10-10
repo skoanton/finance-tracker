@@ -23,19 +23,17 @@ import { Button } from "@/components/ui/button";
 import { Category, CategoryType } from "@/models/generatedTypes";
 import { useState } from "react";
 import { createCategory } from "@/services/api/categoryServices";
+import { useCategoryStore } from "@/stores/useCategoryStore";
 const formSchema = z.object({
   categoryName: z.string().min(2).max(50),
   categoryType: z.nativeEnum(CategoryType),
   color: z.string(),
 });
 
-type CreateCategoryFormProps = {
-  onSetCategories: (categories: Category) => void;
-};
+type CreateCategoryFormProps = {};
 
-export default function CreateCategoryForm({
-  onSetCategories,
-}: CreateCategoryFormProps) {
+export default function CreateCategoryForm({}: CreateCategoryFormProps) {
+  const addCategory = useCategoryStore((state) => state.addCategory);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,10 +57,9 @@ export default function CreateCategoryForm({
       color: values.color,
     };
 
-    await createCategory(newCategory).then((response) => {
-      onSetCategories(response);
-      setIsLoading(false);
-    });
+    const response = await createCategory(newCategory);
+    addCategory(response);
+    setIsLoading(false);
   }
 
   return (

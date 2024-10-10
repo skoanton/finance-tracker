@@ -17,9 +17,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  useFormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import {
   Select,
@@ -32,31 +33,28 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { uploadTransactions } from "@/services/api/transactionService";
 import { updateCategory } from "@/services/api/categoryServices";
+import { useCategoryStore } from "@/stores/useCategoryStore";
+import { useGetAllCategories } from "@/hooks/useGetAllCategories";
+import { get } from "http";
 
 const formSchema = z.object({
   categoryId: z.number().min(1),
 });
 
 type CategorySelectorModalProps = {
-  transaction: CsvFile;
+  selectedTransaction: CsvFile;
   transactionType: string;
-  allCategories: Category[] | null;
-  categoriesWithMultipleMatches: Category[] | null;
   onSetSelectedTransaction: (transaction: CsvFile) => void;
   onSetSelectedTransactionToNull: () => void;
 };
 
 export default function CategorySelectorModal({
-  transaction,
+  selectedTransaction,
   transactionType,
-  allCategories,
-  categoriesWithMultipleMatches,
   onSetSelectedTransaction,
   onSetSelectedTransactionToNull,
 }: CategorySelectorModalProps) {
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,21 +62,37 @@ export default function CategorySelectorModal({
     },
   });
   const [isLoading, setIsLoading] = useState(false);
+  const { getCategories } = useGetAllCategories();
 
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  const categories = useCategoryStore((state) => state.categories);
+  console.log(categories);
+  const multiMatchesCategories = useCategoryStore(
+    (state) => state.multiMatchesCategories
+  );
+  console.log("Currently selected transaction", selectedTransaction);
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const categoryToChange = allCategories?.find(
-      (x) => x.id == values.categoryId
-    );
+    const categoryToChange = categories.find((x) => x.id == values.categoryId);
 
     if (categoryToChange) {
-      categoryToChange.description!.push(transaction.description!);
+      categoryToChange.description!.push(selectedTransaction.description!);
       setIsLoading(true);
-      await updateCategory(categoryToChange).then(() => {
+
+      try {
         setIsLoading(false);
-      });
+        await updateCategory(categoryToChange);
+      } catch (error) {
+        console.error("Error updating category", error);
+      } finally {
+        onSetSelectedTransaction(selectedTransaction);
+        setIsLoading(false);
+      }
     }
+
     setIsOpen(false);
-    onSetSelectedTransaction(transaction);
   }
   const [isOpen, setIsOpen] = useState(true);
 
@@ -99,20 +113,23 @@ export default function CategorySelectorModal({
             <>
               <div>
                 <p className="text-sm">
-                  <strong>Account:</strong> {transaction.accountName}{" "}
+                  <strong>Account:</strong> {selectedTransaction.accountName}{" "}
                 </p>
                 <p className="text-sm">
                   {" "}
                   <strong>Date:</strong>{" "}
-                  {new Date(transaction.transactionDate!).toLocaleDateString()}{" "}
+                  {new Date(
+                    selectedTransaction.transactionDate!
+                  ).toLocaleDateString()}{" "}
                 </p>
               </div>
               <div>
                 <p className="text-sm">
-                  <strong>Description: </strong> {transaction.description}
+                  <strong>Description: </strong>{" "}
+                  {selectedTransaction.description}
                 </p>{" "}
                 <p className="text-sm">
-                  <strong>Amount:</strong> {transaction.amount} kr{" "}
+                  <strong>Amount:</strong> {selectedTransaction.amount} kr{" "}
                 </p>
               </div>
             </>
@@ -134,13 +151,16 @@ export default function CategorySelectorModal({
                         value={field.value.toString()}
                       >
                         <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Category" />
+                          <SelectValue>
+                            {categories.find((c) => c.id === field.value)
+                              ?.name || "Pick a category"}
+                          </SelectValue>
                         </SelectTrigger>
 
                         <SelectContent>
                           {transactionType === "No Category"
-                            ? allCategories &&
-                              allCategories.map((category) => (
+                            ? categories &&
+                              categories.map((category) => (
                                 <SelectItem
                                   {...field}
                                   key={category.id}
@@ -149,8 +169,8 @@ export default function CategorySelectorModal({
                                   {category.name}
                                 </SelectItem>
                               ))
-                            : categoriesWithMultipleMatches &&
-                              categoriesWithMultipleMatches.map((category) => (
+                            : multiMatchesCategories &&
+                              multiMatchesCategories.map((category) => (
                                 <SelectItem
                                   key={category.id}
                                   value={category.name!}

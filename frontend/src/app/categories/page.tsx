@@ -2,7 +2,6 @@
 import CategoryCard from "@/components/categories/CategoryCard";
 import CategoryModal from "@/components/categories/CategoryModal";
 import { Category } from "@/models/generatedTypes";
-import { getCategories } from "@/services/api/categoryServices";
 import { useEffect, useState } from "react";
 
 import {
@@ -11,31 +10,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useGetAllCategories } from "@/hooks/useGetAllCategories";
+import { useCategoryStore } from "@/stores/useCategoryStore";
+import { get } from "http";
 type CategoriesViewProps = {};
 
 export default function CategoriesView({}: CategoriesViewProps) {
-  const [categories, setCategories] = useState<Category[]>([]);
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await getCategories();
+  const { getCategories } = useGetAllCategories();
 
-        setCategories(response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getData();
+  useEffect(() => {
+    getCategories();
   }, []);
 
-  const onSetCategories = (category: Category) => {
-    setCategories([...categories, category]);
-  };
-
-  const handleDeleteCategories = (category: Category) => {
-    setCategories(categories.filter((cat) => cat.id !== category.id));
-    console.log("Category deleted");
-  };
+  const categories = useCategoryStore((state) => state.categories);
 
   const categoryTypeMap: Record<number, string> = {
     0: "Income",
@@ -48,7 +35,7 @@ export default function CategoriesView({}: CategoriesViewProps) {
     <>
       <div className="flex flex-col gap-5">
         <div>
-          <CategoryModal onSetCategories={onSetCategories} />
+          <CategoryModal />
         </div>
         <div className="flex flex-col gap-5">
           {Object.keys(categoryTypeMap).map((typeKey) => {
@@ -66,11 +53,7 @@ export default function CategoriesView({}: CategoriesViewProps) {
                       {categories
                         ?.filter((c) => c.type === type)
                         .map((category) => (
-                          <CategoryCard
-                            key={category.id}
-                            category={category}
-                            handleDeleteCategories={handleDeleteCategories}
-                          />
+                          <CategoryCard key={category.id} category={category} />
                         ))}
                     </AccordionContent>
                   </AccordionItem>

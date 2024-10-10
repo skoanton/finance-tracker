@@ -22,9 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { getCategories } from "@/services/api/categoryServices";
 import { updateTransaction } from "@/services/api/transactionService";
 import { set } from "date-fns";
+import { useCategoryStore } from "@/stores/useCategoryStore";
 const formSchema = z.object({
   transactionDate: z.date(),
   amount: z.number(),
@@ -42,17 +42,8 @@ export default function EditTransactionForm({
   onModalClose,
   onSave,
 }: EditTransactionFormProps) {
-  const [categories, setCategories] = useState<Category[] | null>(null);
+  const categories = useCategoryStore((state) => state.categories);
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const response = await getCategories();
-      if (response) {
-        setCategories(response);
-      }
-    };
-    fetchCategories();
-  }, []);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({

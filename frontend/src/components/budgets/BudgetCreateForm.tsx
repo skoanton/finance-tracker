@@ -13,10 +13,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { getCategories } from "@/services/api/categoryServices";
 import { Budget, Category } from "@/models/generatedTypes";
 import { Checkbox } from "../ui/checkbox";
 import BudgetSetForm from "./BudgetSetForm";
+import { useGetAllCategories } from "@/hooks/useGetAllCategories";
+import { get } from "http";
+import { useCategoryStore } from "@/stores/useCategoryStore";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -41,22 +43,17 @@ export default function BudgetCreateForm({
   onSetBudgets,
   onModalClose,
 }: BudgetCreateFormProps) {
-  const [categories, setCategories] = useState<Category[] | null>(null);
+  const { getCategories } = useGetAllCategories();
+  const categories = useCategoryStore((state) => state.categories);
+  useEffect(() => {
+    getCategories();
+  }, []);
+
   const [showNextForm, setShowNextForm] = useState(false);
   const [categoriesToAdd, setCategoriesToAdd] = useState<
     Partial<Category>[] | null
   >(null);
   const [budgetName, setBudgetName] = useState<string>("");
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const response = await getCategories();
-
-      if (response) {
-        setCategories(response);
-      }
-    };
-    fetchCategories();
-  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

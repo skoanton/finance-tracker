@@ -10,19 +10,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { EllipsisVertical } from "lucide-react";
+import { useCategoryStore } from "@/stores/useCategoryStore";
 type CategoryCardProps = {
   category: Category;
-  handleDeleteCategories: (category: Category) => void;
 };
 
-export default function CategoryCard({
-  category,
-  handleDeleteCategories,
-}: CategoryCardProps) {
+export default function CategoryCard({ category }: CategoryCardProps) {
+  const removeCategory = useCategoryStore((state) => state.removeCategory);
   const handleDelete = async () => {
-    await deleteCategory(category!.id!).then(() => {
-      handleDeleteCategories!(category!);
-    });
+    const response = await deleteCategory(category!.id!);
+    removeCategory(response.id!);
   };
 
   return (

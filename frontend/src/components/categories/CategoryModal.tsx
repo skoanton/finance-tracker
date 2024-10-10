@@ -10,11 +10,9 @@ import {
 import CreateCategoryForm from "./CreateCategoryForm";
 import { Category } from "@/models/generatedTypes";
 import { Button } from "../ui/button";
-type CategoryModalProps = {
-  onSetCategories: (categories: Category) => void;
-};
+type CategoryModalProps = {};
 
-export default function CategoryModal({ onSetCategories }: CategoryModalProps) {
+export default function CategoryModal({}: CategoryModalProps) {
   return (
     <>
       <Dialog>
@@ -28,7 +26,7 @@ export default function CategoryModal({ onSetCategories }: CategoryModalProps) {
               Skapa en ny kategori för att kategorisera dina transaktioner.
             </DialogDescription>
           </DialogHeader>
-          <CreateCategoryForm onSetCategories={onSetCategories} />
+          <CreateCategoryForm />
         </DialogContent>
       </Dialog>
     </>

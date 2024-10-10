@@ -142,10 +142,11 @@ export interface IClient {
      */
     transactionDELETE(id: number): Promise<void>;
     /**
+     * @param isFirst (optional) 
      * @param body (optional) 
      * @return Success
      */
-    create2(body: CsvFile[] | undefined): Promise<void>;
+    create2(isFirst: boolean | undefined, body: CsvFile[] | undefined): Promise<void>;
     /**
      * @param startDate (optional) 
      * @param endDate (optional) 
@@ -1700,11 +1701,16 @@ export class Client implements IClient {
     }
 
     /**
+     * @param isFirst (optional) 
      * @param body (optional) 
      * @return Success
      */
-    create2(body: CsvFile[] | undefined, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/Transaction/create";
+    create2(isFirst: boolean | undefined, body: CsvFile[] | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/Transaction/create?";
+        if (isFirst === null)
+            throw new Error("The parameter 'isFirst' cannot be null.");
+        else if (isFirst !== undefined)
+            url_ += "isFirst=" + encodeURIComponent("" + isFirst) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -1930,6 +1936,7 @@ export enum CategoryType {
 }
 
 export interface CsvFile {
+    id: number;
     accountName: string;
     transactionDate: Date;
     description: string;
