@@ -25,6 +25,8 @@ import {
 import { updateTransaction } from "@/services/api/transactionService";
 import { set } from "date-fns";
 import { useCategoryStore } from "@/stores/useCategoryStore";
+import { TransactionTableData } from "./DataTable/Columns";
+import { useTransactionStore } from "@/stores/useTransactionsStore";
 const formSchema = z.object({
   transactionDate: z.date(),
   amount: z.number(),
@@ -34,13 +36,11 @@ const formSchema = z.object({
 type EditTransactionFormProps = {
   transaction: Transaction;
   onModalClose: () => void;
-  onSave: (transaction: Transaction) => void;
 };
 
 export default function EditTransactionForm({
   transaction,
   onModalClose,
-  onSave,
 }: EditTransactionFormProps) {
   const categories = useCategoryStore((state) => state.categories);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +54,9 @@ export default function EditTransactionForm({
       categoryId: transaction.categoryId,
     },
   });
-
+  const updateTransactionState = useTransactionStore(
+    (state) => state.updateTransaction
+  );
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -66,10 +68,17 @@ export default function EditTransactionForm({
     };
 
     const updatedTransaction = await updateTransaction(newTransaction);
-
+    const updatedTransactionTable: TransactionTableData = {
+      id: updatedTransaction.id!,
+      account: updatedTransaction.account!.name,
+      description: updatedTransaction.description!,
+      category: updatedTransaction.category!.name!,
+      amount: updatedTransaction.amount!,
+      date: updatedTransaction.transactionDate!,
+    };
     console.log(values);
     setIsLoading(false);
-    onSave(updatedTransaction);
+    updateTransactionState(updatedTransactionTable);
     onModalClose();
   }
   return (

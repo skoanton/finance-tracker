@@ -52,7 +52,7 @@ export default function CreateCategoryForm({}: CreateCategoryFormProps) {
     values.categoryName = firstLetter + restOfName;
     const newCategory: Category = {
       name: values.categoryName,
-      type: values.categoryType as CategoryType,
+      type: values.categoryType,
       description: [],
       color: values.color,
     };

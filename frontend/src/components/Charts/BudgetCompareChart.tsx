@@ -76,7 +76,7 @@ export default function BudgetCompareChart({}: BudgetCompareChartProps) {
 
   return (
     <>
-      <Card className="border-none shadow-none flex flex-col">
+      <Card className="border-none shadow-none flex flex-col h-40">
         <CardHeader className="items-center pb-0">
           <CardTitle>Budget</CardTitle>
           <CardDescription className="text-center mt-5">

@@ -4,10 +4,6 @@ import { useUploadStore } from "@/stores/useUploadStore";
 import { useEffect } from "react";
 
 export const useResetStates = () => {
-  const resetMultiCategoryTransactions = useTransactionStore(
-    (state) => state.resetMultiCategoryTransactions
-  );
-
   const resetNoCategoryTransactions = useTransactionStore(
     (state) => state.resetNoCategoryTransactions
   );
@@ -19,7 +15,6 @@ export const useResetStates = () => {
     (state) => state.resetUploadedTransactions
   );
   const resetStates = () => {
-    resetMultiCategoryTransactions();
     resetNoCategoryTransactions();
     resetNewAccount();
     resetTransactionsToUpload();

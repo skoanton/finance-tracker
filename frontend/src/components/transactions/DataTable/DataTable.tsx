@@ -35,23 +35,25 @@ import { deleteTransaction } from "@/services/api/transactionService";
 import { TransactionTableData } from "./Columns";
 import { CodeSquare, Loader } from "lucide-react";
 import { on } from "events";
+import { useTransactionStore } from "@/stores/useTransactionsStore";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  handleDeleteTransactions: (ids: number[]) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  handleDeleteTransactions,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const removeTransactions = useTransactionStore(
+    (state) => state.removeTransactions
+  );
   const table = useReactTable({
     data,
     columns,
@@ -90,7 +92,7 @@ export function DataTable<TData, TValue>({
       );
 
       // Update the transactions state in one batch
-      handleDeleteTransactions(transactionIdsToDelete);
+      removeTransactions(transactionIdsToDelete);
 
       // Unselect all rows after deletions
       selectedRows.forEach((row) => {

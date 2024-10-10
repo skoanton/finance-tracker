@@ -45,14 +45,14 @@ const formSchema = z.object({
 
 type CategorySelectorModalProps = {
   selectedTransaction: CsvFile;
-  transactionType: string;
+
   onSetSelectedTransaction: (transaction: CsvFile) => void;
   onSetSelectedTransactionToNull: () => void;
 };
 
 export default function CategorySelectorModal({
   selectedTransaction,
-  transactionType,
+
   onSetSelectedTransaction,
   onSetSelectedTransactionToNull,
 }: CategorySelectorModalProps) {

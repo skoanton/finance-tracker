@@ -27,7 +27,7 @@ export default function CategoriesView({}: CategoriesViewProps) {
   const categoryTypeMap: Record<string, string> = {
     Income: "Income",
     Expense: "Expense",
-    Savings: "Savings",
+    Saving: "Saving",
     // Add any other categories as needed
   };
 

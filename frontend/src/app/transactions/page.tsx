@@ -6,10 +6,12 @@ import {
   columns,
 } from "@/components/transactions/DataTable/Columns";
 import { DataTable } from "@/components/transactions/DataTable/DataTable";
+import { useTransactionStore } from "@/stores/useTransactionsStore";
 type TransactionsViewProps = {};
 
 export default function TransactionsView({}: TransactionsViewProps) {
-  const [transactions, setTransactions] = useState<TransactionTableData[]>([]);
+  const setTransactions = useTransactionStore((state) => state.setTransactions);
+  const transactions = useTransactionStore((state) => state.transactions);
   useEffect(() => {
     const getData = async () => {
       const transactions = await getTransactions();
@@ -60,11 +62,7 @@ export default function TransactionsView({}: TransactionsViewProps) {
 
   return (
     <>
-      <DataTable
-        columns={columns}
-        data={transactions}
-        handleDeleteTransactions={handleDeleteTransactions}
-      />
+      <DataTable columns={columns} data={transactions} />
     </>
   );
 }

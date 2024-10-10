@@ -67,25 +67,14 @@ namespace server.Controllers
             foreach (var transaction in transactions)
             {
                 Console.WriteLine("Inside transaction");
-                var categoriesFoundWithDescription = categories.Where(category => category.Description.Contains(transaction.Description)).ToList();
+                var categoriesFoundWithDescription = categories.Where(category => category.Description.Contains(transaction.Description)).FirstOrDefault();
                 Category? category = null;
 
                 
 
-                if (categoriesFoundWithDescription.Count == 1)
+                if (categoriesFoundWithDescription != null)
                 {
-                    category = categoriesFoundWithDescription[0];
-                }
-                else if (categoriesFoundWithDescription.Count > 1)
-                {
-                    results.Add(new
-                    {
-                        Status = "Multiple Categories Found",
-                        Message = "Multiple categories found with the same description, choose one",
-                        Transaction = transaction,
-                        Categories = categoriesFoundWithDescription
-                    });
-                    continue;
+                    category = categoriesFoundWithDescription;
                 }
                 else
                 {

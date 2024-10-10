@@ -7,11 +7,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Transaction } from "@/models/generatedTypes";
-import {
-  getTransactionById,
-  getTransactions,
-} from "@/services/api/transactionService";
-import { Edit } from "lucide-react";
+import { getTransactionById } from "@/services/api/transactionService";
 import { use, useEffect, useState } from "react";
 import EditTransactionForm from "./EditTransactionForm";
 
@@ -19,14 +15,12 @@ type EditTransactionModalProps = {
   isModalOpen: boolean;
   transactionId: number;
   onModalClose: () => void;
-  onSave: (transaction: Transaction) => void;
 };
 
 export default function EditTransactionModal({
   isModalOpen,
   transactionId,
   onModalClose,
-  onSave,
 }: EditTransactionModalProps) {
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +55,6 @@ export default function EditTransactionModal({
             <EditTransactionForm
               transaction={transaction}
               onModalClose={onModalClose}
-              onSave={onSave}
             />
           )}
         </DialogContent>

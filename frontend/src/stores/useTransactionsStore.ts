@@ -1,19 +1,14 @@
+import { TransactionTableData } from "@/components/transactions/DataTable/Columns";
 import { CsvFile, Transaction } from "@/models/generatedTypes";
 import { create } from "zustand";
 
 interface TransactionState {
-  transactions: Transaction[];
-  setTransactions: (transactions: Transaction[]) => void;
-  addTransaction: (transaction: Transaction) => void;
-  updateTransaction: (updatedTransaction: Transaction) => void;
+  transactions: TransactionTableData[];
+  setTransactions: (transactions: TransactionTableData[]) => void;
+  addTransaction: (transaction: TransactionTableData) => void;
+  updateTransaction: (updatedTransaction: TransactionTableData) => void;
   removeTransaction: (id: number) => void;
-
-  multiCategoryTransactions: CsvFile[];
-  setMultiCategoryTransactions: (transactions: CsvFile[]) => void;
-  addMultiCategoryTransactions: (transaction: CsvFile) => void;
-  updateMultiCategoryTransactions: (updatedTransaction: CsvFile) => void;
-  removeMultiCategoryTransactions: (id: number) => void;
-  resetMultiCategoryTransactions: () => void;
+  removeTransactions: (id: number[]) => void;
 
   noCategoryTransactions: CsvFile[];
   setNoCategoryTransactions: (transactions: CsvFile[]) => void;
@@ -25,10 +20,11 @@ interface TransactionState {
 
 export const useTransactionStore = create<TransactionState>((set) => ({
   transactions: [],
-  setTransactions: (transactions: Transaction[]) => set({ transactions }),
-  addTransaction: (transaction: Transaction) =>
+  setTransactions: (transactions: TransactionTableData[]) =>
+    set({ transactions }),
+  addTransaction: (transaction: TransactionTableData) =>
     set((state) => ({ transactions: [...state.transactions, transaction] })),
-  updateTransaction: (updatedTransaction: Transaction) =>
+  updateTransaction: (updatedTransaction: TransactionTableData) =>
     set((state) => ({
       transactions: state.transactions.map((transaction) =>
         transaction.id === updatedTransaction.id
@@ -42,31 +38,10 @@ export const useTransactionStore = create<TransactionState>((set) => ({
         (transaction) => transaction.id !== id
       ),
     })),
-
-  multiCategoryTransactions: [],
-  setMultiCategoryTransactions: (transactions: CsvFile[]) =>
-    set({ multiCategoryTransactions: transactions }),
-  addMultiCategoryTransactions: (transaction: CsvFile) =>
+  removeTransactions: (ids: number[]) =>
     set((state) => ({
-      multiCategoryTransactions: [
-        ...state.multiCategoryTransactions,
-        transaction,
-      ],
-    })),
-  resetMultiCategoryTransactions: () => set({ multiCategoryTransactions: [] }),
-  updateMultiCategoryTransactions: (updatedTransaction: CsvFile) =>
-    set((state) => ({
-      multiCategoryTransactions: state.multiCategoryTransactions.map(
-        (transaction) =>
-          transaction.id === updatedTransaction.id
-            ? updatedTransaction
-            : transaction
-      ),
-    })),
-  removeMultiCategoryTransactions: (id: number) =>
-    set((state) => ({
-      multiCategoryTransactions: state.multiCategoryTransactions.filter(
-        (transaction) => transaction.id !== id
+      transactions: state.transactions.filter(
+        (transaction) => !ids.includes(transaction.id)
       ),
     })),
 

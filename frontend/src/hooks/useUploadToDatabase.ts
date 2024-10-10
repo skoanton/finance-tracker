@@ -14,17 +14,11 @@ export const useUploadToDatabase = () => {
   const transactionsToUpload = useUploadStore(
     (state) => state.transactionsToUpload
   );
-  const setMultiCategoryTransactions = useTransactionStore(
-    (state) => state.setMultiCategoryTransactions
-  );
   const setNoCategoryTransactions = useTransactionStore(
     (state) => state.setNoCategoryTransactions
   );
   const setUploadedTransactions = useUploadStore(
     (state) => state.setUploadedTransactions
-  );
-  const setMultiMatchesCategories = useCategoryStore(
-    (state) => state.setMultiMatchesCategories
   );
 
   const setNewAccountInfo = useAccountStore((state) => state.setNewAccountInfo);
@@ -42,9 +36,7 @@ export const useUploadToDatabase = () => {
         transactionsToUpload,
         isFirstUpload
       );
-      setMultiCategoryTransactions(response.multiCategoryTransactions);
       setNoCategoryTransactions(response.noCategoryTransactions);
-      setMultiMatchesCategories(response.multiMatchesCategories);
       setNewAccountInfo({
         name: response.newAccountName,
         balance: response.startingBalance,

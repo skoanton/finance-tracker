@@ -16,6 +16,8 @@ import { useState } from "react";
 import EditTransactionModal from "../EditTransactionModal";
 import { after } from "node:test";
 import { Transaction } from "@/models/generatedTypes";
+import { useTransactionStore } from "@/stores/useTransactionsStore";
+import { deleteTransaction } from "@/services/api/transactionService";
 
 export type TransactionTableData = {
   id: number;
@@ -147,14 +149,14 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     id: "actions",
     cell: ({ row }) => {
       const transaction = row.original;
-
+      const removeTransaction = useTransactionStore(
+        (state) => state.removeTransaction
+      );
       const [isModalOpen, setIsModalOpen] = useState(false);
       const [selectedTransactionId, setSelectedTransactionId] = useState<
         number | null
       >(null);
-      const [transactions, setTransactions] = useState<TransactionTableData[]>(
-        []
-      );
+
       const onModalClose = () => {
         setSelectedTransactionId(null);
         setIsModalOpen(false);
@@ -165,25 +167,13 @@ export const columns: ColumnDef<TransactionTableData>[] = [
         setIsModalOpen(true);
       };
 
-      const handleDelete = (transactionId: number) => {
-        console.log("Delete transaction", transactionId);
+      const handleDelete = async (transactionId: number) => {
+        await deleteTransaction(transactionId);
+        removeTransaction(transactionId);
       };
 
       const handleView = (transactionId: number) => {
         console.log("View transaction");
-      };
-
-      const handleTransactionSave = (updatedTransaction: Transaction) => {
-        console.log("Save transaction", transaction);
-        const newTransaction: TransactionTableData = {
-          id: transaction.id!,
-          account: transaction.account,
-          description: transaction.description,
-          amount: updatedTransaction.amount,
-          category: updatedTransaction.category.name!,
-          date: new Date(updatedTransaction.transactionDate),
-        };
-        console.log("New transaction", newTransaction);
       };
 
       return (
@@ -215,7 +205,6 @@ export const columns: ColumnDef<TransactionTableData>[] = [
               isModalOpen={isModalOpen}
               transactionId={selectedTransactionId} // Pass the selected transaction ID
               onModalClose={onModalClose}
-              onSave={handleTransactionSave}
             />
           )}
         </>

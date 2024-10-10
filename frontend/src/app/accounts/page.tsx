@@ -9,6 +9,7 @@ import AccountRecentTransactions from "@/components/account/AccountRecentTransac
 import WarningDialog from "@/components/WarningDialog";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { formatToSek } from "@/lib/utils/formatToSek";
+import H1 from "@/components/H1";
 type AccountPageProps = {};
 
 export default function AccountPage({}: AccountPageProps) {
@@ -37,6 +38,7 @@ export default function AccountPage({}: AccountPageProps) {
 
   return (
     <>
+      <H1 className="mb-5">Accounts</H1>
       <div className="flex flex-col gap-5">
         <div className="grid grid-cols-2 gap-2">
           <AccountBalanceChart totalBalance={totalBalance} />

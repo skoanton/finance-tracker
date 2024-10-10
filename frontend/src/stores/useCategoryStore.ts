@@ -7,11 +7,6 @@ interface CategoryState {
   setCategories: (categories: Category[]) => void;
   updateCategory: (updatedCategory: Category) => void;
   removeCategory: (id: number) => void;
-
-  multiMatchesCategories: Category[];
-  setMultiMatchesCategories: (categories: Category[]) => void;
-  updateMultiMatchesCategories: (updatedCategory: Category) => void;
-  resetMultiMatchesCategories: () => void;
 }
 
 export const useCategoryStore = create<CategoryState>((set) => ({
@@ -29,15 +24,4 @@ export const useCategoryStore = create<CategoryState>((set) => ({
     set((state) => ({
       categories: state.categories.filter((category) => category.id !== id),
     })),
-
-  multiMatchesCategories: [],
-  setMultiMatchesCategories: (categories: Category[]) =>
-    set({ multiMatchesCategories: categories }),
-  updateMultiMatchesCategories: (updatedCategory: Category) =>
-    set((state) => ({
-      categories: state.categories.map((category) =>
-        category.id === updatedCategory.id ? updatedCategory : category
-      ),
-    })),
-  resetMultiMatchesCategories: () => set({ multiMatchesCategories: [] }),
 }));

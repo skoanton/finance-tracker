@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 import { activateBudget, deleteBudget } from "@/services/api/budget";
 import { useState } from "react";
 import { on } from "events";
+import { formatToSek } from "@/lib/utils/formatToSek";
 
 type BudgetCardProps = {
   budget: Budget;
@@ -56,7 +57,7 @@ export default function BudgetCard({
           <CardDescription>Card Description</CardDescription>
         </CardHeader>
         <CardContent>
-          <p>Total Budget: {budget.totalBudget}</p>
+          <p>Total Budget: {formatToSek(budget.totalBudget)}</p>
         </CardContent>
         <CardFooter>
           {error && <p style={{ color: "red" }}>{error}</p>}

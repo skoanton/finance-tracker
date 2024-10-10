@@ -38,9 +38,6 @@ export default function FileUploader({}: FileUploaderProps) {
   const noCategoryTransactions = useTransactionStore(
     (state) => state.noCategoryTransactions
   );
-  const multiCategoriesTransactions = useTransactionStore(
-    (state) => state.multiCategoryTransactions
-  );
   const transactionsToUpload = useUploadStore(
     (state) => state.transactionsToUpload
   );
@@ -101,14 +98,10 @@ export default function FileUploader({}: FileUploaderProps) {
             {newAccountInfo.name && newAccountInfo.balance !== null && (
               <AccountModal />
             )}
-
-            {multiCategoriesTransactions.length > 0 ||
-              (noCategoryTransactions.length > 0 && <UnhandledTransactions />)}
+            {noCategoryTransactions.length > 0 && <UnhandledTransactions />}
           </div>
-
           {transactionsToUpload.length > 0 &&
             noCategoryTransactions.length === 0 &&
-            multiCategoriesTransactions.length === 0 &&
             newAccountInfo.name === null &&
             isFileUploaded && (
               <>
