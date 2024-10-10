@@ -11,20 +11,11 @@ export const useUploadToDatabase = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const transactionsToUpload = useUploadStore(
-    (state) => state.transactionsToUpload
-  );
-  const setNoCategoryTransactions = useTransactionStore(
-    (state) => state.setNoCategoryTransactions
-  );
-  const setUploadedTransactions = useUploadStore(
-    (state) => state.setUploadedTransactions
-  );
-
-  const setNewAccountInfo = useAccountStore((state) => state.setNewAccountInfo);
-
-  const uploadTransactionToDatabase = async (isFirstUpload = false) => {
-    console.log(transactionsToUpload);
+  const transactionsToUpload = useUploadStore((state) => state.transactionsToUpload);
+  const setNoCategoryTransactions = useTransactionStore((state) => state.setNoCategoryTransactions);
+  const setUploadedTransactions = useUploadStore((state) => state.setUploadedTransactions);
+  const removeTransactionToUpload = useUploadStore((state) => state.removeTransactionToUpload);
+  const uploadTransactionToDatabase = async () => {
     if (transactionsToUpload.length === 0) {
       console.log("No transactions to upload");
       return;
@@ -32,16 +23,12 @@ export const useUploadToDatabase = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await uploadTransactions(
-        transactionsToUpload,
-        isFirstUpload
-      );
+      const response = await uploadTransactions(transactionsToUpload);
       setNoCategoryTransactions(response.noCategoryTransactions);
-      setNewAccountInfo({
-        name: response.newAccountName,
-        balance: response.startingBalance,
-      });
       setUploadedTransactions(response.uploadedTransactions);
+      for (const transaction of response.uploadedTransactions) {
+        removeTransactionToUpload(transaction.id!);
+      }
     } catch (error) {
       setError("Failed to upload transactions. Please try again.");
       console.error(error);

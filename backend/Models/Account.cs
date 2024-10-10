@@ -30,7 +30,8 @@ namespace server.Models
         [Required]
         public AccountType Type { get; set; }
         [Required]
-        public decimal Balance { get; set; }
+        public decimal StartingBalance { get; set; }
+
     }
 
 

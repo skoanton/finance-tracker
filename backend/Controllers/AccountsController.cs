@@ -41,8 +41,19 @@ namespace server.Controllers
             return Ok(account);
         }
 
-        [HttpPost("create")]
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetAccountByName(string name)
+        {
+            var account = await _context.GetAccountByNameAsync(name);
 
+            if (account == null)
+            {
+                return NotFound();
+            }
+            return Ok(account);
+        }
+
+        [HttpPost("create")]
         public async Task<IActionResult> CreateAccount(Account account)
         {
             var createdAccount = await _context.CreateAccountAsync(account);
@@ -91,6 +102,23 @@ namespace server.Controllers
             return Ok(accounts);
         }
 
+        [HttpGet("balance/{id}")]
+        public async Task<ActionResult<int>> GetAccountBalance(int id)
+        {
+            var account = await _context.GetBalance(id);
+            if (account == null)
+            {
+                return NotFound();
+            }
+            return Ok(account);
+        }
+
+        [HttpGet("balance/total")]
+        public async Task<ActionResult<int>> GetTotalBalance()
+        {
+            var total = await _context.GetBalanceForAllAccountsAsync();
+            return Ok(total);
+        }
 
     }
 }

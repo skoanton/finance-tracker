@@ -17,8 +17,7 @@ interface UploadState {
 
 export const useUploadStore = create<UploadState>((set) => ({
   uploadedTransactions: [],
-  setUploadedTransactions: (transactions: Transaction[]) =>
-    set({ uploadedTransactions: transactions }),
+  setUploadedTransactions: (transactions: Transaction[]) => set({ uploadedTransactions: transactions }),
   addUploadedTransaction: (transaction: Transaction) =>
     set((state) => ({
       uploadedTransactions: [...state.uploadedTransactions, transaction],
@@ -26,25 +25,20 @@ export const useUploadStore = create<UploadState>((set) => ({
   updateUploadedTransaction: (updatedTransaction: Transaction) =>
     set((state) => ({
       uploadedTransactions: state.uploadedTransactions.map((transaction) =>
-        transaction.id === updatedTransaction.id
-          ? updatedTransaction
-          : transaction
+        transaction.id === updatedTransaction.id ? updatedTransaction : transaction
       ),
     })),
   resetUploadedTransactions: () => set({ uploadedTransactions: [] }),
 
   transactionsToUpload: [],
-  setTransactionsToUpload: (transactions: CsvFile[]) =>
-    set({ transactionsToUpload: transactions }),
+  setTransactionsToUpload: (transactions: CsvFile[]) => set({ transactionsToUpload: transactions }),
   addTransactionToUpload: (transaction: CsvFile) =>
     set((state) => ({
       transactionsToUpload: [...state.transactionsToUpload, transaction],
     })),
   removeTransactionToUpload: (id: number) =>
     set((state) => ({
-      transactionsToUpload: state.transactionsToUpload.filter(
-        (transaction) => transaction.id !== id
-      ),
+      transactionsToUpload: state.transactionsToUpload.filter((transaction) => transaction.id !== id),
     })),
   resetTransactionsToUpload: () => set({ transactionsToUpload: [] }),
 }));

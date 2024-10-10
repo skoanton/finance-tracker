@@ -6,14 +6,7 @@ import { Category, CsvFile, Transaction } from "@/models/generatedTypes";
 import UnhandledTransactions from "./UnhandledTransactions";
 import { uploadTransactions } from "@/services/api/transactionService";
 import AccountModal from "../AccountModal";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useFileUpload } from "@/hooks/useFileUpload";
 
@@ -29,32 +22,18 @@ import { useRouter } from "next/navigation";
 type FileUploaderProps = {};
 
 export default function FileUploader({}: FileUploaderProps) {
-  const {
-    isFileUploaded,
-    parseCsvFile,
-    isLoading: isFileLoading,
-  } = useFileUpload();
-
-  const noCategoryTransactions = useTransactionStore(
-    (state) => state.noCategoryTransactions
-  );
-  const transactionsToUpload = useUploadStore(
-    (state) => state.transactionsToUpload
-  );
-  const { uploadTransactionToDatabase } = useUploadToDatabase();
-
-  useEffect(() => {
-    if (transactionsToUpload.length > 0) {
-      console.log("Transactions to upload updated", transactionsToUpload);
-      uploadTransactionToDatabase();
-    }
-  }, [transactionsToUpload]);
-  const newAccountInfo = useAccountStore((state) => state.newAccountInfo);
-  const [isOpen, setIsOpen] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const { isFileUploaded, parseCsvFile, isLoading: isFileLoading, accountExists } = useFileUpload();
+  const noCategoryTransactions = useTransactionStore((state) => state.noCategoryTransactions);
+  const transactionsToUpload = useUploadStore((state) => state.transactionsToUpload);
+  const transactionsUploaded = useUploadStore((state) => state.uploadedTransactions);
+  const { uploadTransactionToDatabase, isLoading: uploadingIsLoading } = useUploadToDatabase();
   const { toast } = useToast();
   const { resetStates } = useResetStates();
   const router = useRouter();
+
+  const [isOpen, setIsOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleCompletion = async () => {
     setIsLoading(true);
     await uploadTransactionToDatabase();
@@ -72,6 +51,15 @@ export default function FileUploader({}: FileUploaderProps) {
     router.back();
   };
 
+  useEffect(() => {
+    if (accountExists && transactionsToUpload.length > 0 && isFileUploaded) {
+      uploadTransactionToDatabase();
+    }
+  }, [accountExists, transactionsToUpload, isFileUploaded]);
+
+  const isTransactionsReadyToUpload = transactionsToUpload.length > 0 && noCategoryTransactions.length === 0 && !uploadingIsLoading;
+  const isTransactionsUploaded = transactionsToUpload.length === 0 && isFileUploaded;
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleModalClose}>
@@ -80,40 +68,31 @@ export default function FileUploader({}: FileUploaderProps) {
             <DialogTitle className="text-xl">Upload Transactions</DialogTitle>
             <DialogDescription>Upload a CSV transactions</DialogDescription>
           </DialogHeader>
+
           {!isFileUploaded && (
             <div className="flex flex-col gap-2">
               <div className="flex gap-5 items-center">
-                <Input
-                  type="file"
-                  onChange={(e) => parseCsvFile(e)}
-                  className="w-52"
-                />
+                <Input type="file" onChange={(e) => parseCsvFile(e)} className="w-52" />
               </div>
             </div>
           )}
           <div>
-            {isFileLoading && (
-              <p className="animate-pulse">Uploading file...</p>
-            )}
-            {newAccountInfo.name && newAccountInfo.balance !== null && (
-              <AccountModal />
-            )}
+            {isFileLoading && <p className="animate-pulse">Uploading file...</p>}
+            {!accountExists && <AccountModal />}
+            {uploadingIsLoading && <p className="animate-pulse">Working...</p>}
             {noCategoryTransactions.length > 0 && <UnhandledTransactions />}
           </div>
-          {transactionsToUpload.length > 0 &&
-            noCategoryTransactions.length === 0 &&
-            newAccountInfo.name === null &&
-            isFileUploaded && (
-              <>
-                <p>
-                  <span className="font-bold">
-                    {transactionsToUpload.length}{" "}
-                  </span>
-                  Transactions ready to be uploaded{" "}
-                </p>
-                <Button onClick={() => handleCompletion()}>Upload</Button>
-              </>
-            )}
+
+          {isTransactionsUploaded && <p>Transactions uploaded</p>}
+
+          {isTransactionsReadyToUpload && (
+            <>
+              <p>
+                <span className="font-bold">{transactionsToUpload.length}</span> Transactions ready to be uploaded{" "}
+              </p>
+              <Button onClick={handleCompletion}>Upload</Button>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </>

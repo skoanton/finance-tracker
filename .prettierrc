@@ -1,0 +1,14 @@
+{
+    "printWidth": 150,               // Max line width (default is 80)
+    "tabWidth": 2,                   // Number of spaces per indentation level (default is 2)
+    "useTabs": false,                // Use spaces instead of tabs (default is false)
+    "semi": true,                    // Add semicolons (default is true)
+    "singleQuote": false,             // Use single quotes instead of double quotes (default is false)
+    "trailingComma": "es5",          // Add trailing commas for ES5+ (none, es5, all)
+    "bracketSpacing": true,          // Add spaces between brackets in object literals
+    "arrowParens": "always",         // Include parentheses around a sole arrow function parameter
+    "endOfLine": "lf",               // End of line character (lf, crlf, cr, auto)
+    "jsxSingleQuote": false,         // Use double quotes in JSX (default is false)
+    "jsxBracketSameLine": false      // Put closing JSX bracket on a new line (default is false)
+  }
+  

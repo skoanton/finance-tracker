@@ -17,10 +17,7 @@ export const getAllCategories = async (): Promise<Category[]> => {
 
 export const createCategory = async (category: Category): Promise<Category> => {
   try {
-    const response = await axios.post(
-      "http://localhost:5000/api/category",
-      category
-    );
+    const response = await axios.post("http://localhost:5000/api/category", category);
 
     if (response.status !== 201) {
       throw new Error("Error creating budget category");
@@ -30,11 +27,7 @@ export const createCategory = async (category: Category): Promise<Category> => {
   } catch (error: any) {
     // More detailed error handling
     if (error.response) {
-      throw new Error(
-        `Error creating Budget Category: ${
-          error.response.data.message || error.message
-        }`
-      );
+      throw new Error(`Error creating Budget Category: ${error.response.data.message || error.message}`);
     } else {
       throw new Error(`Error creating Budget Category: ${error.message}`);
     }
@@ -43,10 +36,7 @@ export const createCategory = async (category: Category): Promise<Category> => {
 
 export const updateCategory = async (category: Category): Promise<Category> => {
   try {
-    const response = await axios.put(
-      `http://localhost:5000/api/category/${category.id}`,
-      category
-    );
+    const response = await axios.put(`http://localhost:5000/api/category/${category.id}`, category);
 
     if (response.status !== 200) {
       throw new Error("Error updating category");
@@ -60,9 +50,7 @@ export const updateCategory = async (category: Category): Promise<Category> => {
 
 export const deleteCategory = async (id: number): Promise<Category> => {
   try {
-    const response = await axios.delete(
-      `http://localhost:5000/api/category/${id}`
-    );
+    const response = await axios.delete(`http://localhost:5000/api/category/${id}`);
 
     if (response.status !== 200) {
       throw new Error("Error deleting category");
@@ -74,13 +62,9 @@ export const deleteCategory = async (id: number): Promise<Category> => {
   }
 };
 
-export const getCategoriesByType = async (
-  categoryType: CategoryType
-): Promise<Category[]> => {
+export const getCategoriesByType = async (categoryType: CategoryType): Promise<Category[]> => {
   try {
-    const response = await axios.get(
-      `http://localhost:5000/api/category/type/${categoryType}`
-    );
+    const response = await axios.get(`http://localhost:5000/api/category/type/${categoryType}`);
 
     if (response.status !== 200) {
       throw new Error("Error getting categories by type");

@@ -45,7 +45,7 @@ namespace server.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateTransaction([FromBody] List<CsvFile> transactions, Boolean? isFirst = false)
+        public async Task<IActionResult> CreateTransaction([FromBody] List<CsvFile> transactions)
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
             var accounts = await _accountService.GetAllAccountsAsync();
@@ -54,14 +54,7 @@ namespace server.Controllers
 
             if (account == null)
             {
-                results.Add(new
-                {
-                    Status = "No account found",
-                    Message = "Account not found, create one",
-                    AccountName = new String(transactions.First().AccountName),
-                    StartBalance= transactions.First().StartBalance
-                });
-                return Ok(results);
+                return NotFound();
             }
 
             foreach (var transaction in transactions)
@@ -110,11 +103,6 @@ namespace server.Controllers
                         Message = "Transaction created successfully",
                         Transaction = newTransaction
                     });
-                    if (isFirst == false)
-                    {
-
-                        account.Balance += newTransaction.Amount;
-                    }
 
                 }
 

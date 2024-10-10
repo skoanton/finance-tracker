@@ -8,7 +8,7 @@ namespace backend.Services
     public interface IAccountService
     {
         Task<IEnumerable<Account>> GetAllAccountsAsync();
-        Task<Account> GetAccountByNameAsunc(string name);
+        Task<Account> GetAccountByNameAsync(string name);
         Task<Account> GetAccountByIdAsync(int id);
         Task<Account> CreateAccountAsync(Account account);
         Task<Account> UpdateAccountAsync(int id, Account updatedAccount);
@@ -16,6 +16,8 @@ namespace backend.Services
         Task<List<AccountsBalanceSummary>> GetAccountsBalancePastWeekAsync();
         Task<List<AccountsBalanceSummary>> GetAccountsBalancePastMonthAsync();
         Task<List<AccountsBalanceSummary>> GetAccountsBalancePastYearAsync();
+        Task<decimal> GetBalance(int id);
+        Task<decimal> GetBalanceForAllAccountsAsync();
 
     }
     public class AccountService : IAccountService
@@ -35,7 +37,7 @@ namespace backend.Services
         {
             return await _context.Accounts.FindAsync(id);
         }
-        public async Task<Account> GetAccountByNameAsunc(string name)
+        public async Task<Account> GetAccountByNameAsync(string name)
         {
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Name == name);
         }
@@ -53,7 +55,6 @@ namespace backend.Services
                 return null;
             }
             account.Name = updatedAccount.Name;
-            account.Balance = updatedAccount.Balance;
             account.Type = updatedAccount.Type;
 
             _context.Accounts.Update(account);
@@ -63,7 +64,7 @@ namespace backend.Services
         public async Task<Account> DeleteAccountAsync(int id)
         {
             var account = await _context.Accounts.FindAsync(id);
-            
+
             if (account == null)
             {
                 return null;
@@ -79,6 +80,7 @@ namespace backend.Services
         }
         public async Task<List<AccountsBalanceSummary>> GetAccountsBalancePastWeekAsync()
         {
+
             var currentDate = DateTime.Now;
 
             // Calculate the start of the current week (Monday)
@@ -91,8 +93,11 @@ namespace backend.Services
 
             foreach (var account in accounts)
             {
-                // Step 1: Get the current balance for the account (total sum of all transactions for the account)
-                decimal currentBalance = account.Balance;
+                // Step 1: Get the current balance by summing all transactions for the account up to the current date
+                // Adding the starting balance if applicable
+                decimal currentBalance = account.StartingBalance + await _context.Transactions
+                    .Where(t => t.AccountId == account.Id && t.TransactionDate <= currentDate)
+                    .SumAsync(t => t.Amount);
 
                 // Step 2: Get the transactions for the current week (we will subtract these from the current balance)
                 var weeklyTransactions = await _context.Transactions
@@ -139,6 +144,7 @@ namespace backend.Services
                 .ToList();
 
             return allAccountsBalanceSummary;
+
         }
 
         public async Task<List<AccountsBalanceSummary>> GetAccountsBalancePastMonthAsync()
@@ -155,8 +161,10 @@ namespace backend.Services
 
             foreach (var account in accounts)
             {
-                // Step 1: Get the current balance for the account (total sum of all transactions for the account)
-                decimal currentBalance = account.Balance;
+                // Step 1: Get the current balance by summing all transactions up to today and adding the starting balance
+                decimal currentBalance = account.StartingBalance + await _context.Transactions
+                    .Where(t => t.AccountId == account.Id && t.TransactionDate <= currentDate)
+                    .SumAsync(t => t.Amount);
 
                 // Step 2: Get the transactions for the current month (we will subtract these from the current balance)
                 var monthlyTransactions = await _context.Transactions
@@ -200,7 +208,9 @@ namespace backend.Services
                 .ToList();
 
             return allAccountsBalanceSummary;
+
         }
+
         public async Task<List<AccountsBalanceSummary>> GetAccountsBalancePastYearAsync()
         {
             var currentDate = DateTime.Now;
@@ -215,8 +225,10 @@ namespace backend.Services
 
             foreach (var account in accounts)
             {
-                // Step 1: Get the current balance for the account (total sum of all transactions for the account)
-                decimal currentBalance = account.Balance;
+                // Step 1: Get the current balance by summing all transactions up to today and adding the starting balance
+                decimal currentBalance = account.StartingBalance + await _context.Transactions
+                    .Where(t => t.AccountId == account.Id && t.TransactionDate <= currentDate)
+                    .SumAsync(t => t.Amount);
 
                 // Step 2: Get the transactions for the past years (grouped by year)
                 var yearlyTransactions = await _context.Transactions
@@ -260,6 +272,33 @@ namespace backend.Services
                 .ToList();
 
             return allAccountsBalanceSummary;
+
         }
+
+        public async Task<decimal> GetBalance(int id)
+        {
+            var account = await _context.Accounts.FindAsync(id);
+            if(account == null)
+            {
+                return 0;
+            }
+            var transactionsSum = await _context.Transactions
+                .Where(t => t.AccountId == id)
+                .SumAsync(t => t.Amount);
+            return account.StartingBalance + transactionsSum;
+
+        }
+
+        public async Task<decimal> GetBalanceForAllAccountsAsync()
+        {
+            var accounts = await _context.Accounts.ToListAsync();
+            var totalBalance = 0m;
+            foreach (var account in accounts)
+            {
+                totalBalance += await GetBalance(account.Id);
+            }
+            return totalBalance;
+        }
+
     }
 }

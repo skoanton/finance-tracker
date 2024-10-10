@@ -35,31 +35,6 @@ export default function TransactionsView({}: TransactionsViewProps) {
     getData();
   }, []);
 
-  const handleDeleteTransactions = (transactionIdsToDelete: number[]) => {
-    setTransactions((prevTransactions) =>
-      prevTransactions.filter((t) => !transactionIdsToDelete.includes(t.id))
-    );
-  };
-
-  const handleSetTransactions = (transaction: TransactionTableData) => {
-    setTransactions((prevTransactions) => {
-      // Check if the transaction already exists in the array
-      const transactionExists = prevTransactions.some(
-        (t) => t.id === transaction.id
-      );
-
-      if (transactionExists) {
-        // If it exists, update the transaction
-        return prevTransactions.map((t) =>
-          t.id === transaction.id ? transaction : t
-        );
-      } else {
-        // If it doesn't exist, add it to the array
-        return [...prevTransactions, transaction];
-      }
-    });
-  };
-
   return (
     <>
       <DataTable columns={columns} data={transactions} />

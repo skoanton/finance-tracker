@@ -14,31 +14,21 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { useResetStates } from "@/hooks/useResetStates";
 
-type UploadedTransactionsPreviewProps = {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-};
+type UploadedTransactionsPreviewProps = {};
 
-export default function UploadedTransactionsPreview({
-  isOpen,
-  onOpenChange,
-}: UploadedTransactionsPreviewProps) {
+export default function UploadedTransactionsPreview({}: UploadedTransactionsPreviewProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [newTransactions, setNewTransactions] = useState<Transaction[] | null>(
-    null
-  );
-
-  const { getCategories } = useGetAllCategories();
+  const [newTransactions, setNewTransactions] = useState<Transaction[] | null>(null);
   const router = useRouter();
+  const { resetStates } = useResetStates();
+  const { getCategories } = useGetAllCategories();
+  const categories = useCategoryStore((state) => state.categories);
+  const uploadedTransactions = useUploadStore((state) => state.uploadedTransactions);
+
   useEffect(() => {
     getCategories();
   }, []);
 
-  const categories = useCategoryStore((state) => state.categories);
-  const { resetStates } = useResetStates();
-  const uploadedTransactions = useUploadStore(
-    (state) => state.uploadedTransactions
-  );
   const onSetTransactions = (transaction: Transaction, category: Category) => {
     const newTransaction = {
       ...transaction,
@@ -47,9 +37,7 @@ export default function UploadedTransactionsPreview({
     if (!newTransactions || newTransactions!.length === 0) {
       setNewTransactions([newTransaction]);
     } else {
-      const transactionExists = newTransactions.some(
-        (t) => t.id === newTransaction.id
-      );
+      const transactionExists = newTransactions.some((t) => t.id === newTransaction.id);
       if (!transactionExists) {
         setNewTransactions([...newTransactions, newTransaction]);
       }
@@ -66,25 +54,20 @@ export default function UploadedTransactionsPreview({
           console.error("Error updating transaction", error);
         } finally {
           setIsLoading(false);
-          router.push("/transactions");
-          resetStates();
           toast({
             description: "Transactions has been updated.",
           });
         }
       }
-    } else {
-      router.push("/transactions");
     }
+    resetStates();
+    router.push("/transactions");
   };
 
   return (
     <>
       <Button onClick={() => handleUpload()}>Confirm transactions</Button>
-      <p className="italic my-2">
-        Here you can double check your transactions if they have correct
-        categories
-      </p>
+      <p className="italic my-2">Here you can double check your transactions if they have correct categories</p>
       <ScrollArea className="border-none my-5">
         <div className="flex flex-col gap-5">
           {uploadedTransactions.map((transaction) => (
@@ -96,13 +79,7 @@ export default function UploadedTransactionsPreview({
                 </div>
                 <div>
                   {isLoading && <p className="animate-pulse">Loading...</p>}
-                  {categories && (
-                    <CategoryOptions
-                      transaction={transaction}
-                      categories={categories}
-                      onSetTransactions={onSetTransactions}
-                    />
-                  )}
+                  {categories && <CategoryOptions transaction={transaction} categories={categories} onSetTransactions={onSetTransactions} />}
                 </div>
               </div>
             </div>

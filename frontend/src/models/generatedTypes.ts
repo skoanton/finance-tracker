@@ -120,10 +120,9 @@ export interface IClient {
      */
     categoryDELETE(id: number): Promise<void>;
     /**
-     * @param type (optional) 
      * @return Success
      */
-    type(type: CategoryType | undefined, id: string): Promise<void>;
+    type(type: CategoryType): Promise<void>;
     /**
      * @return Success
      */
@@ -142,11 +141,10 @@ export interface IClient {
      */
     transactionDELETE(id: number): Promise<void>;
     /**
-     * @param isFirst (optional) 
      * @param body (optional) 
      * @return Success
      */
-    create2(isFirst: boolean | undefined, body: CsvFile[] | undefined): Promise<void>;
+    create2(body: CsvFile[] | undefined): Promise<void>;
     /**
      * @param startDate (optional) 
      * @param endDate (optional) 
@@ -1444,18 +1442,13 @@ export class Client implements IClient {
     }
 
     /**
-     * @param type (optional) 
      * @return Success
      */
-    type(type: CategoryType | undefined, id: string, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/Category/type/{id}?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (type === null)
-            throw new Error("The parameter 'type' cannot be null.");
-        else if (type !== undefined)
-            url_ += "type=" + encodeURIComponent("" + type) + "&";
+    type(type: CategoryType, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/Category/type/{type}";
+        if (type === undefined || type === null)
+            throw new Error("The parameter 'type' must be defined.");
+        url_ = url_.replace("{type}", encodeURIComponent("" + type));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -1701,16 +1694,11 @@ export class Client implements IClient {
     }
 
     /**
-     * @param isFirst (optional) 
      * @param body (optional) 
      * @return Success
      */
-    create2(isFirst: boolean | undefined, body: CsvFile[] | undefined, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/Transaction/create?";
-        if (isFirst === null)
-            throw new Error("The parameter 'isFirst' cannot be null.");
-        else if (isFirst !== undefined)
-            url_ += "isFirst=" + encodeURIComponent("" + isFirst) + "&";
+    create2(body: CsvFile[] | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/Transaction/create";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -1879,7 +1867,7 @@ export interface Account {
     id?: number;
     name: string;
     type: AccountType;
-    balance: number;
+    startingBalance: number;
 }
 
 export enum AccountType {

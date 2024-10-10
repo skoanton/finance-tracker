@@ -3,36 +3,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Account, AccountType, CsvFile } from "@/models/generatedTypes";
 import { createAccount } from "@/services/api/accountService";
 import { useState } from "react";
 import { useUploadToDatabase } from "@/hooks/useUploadToDatabase";
 import { useAccountStore } from "@/stores/useAccountStore";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const formSchema = z.object({
   accountName: z.string().min(2).max(50),
-  accountType: z.enum([
-    AccountType.Checking,
-    AccountType.Savings,
-    AccountType.Card,
-  ]),
+  accountType: z.enum([AccountType.Checking, AccountType.Savings, AccountType.Card]),
   startAmount: z.coerce.number().min(0),
 });
 type AccountFormProps = {
@@ -58,7 +40,7 @@ export default function AccountForm({ onSetIsOpen }: AccountFormProps) {
     const newAccount: Account = {
       name: values.accountName,
       type: values.accountType,
-      balance: values.startAmount,
+      startingBalance: values.startAmount,
     };
 
     try {
@@ -69,7 +51,7 @@ export default function AccountForm({ onSetIsOpen }: AccountFormProps) {
     } finally {
       setIsLoading(false);
       onSetIsOpen();
-      uploadTransactionToDatabase(true);
+      uploadTransactionToDatabase();
     }
   }
 
@@ -103,12 +85,8 @@ export default function AccountForm({ onSetIsOpen }: AccountFormProps) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={AccountType.Card}>Card</SelectItem>
-                      <SelectItem value={AccountType.Checking}>
-                        Checking
-                      </SelectItem>
-                      <SelectItem value={AccountType.Savings}>
-                        Savings
-                      </SelectItem>
+                      <SelectItem value={AccountType.Checking}>Checking</SelectItem>
+                      <SelectItem value={AccountType.Savings}>Savings</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>

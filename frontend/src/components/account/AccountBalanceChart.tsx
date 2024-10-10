@@ -24,6 +24,8 @@ import {
   getAccountBalanceSummaryByYear,
 } from "@/services/api/accountService";
 import { set } from "date-fns";
+import { useGetAccountBalance } from "@/hooks/useGetAccountBalance";
+import { formatToSek } from "@/lib/utils/formatToSek";
 export const description = "A line chart";
 const chartData = [
   { interval: "January", balance: 186 },
@@ -40,13 +42,9 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-type AccountBalanceChartProps = {
-  totalBalance: string;
-};
+type AccountBalanceChartProps = {};
 
-export default function AccountBalanceChart({
-  totalBalance,
-}: AccountBalanceChartProps) {
+export default function AccountBalanceChart({}: AccountBalanceChartProps) {
   const [weekIsActive, setWeekIsActive] = useState(true);
   const [monthIsActive, setMonthIsActive] = useState(false);
   const [yearIsActive, setYearIsActive] = useState(false);
@@ -55,10 +53,14 @@ export default function AccountBalanceChart({
   );
   const [isLoading, setIsLoading] = useState(false);
 
+  const { fetchTotalAccountBalance, totalAccountBalance, error } =
+    useGetAccountBalance();
+
   useEffect(() => {
     const fetchChartData = async () => {
       setIsLoading(true);
       const response = await getAccountBalanceSummaryByWeek();
+      await fetchTotalAccountBalance();
       if (response) {
         setChartData(response);
       }
@@ -106,7 +108,9 @@ export default function AccountBalanceChart({
         <CardHeader className="flex-row justify-between items-center">
           <CardTitle className="text-sm">
             Total Balance
-            <p className="text-2xl font-bold">{totalBalance}</p>
+            <p className="text-2xl font-bold">
+              {formatToSek(totalAccountBalance)}
+            </p>
           </CardTitle>
           <div className="flex items-center border rounded-lg">
             <Button

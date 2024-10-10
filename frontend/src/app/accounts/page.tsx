@@ -15,7 +15,6 @@ type AccountPageProps = {};
 export default function AccountPage({}: AccountPageProps) {
   const setAccounts = useAccountStore((state) => state.setAccounts);
   const accounts = useAccountStore((state) => state.accounts);
-  const [totalBalance, setTotalBalance] = useState<string>("");
   useEffect(() => {
     const getData = async () => {
       try {
@@ -23,12 +22,6 @@ export default function AccountPage({}: AccountPageProps) {
         console.log(response);
         const accounts = response;
         setAccounts(accounts);
-
-        const total = accounts.reduce((acc, account) => {
-          return acc + account.balance;
-        }, 0);
-        const formattedTotal = formatToSek(total);
-        setTotalBalance(formattedTotal);
       } catch (error) {
         console.log(error);
       }
@@ -41,7 +34,7 @@ export default function AccountPage({}: AccountPageProps) {
       <H1 className="mb-5">Accounts</H1>
       <div className="flex flex-col gap-5">
         <div className="grid grid-cols-2 gap-2">
-          <AccountBalanceChart totalBalance={totalBalance} />
+          <AccountBalanceChart />
           <AccountRecentTransactions />
         </div>
         <div className="grid grid-cols-3 gap-2">

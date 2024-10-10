@@ -4,12 +4,7 @@ import CategoryModal from "@/components/categories/CategoryModal";
 import { Category } from "@/models/generatedTypes";
 import { useEffect, useState } from "react";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useGetAllCategories } from "@/hooks/useGetAllCategories";
 import { useCategoryStore } from "@/stores/useCategoryStore";
 import { get } from "http";
@@ -44,8 +39,7 @@ export default function CategoriesView({}: CategoriesViewProps) {
                 <Accordion type="single" collapsible>
                   <AccordionItem value="item-1">
                     <AccordionTrigger className="font-bold">
-                      {categoryTypeMap[typeKey]} (
-                      {categories.filter((c) => c.type === typeKey).length})
+                      {categoryTypeMap[typeKey]} ({categories.filter((c) => c.type === typeKey).length})
                     </AccordionTrigger>
                     <AccordionContent>
                       {/* Display the title for each type */}
