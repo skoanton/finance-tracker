@@ -51,9 +51,10 @@ namespace backend.Services
             
             if (transaction == null)
             {
+                Console.WriteLine("Transaction not found");
                 return null;
             }
-
+            Console.WriteLine($"Updating Transaction ID: {transaction.Id}");
             var category = await _context.Categories.FindAsync(updatedTransaction.CategoryId);
             if (category != null) {
                 category.Description.Add(updatedTransaction.Description);
@@ -64,13 +65,23 @@ namespace backend.Services
             transaction.Description = updatedTransaction.Description;
             transaction.CategoryId = updatedTransaction.CategoryId;
             transaction.AccountId = updatedTransaction.AccountId;
-
+            Console.WriteLine($"Transaction state: {_context.Entry(transaction).State}");
+            Console.WriteLine($"Category state: {_context.Entry(category).State}");
             _context.Transactions.Update(transaction);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Transaction updated successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating transaction: {ex.Message}");
+            }
             return await _context.Transactions
-            .Include(t => t.Account)
-            .Include(t => t.Category)
-            .FirstOrDefaultAsync(t => t.Id == id);
+        .Include(t => t.Account)
+        .Include(t => t.Category)
+        .FirstOrDefaultAsync(t => t.Id == id);
         }
         public async Task<Transaction> DeleteTransactionAsync(int id)
         {

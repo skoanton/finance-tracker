@@ -57,7 +57,7 @@ export default function UploadedTransactionsPreview({
   const onSetTransactions = (transaction: Transaction, category: Category) => {
     const newTransaction = {
       ...transaction,
-      category: category,
+      categoryId: category.id!,
     };
     if (!newTransactions || newTransactions!.length === 0) {
       setNewTransactions([newTransaction]);
