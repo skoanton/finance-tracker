@@ -1,0 +1,24 @@
+{
+    "runtime": "Net80",
+    "documentGenerator": {
+      "fromDocument": {
+        "url": "http://localhost:5000/swagger/v1/swagger.json"
+      }
+    },
+    "codeGenerators": {
+      "openApiToTypeScriptClient": {
+        "className": "{controller}Client",
+        "template": "Axios",
+        "typeStyle": "Interface",
+        "enumStyle": "Enum",
+        "dateTimeType": "Date",
+        "generateClientClasses": true,
+        "generateClientInterfaces": true,
+        "generateDtoTypes": true,
+        "operationGenerationMode": "MultipleClientsFromOperationId",
+        "markOptionalProperties": true,
+        "output": "src/models/generatedTypes.ts",
+        "generateEnumAsString": true
+      }
+    }
+  }

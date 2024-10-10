@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using server.Models;
 using Microsoft.AspNetCore.Mvc;
 using server.Data;
+using backend.Services;
+using backend.Models;
 
 namespace server.Controllers
 {
@@ -12,23 +14,28 @@ namespace server.Controllers
     [Route("api/[controller]")]
     public class TransactionController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        public TransactionController(ApplicationDbContext context)
+        private readonly ITransactionService _transactionService;
+        private readonly ICategoryService _categoryService;
+        private readonly IAccountService _accountService;
+        public TransactionController(ITransactionService transactionService, ICategoryService categoryService, IAccountService accountService)
         {
-            _context = context;
+            _transactionService = transactionService;
+            _categoryService = categoryService;
+            _accountService = accountService;
+
         }
 
         [HttpGet]
-        public IActionResult GetAllTransactions()
+        public async Task<IActionResult> GetAllTransactions()
         {
-            var transactions = _context.Transactions.ToList();
+            var transactions = await _transactionService.GetAllTransactionsAsync();
             return Ok(transactions);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetTransactionById(int id)
+        public async Task<IActionResult> GetTransactionById(int id)
         {
-            var transaction = _context.Transactions.Find(id);
+            var transaction = await _transactionService.GetTransactionByIdAsync(id);
 
             if (transaction == null)
             {
@@ -37,45 +44,133 @@ namespace server.Controllers
             return Ok(transaction);
         }
 
-        [HttpPost]
-        public IActionResult CreateTransaction(Transaction transaction)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateTransaction([FromBody] List<CsvFile> transactions, Boolean? isFirst = false)
         {
-            _context.Transactions.Add(transaction);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(GetTransactionById), new { id = transaction.Id }, transaction);
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            var accounts = await _accountService.GetAllAccountsAsync();
+            var results = new List<object>();
+            var account = accounts.FirstOrDefault(account => account.Name == transactions.First().AccountName);
+
+            if (account == null)
+            {
+                results.Add(new
+                {
+                    Status = "No account found",
+                    Message = "Account not found, create one",
+                    AccountName = new String(transactions.First().AccountName),
+                    StartBalance= transactions.First().StartBalance
+                });
+                return Ok(results);
+            }
+
+            foreach (var transaction in transactions)
+            {
+                Console.WriteLine("Inside transaction");
+                var categoriesFoundWithDescription = categories.Where(category => category.Description.Contains(transaction.Description)).FirstOrDefault();
+                Category? category = null;
+
+                
+
+                if (categoriesFoundWithDescription != null)
+                {
+                    category = categoriesFoundWithDescription;
+                }
+                else
+                {
+                    results.Add(new
+                    {
+                        Status = "No Category Found",
+                        Message = "Category not found, Choose one",
+                        Transaction = transaction
+                        
+                    });
+                    continue;
+                }
+
+               
+
+                if (account != null && category != null)
+                {
+                    var newTransaction = new Transaction
+                    {
+                        Amount = transaction.Amount,
+                        TransactionDate = transaction.TransactionDate,
+                        Description = transaction.Description,
+                        Account = account,
+                        Category = category,
+                        AccountId = account.Id,
+                        CategoryId = category.Id 
+                    };
+
+                    await _transactionService.CreateTransactionAsync(newTransaction);
+                    results.Add(new
+                    {
+                        Status = "Transaction Uploaded",
+                        Message = "Transaction created successfully",
+                        Transaction = newTransaction
+                    });
+                    if (isFirst == false)
+                    {
+
+                        account.Balance += newTransaction.Amount;
+                    }
+
+                }
+
+                else
+                {
+                    Console.WriteLine("No transaction created");
+                }
+
+            }
+            {
+                results.Add(new
+                {
+                    Status = "All Categories",
+                    Messeage = "All available categories",
+                    AllCategories = categories
+
+                });
+            }
+                return Ok(results);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateTransaction(int id, Transaction updatedTransaction)
+        public async Task<IActionResult> UpdateTransaction(int id, Transaction updatedTransaction)
         {
-            var transaction = _context.Transactions.Find(id);
+            var transaction = await _transactionService.UpdateTransactionAsync(id, updatedTransaction);
             if (transaction == null)
             {
                 return NotFound();
             }
 
-            transaction.AccountId = updatedTransaction.AccountId;
-            transaction.CategoryId = updatedTransaction.CategoryId;
-            transaction.Amount = updatedTransaction.Amount;
-            transaction.TransactionDate = updatedTransaction.TransactionDate;
-            transaction.Description = updatedTransaction.Description;
-
-            _context.SaveChanges();
-            return NoContent();
+            return Ok(transaction);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTransaction(int id)
+        public async  Task<IActionResult> DeleteTransaction(int id)
         {
-            var transaction = _context.Transactions.Find(id);
+            var transaction = await _transactionService.DeleteTransactionAsync(id);
             if (transaction == null)
             {
                 return NotFound();
             }
+            return Ok(transaction);
+        }
 
-            _context.Transactions.Remove(transaction);
-            _context.SaveChanges();
-            return NoContent();
+        [HttpGet("summaryMonth")]
+        public async Task<ActionResult<List<CategorySummary>>> GetTransactionsThisMonth(DateTime startDate, DateTime endDate, CategoryType type)
+        {
+            var transactions = await _transactionService.GetMonthlyCategorySumsAsync(startDate, endDate,type);
+            return Ok(transactions);
+        }
+
+        [HttpGet("lastTen")]
+        public async Task<ActionResult<List<Transaction>>> GetLastTenTransactions()
+        {
+            var transactions = await _transactionService.GetLastTenTransactions();
+            return Ok(transactions);
         }
     }
 }

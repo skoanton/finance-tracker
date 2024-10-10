@@ -1,13 +1,4 @@
 services:
-  backend:
-    image: ${DOCKER_REGISTRY-}backend
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    ports:
-      - "5000:8080" # HostPort:ContainerPort for HTTP
-      - "5001:8081" # HostPort:ContainerPort for HTTPS (if needed)
-
   mysql:
     image: mysql:8.0
     container_name: mysql-db
@@ -20,3 +11,35 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql # Bind mount for persistent data
+
+  backend:
+    image: ${DOCKER_REGISTRY-}backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:8080" # HostPort:ContainerPort for HTTP
+      - "5001:8081" # HostPort:ContainerPort for HTTPS (if needed)
+    volumes:
+      - ./backend:/app # Mount the local code into the container
+    command: dotnet watch run # Ensure live reloading
+    depends_on:
+      - mysql
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend #if your Dockerfile is not at the same level change the path here (./frontend)
+      dockerfile: Dockerfile
+    command: npm run dev
+    environment:
+      - REACT_APP_API_URL="http://localhost:5000/api"
+      #if you’re using Windows, you may need to uncomment the next line - Sol from @Kobe E
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    depends_on:
+     - backend
