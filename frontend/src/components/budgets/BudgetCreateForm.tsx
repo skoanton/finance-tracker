@@ -70,11 +70,11 @@ export default function BudgetCreateForm({
     setShowNextForm(true);
   }
 
-  const categoryTypeMap: Record<number, string> = {
-    0: "Income",
-    1: "Expense",
-    2: "Savings",
-    /*     3: "Transfers", */
+  const categoryTypeMap: Record<string, string> = {
+    Income: "Income",
+    Expense: "Expense",
+    Savings: "Savings",
+    // Add any other categories as needed
   };
 
   return (
@@ -96,17 +96,16 @@ export default function BudgetCreateForm({
               )}
             />
             {Object.keys(categoryTypeMap).map((typeKey) => {
-              const type = parseInt(typeKey, 10);
               return (
                 <FormField
                   control={form.control}
                   name="categoriesChoices"
                   render={() => (
                     <FormItem>
-                      <h1 className="font-bold">{categoryTypeMap[type]}</h1>
+                      <h1 className="font-bold">{categoryTypeMap[typeKey]}</h1>
                       {categories &&
                         categories
-                          .filter((c) => c.type === type)
+                          .filter((c) => c.type === typeKey)
                           .map((category) => (
                             <FormField
                               key={category.id!}

@@ -63,9 +63,15 @@ namespace backend.Services
         public async Task<Account> DeleteAccountAsync(int id)
         {
             var account = await _context.Accounts.FindAsync(id);
+            
             if (account == null)
             {
                 return null;
+            }
+            var transactions = await _context.Transactions.Where(t => t.AccountId == id).ToListAsync();
+            if (transactions.Count > 0)
+            {
+                _context.Transactions.RemoveRange(transactions);
             }
             _context.Accounts.Remove(account);
             await _context.SaveChangesAsync();

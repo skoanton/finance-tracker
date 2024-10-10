@@ -29,6 +29,7 @@ export default function Navbar({}: NavbarProps) {
   const isCategories = pathname === "/categories";
   const isUpload = pathname === "/upload";
   const isBudget = pathname === "/budgets";
+
   return (
     <>
       <header className=" bg-primary w-64 fixed h-full">

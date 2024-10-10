@@ -1,5 +1,5 @@
 "use client";
-import { Category, CsvFile } from "@/models/generatedTypes";
+import { Category, CategoryType, CsvFile } from "@/models/generatedTypes";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +37,7 @@ import { updateCategory } from "@/services/api/categoryServices";
 import { useCategoryStore } from "@/stores/useCategoryStore";
 import { useGetAllCategories } from "@/hooks/useGetAllCategories";
 import { get } from "http";
+import TransactionOverview from "./transactions/TransactionOverview";
 
 const formSchema = z.object({
   categoryId: z.number().min(1),
@@ -69,11 +70,22 @@ export default function CategorySelectorModal({
   }, []);
 
   const categories = useCategoryStore((state) => state.categories);
-  console.log(categories);
-  const multiMatchesCategories = useCategoryStore(
-    (state) => state.multiMatchesCategories
-  );
+  const filteredCategories = categories.filter((c) => {
+    return selectedTransaction.amount > 0
+      ? [
+          CategoryType.Income,
+          CategoryType.Saving,
+          CategoryType.Transfer,
+        ].includes(c.type) // Positive transactions
+      : [
+          CategoryType.Expense,
+          CategoryType.Saving,
+          CategoryType.Transfer,
+        ].includes(c.type); // Negative transactions
+  });
+
   console.log("Currently selected transaction", selectedTransaction);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const categoryToChange = categories.find((x) => x.id == values.categoryId);
 
@@ -110,29 +122,7 @@ export default function CategorySelectorModal({
               Transaction
             </DialogTitle>
             <DialogDescription>Pick a category</DialogDescription>
-            <>
-              <div>
-                <p className="text-sm">
-                  <strong>Account:</strong> {selectedTransaction.accountName}{" "}
-                </p>
-                <p className="text-sm">
-                  {" "}
-                  <strong>Date:</strong>{" "}
-                  {new Date(
-                    selectedTransaction.transactionDate!
-                  ).toLocaleDateString()}{" "}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm">
-                  <strong>Description: </strong>{" "}
-                  {selectedTransaction.description}
-                </p>{" "}
-                <p className="text-sm">
-                  <strong>Amount:</strong> {selectedTransaction.amount} kr{" "}
-                </p>
-              </div>
-            </>
+            <TransactionOverview selectedTransaction={selectedTransaction} />
           </DialogHeader>
           <Form {...form}>
             <form
@@ -158,26 +148,15 @@ export default function CategorySelectorModal({
                         </SelectTrigger>
 
                         <SelectContent>
-                          {transactionType === "No Category"
-                            ? categories &&
-                              categories.map((category) => (
-                                <SelectItem
-                                  {...field}
-                                  key={category.id}
-                                  value={category.id!.toString()}
-                                >
-                                  {category.name}
-                                </SelectItem>
-                              ))
-                            : multiMatchesCategories &&
-                              multiMatchesCategories.map((category) => (
-                                <SelectItem
-                                  key={category.id}
-                                  value={category.name!}
-                                >
-                                  {category.name}
-                                </SelectItem>
-                              ))}
+                          {filteredCategories.map((category) => (
+                            <SelectItem
+                              {...field}
+                              key={category.id}
+                              value={category.id!.toString()}
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </FormControl>

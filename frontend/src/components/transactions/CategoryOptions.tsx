@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Category, Transaction } from "@/models/generatedTypes";
+import { Category, CategoryType, Transaction } from "@/models/generatedTypes";
 import { useState } from "react";
 type CategoryOptionsProps = {
   transaction: Transaction;
@@ -28,6 +28,19 @@ export default function CategoryOptions({
       setSelectedCategory(id);
     }
   };
+  const filteredCategories = categories.filter((c) => {
+    return transaction.amount > 0
+      ? [
+          CategoryType.Income,
+          CategoryType.Saving,
+          CategoryType.Transfer,
+        ].includes(c.type) // Positive transactions
+      : [
+          CategoryType.Expense,
+          CategoryType.Saving,
+          CategoryType.Transfer,
+        ].includes(c.type); // Negative transactions
+  });
 
   return (
     <>
@@ -44,7 +57,7 @@ export default function CategoryOptions({
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {categories.map((category) => (
+          {filteredCategories.map((category) => (
             <SelectItem key={category.id} value={category.id!.toString()}>
               {category.name}
             </SelectItem>

@@ -55,7 +55,6 @@ export default function FileUploader({}: FileUploaderProps) {
   const newAccountInfo = useAccountStore((state) => state.newAccountInfo);
   const [isOpen, setIsOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [showNextForm, setShowNextForm] = useState(false);
   const { toast } = useToast();
   const { resetStates } = useResetStates();
   const router = useRouter();
@@ -64,7 +63,6 @@ export default function FileUploader({}: FileUploaderProps) {
     await uploadTransactionToDatabase();
     setIsLoading(false);
     setIsOpen(false);
-    setShowNextForm(true);
     toast({
       description: "Transactions has been added.",
     });
@@ -73,6 +71,8 @@ export default function FileUploader({}: FileUploaderProps) {
 
   const handleModalClose = () => {
     setIsOpen(false);
+    resetStates();
+    router.back();
   };
 
   return (

@@ -39,7 +39,7 @@ export default function CreateCategoryForm({}: CreateCategoryFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       categoryName: "",
-      categoryType: 0,
+      categoryType: CategoryType.Income,
       color: "#000000",
     },
   });
@@ -90,17 +90,25 @@ export default function CreateCategoryForm({}: CreateCategoryFormProps) {
                 <FormLabel>Account Type</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
+                    onValueChange={(value) => field.onChange(value)}
                     value={field.value.toString()}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">Income</SelectItem>
-                      <SelectItem value="1">Expense</SelectItem>
-                      <SelectItem value="2">Savings</SelectItem>
-                      <SelectItem value="3">Transfer</SelectItem>
+                      <SelectItem value={CategoryType.Income}>
+                        Income
+                      </SelectItem>
+                      <SelectItem value={CategoryType.Expense}>
+                        Expense
+                      </SelectItem>
+                      <SelectItem value={CategoryType.Transfer}>
+                        Transfer
+                      </SelectItem>
+                      <SelectItem value={CategoryType.Saving}>
+                        Saving
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>

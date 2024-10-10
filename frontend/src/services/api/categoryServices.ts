@@ -1,4 +1,4 @@
-import { Category } from "@/models/generatedTypes";
+import { Category, CategoryType } from "@/models/generatedTypes";
 import axios from "axios";
 
 export const getAllCategories = async (): Promise<Category[]> => {
@@ -71,5 +71,23 @@ export const deleteCategory = async (id: number): Promise<Category> => {
     return deletedCategory;
   } catch (error) {
     throw new Error("Error deleting category");
+  }
+};
+
+export const getCategoriesByType = async (
+  categoryType: CategoryType
+): Promise<Category[]> => {
+  try {
+    const response = await axios.get(
+      `http://localhost:5000/api/category/type/${categoryType}`
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Error getting categories by type");
+    }
+    const categories: Category[] = response.data;
+    return categories;
+  } catch (error) {
+    throw new Error("Error getting categories by type");
   }
 };

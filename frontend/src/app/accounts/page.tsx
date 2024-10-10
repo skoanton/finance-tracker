@@ -4,15 +4,17 @@ import { useEffect, useState } from "react";
 import { deleteAccount, getAllAccounts } from "@/services/api/accountService";
 import { Account } from "@/models/generatedTypes";
 import AccountCard from "@/components/account/AccountCard";
-import Link from "next/link";
-import AccountBalanceCard from "@/components/account/AccountBalanceChard";
 import AccountBalanceChart from "@/components/account/AccountBalanceChart";
-import AccountRecentTransactions from "@/components/account/AccontRecentTransactions";
+import AccountRecentTransactions from "@/components/account/AccountRecentTransactions";
+import WarningDialog from "@/components/WarningDialog";
+import { useAccountStore } from "@/stores/useAccountStore";
+import { formatToSek } from "@/lib/utils/formatToSek";
 type AccountPageProps = {};
 
 export default function AccountPage({}: AccountPageProps) {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [totalBalance, setTotalBalance] = useState<number>(0);
+  const setAccounts = useAccountStore((state) => state.setAccounts);
+  const accounts = useAccountStore((state) => state.accounts);
+  const [totalBalance, setTotalBalance] = useState<string>("");
   useEffect(() => {
     const getData = async () => {
       try {
@@ -24,7 +26,8 @@ export default function AccountPage({}: AccountPageProps) {
         const total = accounts.reduce((acc, account) => {
           return acc + account.balance;
         }, 0);
-        setTotalBalance(total);
+        const formattedTotal = formatToSek(total);
+        setTotalBalance(formattedTotal);
       } catch (error) {
         console.log(error);
       }
@@ -32,28 +35,19 @@ export default function AccountPage({}: AccountPageProps) {
     getData();
   }, []);
 
-  const onSetAccounts = (account: Account) => {
-    setAccounts((prevAccounts) => [...prevAccounts, account]);
-  };
-
-  const onDeleteAccount = async (id: number) => {
-    await deleteAccount(id).then(() => {
-      setAccounts((prevAccounts) => {
-        return prevAccounts.filter((account) => account.id !== id);
-      });
-    });
-  };
-
   return (
-    <div className="flex- flex-col gap-2">
-      <div className="mb-5">
-        <h3 className="text-sm">Total Balance</h3>
-        <p className="text-xl font-bold">{totalBalance} SEK</p>
+    <>
+      <div className="flex flex-col gap-5">
+        <div className="grid grid-cols-2 gap-2">
+          <AccountBalanceChart totalBalance={totalBalance} />
+          <AccountRecentTransactions />
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {accounts.map((account) => (
+            <AccountCard key={account.id} account={account} />
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <AccountBalanceChart />
-        <AccountRecentTransactions />
-      </div>
-    </div>
+    </>
   );
 }

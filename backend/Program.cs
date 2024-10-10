@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.OpenApi.Models;
 using server.Data;
 using System;
+using System.Text.Json.Serialization;
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,11 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Finance Tracker", Version = "v1" });
 });
 
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddCors(options =>
 {
@@ -66,6 +71,8 @@ using (var scope = app.Services.CreateScope())
         context.Database.Migrate();
     }
 }
+
+
 
 app.UseCors("AllowFrontend");
 app.UseRouting();

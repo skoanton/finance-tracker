@@ -1878,8 +1878,14 @@ export class Client implements IClient {
 export interface Account {
     id?: number;
     name: string;
-    type: string;
+    type: AccountType;
     balance: number;
+}
+
+export enum AccountType {
+    Checking = "Checking",
+    Savings = "Savings",
+    Card = "Card",
 }
 
 export interface AccountsBalanceSummary {
@@ -1928,11 +1934,11 @@ export interface CategorySummary {
 }
 
 export enum CategoryType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
+    Income = "Income",
+    Expense = "Expense",
+    Saving = "Saving",
+    Transfer = "Transfer",
+    Uncategorized = "Uncategorized",
 }
 
 export interface CsvFile {

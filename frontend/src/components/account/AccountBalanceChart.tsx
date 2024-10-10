@@ -40,9 +40,13 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-type AccountBalanceChartProps = {};
+type AccountBalanceChartProps = {
+  totalBalance: string;
+};
 
-export default function AccountBalanceChart({}: AccountBalanceChartProps) {
+export default function AccountBalanceChart({
+  totalBalance,
+}: AccountBalanceChartProps) {
   const [weekIsActive, setWeekIsActive] = useState(true);
   const [monthIsActive, setMonthIsActive] = useState(false);
   const [yearIsActive, setYearIsActive] = useState(false);
@@ -58,9 +62,9 @@ export default function AccountBalanceChart({}: AccountBalanceChartProps) {
       if (response) {
         setChartData(response);
       }
+      setIsLoading(false);
     };
     fetchChartData();
-    setIsLoading(false);
   }, []);
 
   const handleWeekClick = async () => {
@@ -100,7 +104,10 @@ export default function AccountBalanceChart({}: AccountBalanceChartProps) {
     <>
       <Card>
         <CardHeader className="flex-row justify-between items-center">
-          <CardTitle className="text-md">Balance</CardTitle>
+          <CardTitle className="text-sm">
+            Total Balance
+            <p className="text-2xl font-bold">{totalBalance}</p>
+          </CardTitle>
           <div className="flex items-center border rounded-lg">
             <Button
               onClick={() => handleWeekClick()}
@@ -138,9 +145,6 @@ export default function AccountBalanceChart({}: AccountBalanceChartProps) {
           </div>
         </CardHeader>
         <CardContent>
-          {isLoading && (
-            <div className="animate-pulse">Getting your balance...</div>
-          )}
           {chartData && (
             <ChartContainer config={chartConfig}>
               <LineChart
@@ -156,14 +160,14 @@ export default function AccountBalanceChart({}: AccountBalanceChartProps) {
                   dataKey="interval"
                   tickLine={false}
                   axisLine={false}
-                  tickMargin={8}
+                  tickMargin={10}
                   tickFormatter={(value) => value}
                 />
                 <YAxis
                   tickLine={false}
                   axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => `${value}`}
+                  tickMargin={10}
+                  tickFormatter={(value) => `${value} kr`}
                 />
                 <ChartTooltip
                   cursor={false}
@@ -171,10 +175,10 @@ export default function AccountBalanceChart({}: AccountBalanceChartProps) {
                 />
                 <Line
                   dataKey="balance"
-                  type="natural"
+                  type="linear"
                   stroke="#8884d8"
                   strokeWidth={2}
-                  dot={false}
+                  dot={true}
                 />
               </LineChart>
             </ChartContainer>

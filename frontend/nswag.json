@@ -17,7 +17,8 @@
         "generateDtoTypes": true,
         "operationGenerationMode": "MultipleClientsFromOperationId",
         "markOptionalProperties": true,
-        "output": "src/models/generatedTypes.ts"
+        "output": "src/models/generatedTypes.ts",
+        "generateEnumAsString": true
       }
     }
   }

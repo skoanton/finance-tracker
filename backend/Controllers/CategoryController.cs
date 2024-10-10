@@ -69,7 +69,7 @@ namespace server.Controllers
             return Ok(category);
         }
 
-        [HttpGet("type/{id}")]
+        [HttpGet("type/{type}")]
         public async Task<IActionResult> GetCategoryByType(CategoryType type)
         {
             var category = await _categoryService.GetCategoryByTypeAsync(type);

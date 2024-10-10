@@ -12,6 +12,7 @@ import CategoryOptions from "@/components/transactions/CategoryOptions";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { useResetStates } from "@/hooks/useResetStates";
 
 type UploadedTransactionsPreviewProps = {
   isOpen: boolean;
@@ -34,7 +35,7 @@ export default function UploadedTransactionsPreview({
   }, []);
 
   const categories = useCategoryStore((state) => state.categories);
-
+  const { resetStates } = useResetStates();
   const uploadedTransactions = useUploadStore(
     (state) => state.uploadedTransactions
   );
@@ -66,6 +67,7 @@ export default function UploadedTransactionsPreview({
         } finally {
           setIsLoading(false);
           router.push("/transactions");
+          resetStates();
           toast({
             description: "Transactions has been updated.",
           });
@@ -79,6 +81,10 @@ export default function UploadedTransactionsPreview({
   return (
     <>
       <Button onClick={() => handleUpload()}>Confirm transactions</Button>
+      <p className="italic my-2">
+        Here you can double check your transactions if they have correct
+        categories
+      </p>
       <ScrollArea className="border-none my-5">
         <div className="flex flex-col gap-5">
           {uploadedTransactions.map((transaction) => (

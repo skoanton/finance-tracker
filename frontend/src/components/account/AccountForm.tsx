@@ -13,15 +13,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Account, CsvFile } from "@/models/generatedTypes";
+import { Account, AccountType, CsvFile } from "@/models/generatedTypes";
 import { createAccount } from "@/services/api/accountService";
 import { useState } from "react";
 import { useUploadToDatabase } from "@/hooks/useUploadToDatabase";
 import { useAccountStore } from "@/stores/useAccountStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const formSchema = z.object({
   accountName: z.string().min(2).max(50),
-  accountType: z.enum(["Checking Account", "Savings"]),
+  accountType: z.enum([
+    AccountType.Checking,
+    AccountType.Savings,
+    AccountType.Card,
+  ]),
   startAmount: z.coerce.number().min(0),
 });
 type AccountFormProps = {
@@ -36,7 +47,7 @@ export default function AccountForm({ onSetIsOpen }: AccountFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       accountName: newAccountInfo.name ? newAccountInfo.name : "NaN",
-      accountType: "Checking Account",
+      accountType: AccountType.Checking,
       startAmount: newAccountInfo.balance ? newAccountInfo.balance : 0,
     },
   });
@@ -86,7 +97,20 @@ export default function AccountForm({ onSetIsOpen }: AccountFormProps) {
               <FormItem>
                 <FormLabel>Account Type</FormLabel>
                 <FormControl>
-                  <Input placeholder="Account Type" {...field} />
+                  <Select>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Account type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={AccountType.Card}>Card</SelectItem>
+                      <SelectItem value={AccountType.Checking}>
+                        Checking
+                      </SelectItem>
+                      <SelectItem value={AccountType.Savings}>
+                        Savings
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
