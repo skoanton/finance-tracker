@@ -20,9 +20,7 @@ services:
     ports:
       - "5000:8080" # HostPort:ContainerPort for HTTP
       - "5001:8081" # HostPort:ContainerPort for HTTPS (if needed)
-    volumes:
-      - ./backend:/app # Mount the local code into the container
-    command: dotnet watch run # Ensure live reloading
+    command: dotnet /app/backend.dll
     depends_on:
       - mysql
 
