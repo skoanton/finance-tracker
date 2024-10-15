@@ -2,12 +2,12 @@ import { Account, AccountsBalanceSummary } from "@/models/generatedTypes";
 import axios from "axios";
 export const getAllAccounts = async (): Promise<Account[]> => {
   try {
-    const response = await fetch("http://localhost:5000/api/accounts");
+    const response = await axios.get("http://localhost:5000/api/accounts");
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error("Failed to fetch accounts");
     }
-    const accounts: Account[] = await response.json();
+    const accounts: Account[] = await response.data;
     return accounts;
   } catch (error) {
     console.log(error);
@@ -17,18 +17,12 @@ export const getAllAccounts = async (): Promise<Account[]> => {
 
 export const createAccount = async (account: Account): Promise<Account> => {
   try {
-    const response = await fetch("http://localhost:5000/api/accounts/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(account),
-    });
+    const response = await axios.post("http://localhost:5000/api/accounts/create", account);
 
-    if (!response.ok) {
+    if (response.status !== 201) {
       throw new Error("Failed to create account");
     }
-    const createdAccount: Account = await response.json();
+    const createdAccount: Account = response.data;
     return createdAccount;
   } catch (error) {
     console.log(error);
