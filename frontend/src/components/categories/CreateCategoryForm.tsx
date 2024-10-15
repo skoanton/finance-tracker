@@ -8,25 +8,31 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Category, CategoryType } from "@/models/generatedTypes";
 import { useState } from "react";
-import { createCategory } from "@/services/api/categoryServices";
+import { createCategory, updateCategory } from "@/services/api/categoryServices";
 import { useCategoryStore } from "@/stores/useCategoryStore";
+import { toast } from "@/hooks/use-toast";
+
 const formSchema = z.object({
   categoryName: z.string().min(2).max(50),
   categoryType: z.nativeEnum(CategoryType),
   color: z.string(),
 });
 
-type CreateCategoryFormProps = {};
+type CreateCategoryFormProps = {
+  category?: Category;
+  onModalClose?: () => void;
+};
 
-export default function CreateCategoryForm({}: CreateCategoryFormProps) {
+export default function CreateCategoryForm({ category, onModalClose }: CreateCategoryFormProps) {
   const addCategory = useCategoryStore((state) => state.addCategory);
+  const updateCategoryState = useCategoryStore((state) => state.updateCategory);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      categoryName: "",
-      categoryType: CategoryType.Income,
-      color: "#000000",
+      categoryName: category?.name || "",
+      categoryType: category?.type || CategoryType.Income,
+      color: category?.color || "#000000",
     },
   });
 
@@ -37,14 +43,27 @@ export default function CreateCategoryForm({}: CreateCategoryFormProps) {
     const restOfName = values.categoryName.slice(1).toLowerCase();
     values.categoryName = firstLetter + restOfName;
     const newCategory: Category = {
+      id: category?.id,
       name: values.categoryName,
       type: values.categoryType,
       description: [],
       color: values.color,
     };
+    if (category && onModalClose) {
+      const response = await updateCategory(newCategory);
+      updateCategoryState(response);
+      toast({
+        description: "Budget updated",
+      });
+      onModalClose();
+    } else {
+      const response = await createCategory(newCategory);
+      addCategory(response);
+      toast({
+        description: "Budget created",
+      });
+    }
 
-    const response = await createCategory(newCategory);
-    addCategory(response);
     setIsLoading(false);
   }
 
@@ -103,7 +122,7 @@ export default function CreateCategoryForm({}: CreateCategoryFormProps) {
           />
 
           <Button type="submit" className="mt-5" disabled={isLoading}>
-            Add Category
+            {category ? "Edit" : "Create"} category
           </Button>
         </form>
       </Form>

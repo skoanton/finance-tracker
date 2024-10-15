@@ -6,12 +6,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 import { EllipsisVertical } from "lucide-react";
 import { useCategoryStore } from "@/stores/useCategoryStore";
+import { useState } from "react";
+import EditCategoryModal from "./EditCategoryModal";
 type CategoryCardProps = {
   category: Category;
 };
 
 export default function CategoryCard({ category }: CategoryCardProps) {
   const removeCategory = useCategoryStore((state) => state.removeCategory);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const handleDelete = async () => {
     const response = await deleteCategory(category!.id!);
     removeCategory(response.id!);
@@ -29,17 +32,16 @@ export default function CategoryCard({ category }: CategoryCardProps) {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger>
-            {" "}
-            <Button variant={"ghost"} onClick={() => handleDelete()}>
-              <EllipsisVertical size={20} />
-            </Button>
+            <EllipsisVertical size={20} />
           </DropdownMenuTrigger>
           <DropdownMenuContent side="right">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setIsModalOpen(true)}>Edit</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleDelete()}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {isModalOpen && <EditCategoryModal category={category} />}
     </>
   );
 }
