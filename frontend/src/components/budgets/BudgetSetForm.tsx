@@ -2,15 +2,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 import { Checkbox } from "../ui/checkbox";
@@ -33,12 +25,7 @@ type BudgetSetFormProps = {
   onModalClose: () => void;
 };
 
-export default function BudgetSetForm({
-  categories,
-  name,
-  onModalClose,
-  onSetBudgets,
-}: BudgetSetFormProps) {
+export default function BudgetSetForm({ categories, name, onModalClose, onSetBudgets }: BudgetSetFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,23 +34,18 @@ export default function BudgetSetForm({
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Form submitted with values:", values); // Add debugging here
-    const newBudgetCategories: BudgetCategory[] = values.budget.map(
-      (category) => {
-        return {
-          categoryId: category.categoryId,
-          amount: category.amount,
-        };
-      }
-    );
+    const newBudgetCategories: BudgetCategory[] = values.budget.map((category) => {
+      return {
+        categoryId: category.categoryId,
+        amount: category.amount,
+      };
+    });
     const date = new Date();
     const startOfTheMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     const endOfTheMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
     const newBudget: Budget = {
       name: name,
-      totalBudget: newBudgetCategories.reduce(
-        (acc, curr) => acc + curr.amount,
-        0
-      ),
+      totalBudget: newBudgetCategories.reduce((acc, curr) => acc + curr.amount, 0),
       startDate: startOfTheMonth,
       endDate: endOfTheMonth,
     };
@@ -72,18 +54,13 @@ export default function BudgetSetForm({
 
     console.log("New budgetCategories:", newBudgetCategories);
 
-    const newBudgetCategoriesWithBudgetId: BudgetCategory[] =
-      newBudgetCategories.map((category) => {
-        return {
-          ...category,
-          budgetId: createdBudget.id,
-        };
-      });
-    const hej = await Promise.all(
-      newBudgetCategoriesWithBudgetId.map((category) =>
-        createBudgetCategory(category)
-      )
-    );
+    const newBudgetCategoriesWithBudgetId: BudgetCategory[] = newBudgetCategories.map((category) => {
+      return {
+        ...category,
+        budgetId: createdBudget.id,
+      };
+    });
+    const hej = await Promise.all(newBudgetCategoriesWithBudgetId.map((category) => createBudgetCategory(category)));
     onSetBudgets(createdBudget);
     toast({
       description: "Budget created",

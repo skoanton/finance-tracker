@@ -11,14 +11,11 @@ interface CategoryState {
 
 export const useCategoryStore = create<CategoryState>((set) => ({
   categories: [],
-  addCategory: (category: Category) =>
-    set((state) => ({ categories: [...state.categories, category] })),
+  addCategory: (category: Category) => set((state) => ({ categories: [...state.categories, category] })),
   setCategories: (categories: Category[]) => set({ categories }),
   updateCategory: (updatedCategory: Category) =>
     set((state) => ({
-      categories: state.categories.map((category) =>
-        category.id === updatedCategory.id ? updatedCategory : category
-      ),
+      categories: state.categories.map((category) => (category.id === updatedCategory.id ? updatedCategory : category)),
     })),
   removeCategory: (id: number) =>
     set((state) => ({

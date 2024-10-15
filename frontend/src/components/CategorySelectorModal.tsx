@@ -1,34 +1,11 @@
 "use client";
 import { Category, CategoryType, CsvFile } from "@/models/generatedTypes";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useFormField,
-} from "@/components/ui/form";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, useFormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -72,16 +49,8 @@ export default function CategorySelectorModal({
   const categories = useCategoryStore((state) => state.categories);
   const filteredCategories = categories.filter((c) => {
     return selectedTransaction.amount > 0
-      ? [
-          CategoryType.Income,
-          CategoryType.Saving,
-          CategoryType.Transfer,
-        ].includes(c.type) // Positive transactions
-      : [
-          CategoryType.Expense,
-          CategoryType.Saving,
-          CategoryType.Transfer,
-        ].includes(c.type); // Negative transactions
+      ? [CategoryType.Income, CategoryType.Saving, CategoryType.Transfer].includes(c.type) // Positive transactions
+      : [CategoryType.Expense, CategoryType.Saving, CategoryType.Transfer].includes(c.type); // Negative transactions
   });
 
   console.log("Currently selected transaction", selectedTransaction);
@@ -118,17 +87,12 @@ export default function CategorySelectorModal({
       <Dialog onOpenChange={handleModalClose} open={isOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">
-              Transaction
-            </DialogTitle>
+            <DialogTitle className="text-2xl font-bold">Transaction</DialogTitle>
             <DialogDescription>Pick a category</DialogDescription>
             <TransactionOverview selectedTransaction={selectedTransaction} />
           </DialogHeader>
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-5"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
               <FormField
                 control={form.control}
                 name="categoryId"
@@ -136,24 +100,14 @@ export default function CategorySelectorModal({
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        value={field.value.toString()}
-                      >
+                      <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value.toString()}>
                         <SelectTrigger className="w-[180px]">
-                          <SelectValue>
-                            {categories.find((c) => c.id === field.value)
-                              ?.name || "Pick a category"}
-                          </SelectValue>
+                          <SelectValue>{categories.find((c) => c.id === field.value)?.name || "Pick a category"}</SelectValue>
                         </SelectTrigger>
 
                         <SelectContent>
                           {filteredCategories.map((category) => (
-                            <SelectItem
-                              {...field}
-                              key={category.id}
-                              value={category.id!.toString()}
-                            >
+                            <SelectItem {...field} key={category.id} value={category.id!.toString()}>
                               {category.name}
                             </SelectItem>
                           ))}
@@ -164,11 +118,7 @@ export default function CategorySelectorModal({
                   </FormItem>
                 )}
               />
-              <Button
-                disabled={isLoading}
-                type="submit"
-                className="w-1/2 items-center"
-              >
+              <Button disabled={isLoading} type="submit" className="w-1/2 items-center">
                 Add
               </Button>
             </form>

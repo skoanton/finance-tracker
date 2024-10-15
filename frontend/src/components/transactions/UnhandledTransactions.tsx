@@ -8,15 +8,10 @@ import { useTransactionStore } from "@/stores/useTransactionsStore";
 type UnhandledTransactionsProps = {};
 
 export default function UnhandledTransactions({}: UnhandledTransactionsProps) {
-  const noCategoryTransactions = useTransactionStore(
-    (state) => state.noCategoryTransactions
-  );
+  const noCategoryTransactions = useTransactionStore((state) => state.noCategoryTransactions);
 
-  const removeNoCategoryTransactions = useTransactionStore(
-    (state) => state.removeNoCategoryTransactions
-  );
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<CsvFile | null>();
+  const removeNoCategoryTransactions = useTransactionStore((state) => state.removeNoCategoryTransactions);
+  const [selectedTransaction, setSelectedTransaction] = useState<CsvFile | null>();
 
   const onSetSelectedTransactionToNull = () => {
     setSelectedTransaction(null);

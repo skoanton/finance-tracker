@@ -1,28 +1,12 @@
 import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { AccountsBalanceSummary } from "@/models/generatedTypes";
 import { get } from "http";
-import {
-  getAccountBalanceSummaryByMonth,
-  getAccountBalanceSummaryByWeek,
-  getAccountBalanceSummaryByYear,
-} from "@/services/api/accountService";
+import { getAccountBalanceSummaryByMonth, getAccountBalanceSummaryByWeek, getAccountBalanceSummaryByYear } from "@/services/api/accountService";
 import { set } from "date-fns";
 import { useGetAccountBalance } from "@/hooks/useGetAccountBalance";
 import { formatToSek } from "@/lib/utils/formatToSek";
@@ -48,13 +32,10 @@ export default function AccountBalanceChart({}: AccountBalanceChartProps) {
   const [weekIsActive, setWeekIsActive] = useState(true);
   const [monthIsActive, setMonthIsActive] = useState(false);
   const [yearIsActive, setYearIsActive] = useState(false);
-  const [chartData, setChartData] = useState<AccountsBalanceSummary[] | null>(
-    null
-  );
+  const [chartData, setChartData] = useState<AccountsBalanceSummary[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { fetchTotalAccountBalance, totalAccountBalance, error } =
-    useGetAccountBalance();
+  const { fetchTotalAccountBalance, totalAccountBalance, error } = useGetAccountBalance();
 
   useEffect(() => {
     const fetchChartData = async () => {
@@ -108,9 +89,7 @@ export default function AccountBalanceChart({}: AccountBalanceChartProps) {
         <CardHeader className="flex-row justify-between items-center">
           <CardTitle className="text-sm">
             Total Balance
-            <p className="text-2xl font-bold">
-              {formatToSek(totalAccountBalance)}
-            </p>
+            <p className="text-2xl font-bold">{formatToSek(totalAccountBalance)}</p>
           </CardTitle>
           <div className="flex items-center border rounded-lg">
             <Button
@@ -160,30 +139,10 @@ export default function AccountBalanceChart({}: AccountBalanceChartProps) {
                 }}
               >
                 <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="interval"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={10}
-                  tickFormatter={(value) => value}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={10}
-                  tickFormatter={(value) => `${value} kr`}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
-                />
-                <Line
-                  dataKey="balance"
-                  type="linear"
-                  stroke="#8884d8"
-                  strokeWidth={2}
-                  dot={true}
-                />
+                <XAxis dataKey="interval" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value} />
+                <YAxis tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => `${value} kr`} />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                <Line dataKey="balance" type="linear" stroke="#8884d8" strokeWidth={2} dot={true} />
               </LineChart>
             </ChartContainer>
           )}

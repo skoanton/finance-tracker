@@ -4,9 +4,7 @@ type TransactionOverviewProps = {
   selectedTransaction: CsvFile;
 };
 
-export default function TransactionOverview({
-  selectedTransaction,
-}: TransactionOverviewProps) {
+export default function TransactionOverview({ selectedTransaction }: TransactionOverviewProps) {
   return (
     <>
       <>
@@ -16,10 +14,7 @@ export default function TransactionOverview({
           </p>
           <p className="text-sm">
             {" "}
-            <strong>Date:</strong>{" "}
-            {new Date(
-              selectedTransaction.transactionDate!
-            ).toLocaleDateString()}{" "}
+            <strong>Date:</strong> {new Date(selectedTransaction.transactionDate!).toLocaleDateString()}{" "}
           </p>
         </div>
         <div>

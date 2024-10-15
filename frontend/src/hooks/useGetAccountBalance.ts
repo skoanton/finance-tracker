@@ -1,7 +1,4 @@
-import {
-  getAccountBalance,
-  getTotalAccountBalance,
-} from "@/services/api/accountService";
+import { getAccountBalance, getTotalAccountBalance } from "@/services/api/accountService";
 import { useState } from "react";
 
 export const useGetAccountBalance = () => {

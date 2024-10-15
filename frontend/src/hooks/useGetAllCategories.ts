@@ -1,8 +1,5 @@
 import { CategoryType } from "@/models/generatedTypes";
-import {
-  getAllCategories,
-  getCategoriesByType,
-} from "@/services/api/categoryServices";
+import { getAllCategories, getCategoriesByType } from "@/services/api/categoryServices";
 import { useCategoryStore } from "@/stores/useCategoryStore";
 import { useCallback, useEffect, useState } from "react";
 
@@ -16,10 +13,7 @@ export const useGetAllCategories = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response =
-          type !== undefined
-            ? await getCategoriesByType(type)
-            : await getAllCategories();
+        const response = type !== undefined ? await getCategoriesByType(type) : await getAllCategories();
         if (response) {
           setCategories(response);
           return response;

@@ -1,19 +1,7 @@
 import { Divide, TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BudgetChartData } from "@/models/generatedTypes";
 import { use, useEffect, useState } from "react";
 import { getBudgetChartMonthData } from "@/services/api/budget";
@@ -79,54 +67,24 @@ export default function BudgetCompareChart({}: BudgetCompareChartProps) {
       <Card className="border-none shadow-none flex flex-col h-40">
         <CardHeader className="items-center pb-0">
           <CardTitle>Budget</CardTitle>
-          <CardDescription className="text-center mt-5">
-            This month
-          </CardDescription>
+          <CardDescription className="text-center mt-5">This month</CardDescription>
         </CardHeader>
         <CardContent className="shadow-none">
           {isLoading && <p className="animate-pulse">Loading...</p>}
-          {chartData.length === 0 && !isLoading && (
-            <div className="text-center font-bold my-5">No data available</div>
-          )}
+          {chartData.length === 0 && !isLoading && <div className="text-center font-bold my-5">No data available</div>}
           {chartData && chartData.length !== 0 && (
             <ChartContainer className="shadow-none" config={customChartConfig}>
-              <BarChart
-                className="shadow-none"
-                accessibilityLayer
-                data={chartData!}
-              >
+              <BarChart className="shadow-none" accessibilityLayer data={chartData!}>
                 <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="category"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value) => value}
-                />
-                <YAxis
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value) => `${value}`}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent indicator="line" />}
-                />
+                <XAxis dataKey="category" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
+                <YAxis tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => `${value}`} />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
                 <Bar dataKey="categorySum" name="Spent" radius={1}>
                   {chartData.map((entry: any, index: number) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={getCategoryColor(entry.category)}
-                    />
+                    <Cell key={`cell-${index}`} fill={getCategoryColor(entry.category)} />
                   ))}
                 </Bar>
-                <Bar
-                  dataKey="budget"
-                  name={"Budget"}
-                  fill={customChartConfig.budget?.color || "#007bff"}
-                  radius={1}
-                />
+                <Bar dataKey="budget" name={"Budget"} fill={customChartConfig.budget?.color || "#007bff"} radius={1} />
               </BarChart>
             </ChartContainer>
           )}

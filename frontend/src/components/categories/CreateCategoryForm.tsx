@@ -2,22 +2,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Category, CategoryType } from "@/models/generatedTypes";
@@ -65,10 +51,7 @@ export default function CreateCategoryForm({}: CreateCategoryFormProps) {
   return (
     <>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-5"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
           <FormField
             control={form.control}
             name="categoryName"
@@ -89,26 +72,15 @@ export default function CreateCategoryForm({}: CreateCategoryFormProps) {
               <FormItem>
                 <FormLabel>Account Type</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={(value) => field.onChange(value)}
-                    value={field.value.toString()}
-                  >
+                  <Select onValueChange={(value) => field.onChange(value)} value={field.value.toString()}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={CategoryType.Income}>
-                        Income
-                      </SelectItem>
-                      <SelectItem value={CategoryType.Expense}>
-                        Expense
-                      </SelectItem>
-                      <SelectItem value={CategoryType.Transfer}>
-                        Transfer
-                      </SelectItem>
-                      <SelectItem value={CategoryType.Saving}>
-                        Saving
-                      </SelectItem>
+                      <SelectItem value={CategoryType.Income}>Income</SelectItem>
+                      <SelectItem value={CategoryType.Expense}>Expense</SelectItem>
+                      <SelectItem value={CategoryType.Transfer}>Transfer</SelectItem>
+                      <SelectItem value={CategoryType.Saving}>Saving</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -123,11 +95,7 @@ export default function CreateCategoryForm({}: CreateCategoryFormProps) {
               <FormItem>
                 <FormLabel>Account Type</FormLabel>
                 <FormControl>
-                  <Input
-                    type="color"
-                    className="w-12 h-12 border-none"
-                    {...field}
-                  />
+                  <Input type="color" className="w-12 h-12 border-none" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

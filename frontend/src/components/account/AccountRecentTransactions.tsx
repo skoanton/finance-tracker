@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 import RecentTransactionCard from "./RecentTransactionCard";
 import { Transaction } from "@/models/generatedTypes";
@@ -16,9 +9,7 @@ import { set } from "date-fns";
 type AccountRecentTransactionsProps = {};
 
 export default function AccountRecentTransactions({}: AccountRecentTransactionsProps) {
-  const [lastTransactions, setLastTransactions] = useState<
-    Transaction[] | null
-  >(null);
+  const [lastTransactions, setLastTransactions] = useState<Transaction[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchLastTransactions = async () => {
@@ -43,13 +34,7 @@ export default function AccountRecentTransactions({}: AccountRecentTransactionsP
           <ScrollArea className="h-[500px] w-full rounded-md border p-4 border-none">
             <div className="flex flex-col gap-2">
               {isLoading && <p className="animate-pulse">Loading...</p>}
-              {lastTransactions &&
-                lastTransactions.map((transaction) => (
-                  <RecentTransactionCard
-                    key={transaction.id}
-                    transaction={transaction}
-                  />
-                ))}
+              {lastTransactions && lastTransactions.map((transaction) => <RecentTransactionCard key={transaction.id} transaction={transaction} />)}
             </div>
           </ScrollArea>
         </CardContent>

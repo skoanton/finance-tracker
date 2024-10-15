@@ -31,9 +31,7 @@ export default function BudgetPage({}: BudgetPageProps) {
       setBudgets([budget]);
     } else {
       // Check if budget already exists, if so, update it, otherwise add it
-      const updatedBudgets = budgets.some((b) => b.id === budget.id)
-        ? budgets.map((b) => (b.id === budget.id ? budget : b))
-        : [...budgets, budget];
+      const updatedBudgets = budgets.some((b) => b.id === budget.id) ? budgets.map((b) => (b.id === budget.id ? budget : b)) : [...budgets, budget];
       setBudgets(updatedBudgets);
     }
   };
@@ -50,9 +48,7 @@ export default function BudgetPage({}: BudgetPageProps) {
 
     const updatedBudgets = budgets.map((b) => {
       // Debugging to ensure the correct budget is being updated
-      console.log(
-        `Checking budget ID: ${b.id}, Updated budget ID: ${updatedBudget.id}`
-      );
+      console.log(`Checking budget ID: ${b.id}, Updated budget ID: ${updatedBudget.id}`);
 
       // If it's the updated budget, ensure it's active
       if (b.id === updatedBudget.id) {
@@ -71,23 +67,10 @@ export default function BudgetPage({}: BudgetPageProps) {
   return (
     <>
       <div>
-        <Button onClick={() => setIsModalOpen(true)}>
-          Create a new budget
-        </Button>
-        <BudgetModal
-          isModalOpen={isModalOpen}
-          onModalClose={onModalClose}
-          onSetBudgets={onSetBudgets}
-        />
+        <Button onClick={() => setIsModalOpen(true)}>Create a new budget</Button>
+        <BudgetModal isModalOpen={isModalOpen} onModalClose={onModalClose} onSetBudgets={onSetBudgets} />
         {budgets &&
-          budgets.map((budget) => (
-            <BudgetCard
-              key={budget.id}
-              budget={budget}
-              onUpdateBudgets={onUpdateBudgets}
-              onRemoveBudget={onRemoveBudget}
-            />
-          ))}
+          budgets.map((budget) => <BudgetCard key={budget.id} budget={budget} onUpdateBudgets={onUpdateBudgets} onRemoveBudget={onRemoveBudget} />)}
       </div>
     </>
   );

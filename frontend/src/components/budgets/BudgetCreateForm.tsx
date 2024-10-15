@@ -2,15 +2,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Budget, Category } from "@/models/generatedTypes";
@@ -39,10 +31,7 @@ type BudgetCreateFormProps = {
   onModalClose: () => void;
 };
 
-export default function BudgetCreateForm({
-  onSetBudgets,
-  onModalClose,
-}: BudgetCreateFormProps) {
+export default function BudgetCreateForm({ onSetBudgets, onModalClose }: BudgetCreateFormProps) {
   const { getCategories } = useGetAllCategories();
   const categories = useCategoryStore((state) => state.categories);
   useEffect(() => {
@@ -50,9 +39,7 @@ export default function BudgetCreateForm({
   }, []);
 
   const [showNextForm, setShowNextForm] = useState(false);
-  const [categoriesToAdd, setCategoriesToAdd] = useState<
-    Partial<Category>[] | null
-  >(null);
+  const [categoriesToAdd, setCategoriesToAdd] = useState<Partial<Category>[] | null>(null);
   const [budgetName, setBudgetName] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -113,20 +100,12 @@ export default function BudgetCreateForm({
                               name="categoriesChoices"
                               render={({ field }) => {
                                 return (
-                                  <FormItem
-                                    key={category.id!}
-                                    className="flex flex-row items-start space-x-3 space-y-0"
-                                  >
+                                  <FormItem key={category.id!} className="flex flex-row items-start space-x-3 space-y-0">
                                     <FormControl>
                                       <Checkbox
                                         name="categoriesChoices"
                                         checked={field.value?.some(
-                                          (value: {
-                                            id: number;
-                                            name: string;
-                                          }) =>
-                                            value.id === category.id &&
-                                            value.name === category.name
+                                          (value: { id: number; name: string }) => value.id === category.id && value.name === category.name
                                         )}
                                         onCheckedChange={(checked) => {
                                           return checked
@@ -137,20 +116,11 @@ export default function BudgetCreateForm({
                                                   name: category.name,
                                                 },
                                               ])
-                                            : field.onChange(
-                                                field.value?.filter(
-                                                  (value: {
-                                                    id: number;
-                                                    name: string;
-                                                  }) => value.id !== category.id
-                                                )
-                                              );
+                                            : field.onChange(field.value?.filter((value: { id: number; name: string }) => value.id !== category.id));
                                         }}
                                       />
                                     </FormControl>
-                                    <FormLabel className="font-normal">
-                                      {category.name}
-                                    </FormLabel>
+                                    <FormLabel className="font-normal">{category.name}</FormLabel>
                                   </FormItem>
                                 );
                               }}
@@ -166,14 +136,7 @@ export default function BudgetCreateForm({
           </form>
         </Form>
       )}
-      {showNextForm && (
-        <BudgetSetForm
-          categories={categoriesToAdd}
-          name={budgetName}
-          onSetBudgets={onSetBudgets}
-          onModalClose={onModalClose}
-        />
-      )}
+      {showNextForm && <BudgetSetForm categories={categoriesToAdd} name={budgetName} onSetBudgets={onSetBudgets} onModalClose={onModalClose} />}
     </>
   );
 }

@@ -10,13 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
-import {
-  ArrowLeftRight,
-  Banknote,
-  Coins,
-  CreditCard,
-  LayoutDashboard,
-} from "lucide-react";
+import { ArrowLeftRight, Banknote, Coins, CreditCard, LayoutDashboard } from "lucide-react";
 
 type NavbarProps = {};
 
@@ -42,9 +36,7 @@ export default function Navbar({}: NavbarProps) {
               <Link href="/">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
-                    isDashboard
-                      ? "bg-primary-foreground text-primary "
-                      : "text-primary-foreground"
+                    isDashboard ? "bg-primary-foreground text-primary " : "text-primary-foreground"
                   }`}
                 >
                   <LayoutDashboard />
@@ -54,9 +46,7 @@ export default function Navbar({}: NavbarProps) {
               <Link href="/accounts">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
-                    isAccounts
-                      ? "bg-primary-foreground text-primary "
-                      : "text-primary-foreground"
+                    isAccounts ? "bg-primary-foreground text-primary " : "text-primary-foreground"
                   }`}
                 >
                   <CreditCard />
@@ -66,9 +56,7 @@ export default function Navbar({}: NavbarProps) {
               <Link href="/transactions">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
-                    isTransactions
-                      ? "bg-primary-foreground text-primary "
-                      : "text-primary-foreground"
+                    isTransactions ? "bg-primary-foreground text-primary " : "text-primary-foreground"
                   }`}
                 >
                   <ArrowLeftRight />
@@ -78,9 +66,7 @@ export default function Navbar({}: NavbarProps) {
               <Link href="/categories">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
-                    isCategories
-                      ? "bg-primary-foreground text-primary "
-                      : "text-primary-foreground"
+                    isCategories ? "bg-primary-foreground text-primary " : "text-primary-foreground"
                   }`}
                 >
                   <Coins />
@@ -90,9 +76,7 @@ export default function Navbar({}: NavbarProps) {
               <Link href="/budgets">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
-                    isBudget
-                      ? "bg-primary-foreground text-primary "
-                      : "text-primary-foreground"
+                    isBudget ? "bg-primary-foreground text-primary " : "text-primary-foreground"
                   }`}
                 >
                   <Banknote />
@@ -104,17 +88,10 @@ export default function Navbar({}: NavbarProps) {
               <Link href="/upload" className="">
                 <li
                   className={`flex gap-2 items-center font-bold  p-2 rounded-lg hover:bg-primary-foreground hover:text-primary cursor-pointer ${
-                    isUpload
-                      ? "bg-primary-foreground text-primary "
-                      : "text-primary-foreground"
+                    isUpload ? "bg-primary-foreground text-primary " : "text-primary-foreground"
                   }`}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M6.5 20q-2.275 0-3.887-1.575T1 14.575q0-1.95 1.175-3.475T5.25 9.15q.625-2.3 2.5-3.725T12 4q2.925 0 4.963 2.038T19 11q1.725.2 2.863 1.488T23 15.5q0 1.875-1.312 3.188T18.5 20z"

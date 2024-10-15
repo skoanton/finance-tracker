@@ -20,34 +20,23 @@ interface TransactionState {
 
 export const useTransactionStore = create<TransactionState>((set) => ({
   transactions: [],
-  setTransactions: (transactions: TransactionTableData[]) =>
-    set({ transactions }),
-  addTransaction: (transaction: TransactionTableData) =>
-    set((state) => ({ transactions: [...state.transactions, transaction] })),
+  setTransactions: (transactions: TransactionTableData[]) => set({ transactions }),
+  addTransaction: (transaction: TransactionTableData) => set((state) => ({ transactions: [...state.transactions, transaction] })),
   updateTransaction: (updatedTransaction: TransactionTableData) =>
     set((state) => ({
-      transactions: state.transactions.map((transaction) =>
-        transaction.id === updatedTransaction.id
-          ? updatedTransaction
-          : transaction
-      ),
+      transactions: state.transactions.map((transaction) => (transaction.id === updatedTransaction.id ? updatedTransaction : transaction)),
     })),
   removeTransaction: (id: number) =>
     set((state) => ({
-      transactions: state.transactions.filter(
-        (transaction) => transaction.id !== id
-      ),
+      transactions: state.transactions.filter((transaction) => transaction.id !== id),
     })),
   removeTransactions: (ids: number[]) =>
     set((state) => ({
-      transactions: state.transactions.filter(
-        (transaction) => !ids.includes(transaction.id)
-      ),
+      transactions: state.transactions.filter((transaction) => !ids.includes(transaction.id)),
     })),
 
   noCategoryTransactions: [],
-  setNoCategoryTransactions: (transactions: CsvFile[]) =>
-    set({ noCategoryTransactions: transactions }),
+  setNoCategoryTransactions: (transactions: CsvFile[]) => set({ noCategoryTransactions: transactions }),
   addNoCategoryTransactions: (transaction: CsvFile) =>
     set((state) => ({
       noCategoryTransactions: [...state.noCategoryTransactions, transaction],
@@ -55,16 +44,12 @@ export const useTransactionStore = create<TransactionState>((set) => ({
   updateNoCategoryTransactions: (updatedTransaction: CsvFile) =>
     set((state) => ({
       noCategoryTransactions: state.noCategoryTransactions.map((transaction) =>
-        transaction.id === updatedTransaction.id
-          ? updatedTransaction
-          : transaction
+        transaction.id === updatedTransaction.id ? updatedTransaction : transaction
       ),
     })),
   removeNoCategoryTransactions: (id: number) =>
     set((state) => ({
-      noCategoryTransactions: state.noCategoryTransactions.filter(
-        (transaction) => transaction.id !== id
-      ),
+      noCategoryTransactions: state.noCategoryTransactions.filter((transaction) => transaction.id !== id),
     })),
   resetNoCategoryTransactions: () => set({ noCategoryTransactions: [] }),
 }));

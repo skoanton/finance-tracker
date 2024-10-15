@@ -3,25 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Category, Transaction } from "@/models/generatedTypes";
 import { useEffect, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { updateTransaction } from "@/services/api/transactionService";
 import { set } from "date-fns";
 import { useCategoryStore } from "@/stores/useCategoryStore";
@@ -38,10 +24,7 @@ type EditTransactionFormProps = {
   onModalClose: () => void;
 };
 
-export default function EditTransactionForm({
-  transaction,
-  onModalClose,
-}: EditTransactionFormProps) {
+export default function EditTransactionForm({ transaction, onModalClose }: EditTransactionFormProps) {
   const categories = useCategoryStore((state) => state.categories);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,9 +37,7 @@ export default function EditTransactionForm({
       categoryId: transaction.categoryId,
     },
   });
-  const updateTransactionState = useTransactionStore(
-    (state) => state.updateTransaction
-  );
+  const updateTransactionState = useTransactionStore((state) => state.updateTransaction);
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -95,17 +76,11 @@ export default function EditTransactionForm({
                   <Input
                     type="date"
                     {...field}
-                    value={
-                      field.value
-                        ? new Date(field.value).toISOString().split("T")[0]
-                        : ""
-                    } // Format to YYYY-MM-DD
+                    value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""} // Format to YYYY-MM-DD
                     onChange={(e) => field.onChange(e.target.value)} // Handle input change
                   />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
+                <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -119,9 +94,7 @@ export default function EditTransactionForm({
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
+                <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -133,10 +106,7 @@ export default function EditTransactionForm({
               <FormItem>
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
-                    value={field.value.toString()}
-                  >
+                  <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value.toString()}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
@@ -144,11 +114,7 @@ export default function EditTransactionForm({
                     <SelectContent defaultValue={transaction.category.name}>
                       {categories &&
                         categories.map((category) => (
-                          <SelectItem
-                            {...field}
-                            key={category.id}
-                            value={category.id!.toString()}
-                          >
+                          <SelectItem {...field} key={category.id} value={category.id!.toString()}>
                             {category.name}
                           </SelectItem>
                         ))}

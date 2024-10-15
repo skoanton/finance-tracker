@@ -9,23 +9,17 @@ interface AccountState {
   removeAccount: (id: number) => void;
 
   newAccountInfo: { name: string | null; balance: number | null };
-  setNewAccountInfo: (newAccountInfo: {
-    name: string | null;
-    balance: number | null;
-  }) => void;
+  setNewAccountInfo: (newAccountInfo: { name: string | null; balance: number | null }) => void;
   resetNewAccountInfo: () => void;
 }
 
 export const useAccountStore = create<AccountState>((set) => ({
   accounts: [],
   setAccounts: (accounts: Account[]) => set({ accounts }),
-  addAccount: (account: Account) =>
-    set((state) => ({ accounts: [...state.accounts, account] })),
+  addAccount: (account: Account) => set((state) => ({ accounts: [...state.accounts, account] })),
   updateAccount: (updatedAccount: Account) =>
     set((state) => ({
-      accounts: state.accounts.map((account) =>
-        account.id === updatedAccount.id ? updatedAccount : account
-      ),
+      accounts: state.accounts.map((account) => (account.id === updatedAccount.id ? updatedAccount : account)),
     })),
   removeAccount: (id: number) =>
     set((state) => ({
@@ -33,10 +27,6 @@ export const useAccountStore = create<AccountState>((set) => ({
     })),
 
   newAccountInfo: { name: null, balance: null },
-  setNewAccountInfo: (newAccountInfo: {
-    name: string | null;
-    balance: number | null;
-  }) => set({ newAccountInfo }),
-  resetNewAccountInfo: () =>
-    set({ newAccountInfo: { name: null, balance: null } }),
+  setNewAccountInfo: (newAccountInfo: { name: string | null; balance: number | null }) => set({ newAccountInfo }),
+  resetNewAccountInfo: () => set({ newAccountInfo: { name: null, balance: null } }),
 }));

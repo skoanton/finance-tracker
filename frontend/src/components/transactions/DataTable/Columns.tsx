@@ -33,21 +33,12 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
     ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
+    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
     enableSorting: false,
     enableHiding: false,
   },
@@ -55,11 +46,7 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     accessorKey: "account",
     header: ({ column }) => {
       return (
-        <Button
-          className="text-left"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button className="text-left" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Account
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -70,10 +57,7 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     accessorKey: "date",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -94,10 +78,7 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     accessorKey: "description",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Description
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -108,10 +89,7 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     accessorKey: "category",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Category
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -125,10 +103,7 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     accessorKey: "amount",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Amount
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -149,13 +124,9 @@ export const columns: ColumnDef<TransactionTableData>[] = [
     id: "actions",
     cell: ({ row }) => {
       const transaction = row.original;
-      const removeTransaction = useTransactionStore(
-        (state) => state.removeTransaction
-      );
+      const removeTransaction = useTransactionStore((state) => state.removeTransaction);
       const [isModalOpen, setIsModalOpen] = useState(false);
-      const [selectedTransactionId, setSelectedTransactionId] = useState<
-        number | null
-      >(null);
+      const [selectedTransactionId, setSelectedTransactionId] = useState<number | null>(null);
 
       const onModalClose = () => {
         setSelectedTransactionId(null);
@@ -187,16 +158,10 @@ export const columns: ColumnDef<TransactionTableData>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleEdit(transaction.id)}>
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleDelete(transaction.id)}>
-                Delete
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleEdit(transaction.id)}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDelete(transaction.id)}>Delete</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleView(transaction.id)}>
-                View
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleView(transaction.id)}>View</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 

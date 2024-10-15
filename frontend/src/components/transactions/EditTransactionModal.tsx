@@ -1,11 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Transaction } from "@/models/generatedTypes";
 import { getTransactionById } from "@/services/api/transactionService";
 import { use, useEffect, useState } from "react";
@@ -17,11 +10,7 @@ type EditTransactionModalProps = {
   onModalClose: () => void;
 };
 
-export default function EditTransactionModal({
-  isModalOpen,
-  transactionId,
-  onModalClose,
-}: EditTransactionModalProps) {
+export default function EditTransactionModal({ isModalOpen, transactionId, onModalClose }: EditTransactionModalProps) {
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -46,17 +35,10 @@ export default function EditTransactionModal({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>You are editing a transaction</DialogTitle>
-            <DialogDescription>
-              Enter the details of the transaction you want to edit
-            </DialogDescription>
+            <DialogDescription>Enter the details of the transaction you want to edit</DialogDescription>
           </DialogHeader>
           {isLoading && <p>Loading...</p>}
-          {transaction && (
-            <EditTransactionForm
-              transaction={transaction}
-              onModalClose={onModalClose}
-            />
-          )}
+          {transaction && <EditTransactionForm transaction={transaction} onModalClose={onModalClose} />}
         </DialogContent>
       </Dialog>
     </>

@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Budget } from "@/models/generatedTypes";
 import { Button } from "../ui/button";
 import { activateBudget, deleteBudget } from "@/services/api/budget";
@@ -19,11 +12,7 @@ type BudgetCardProps = {
   onRemoveBudget: (budget: Budget) => void;
 };
 
-export default function BudgetCard({
-  budget,
-  onUpdateBudgets,
-  onRemoveBudget,
-}: BudgetCardProps) {
+export default function BudgetCard({ budget, onUpdateBudgets, onRemoveBudget }: BudgetCardProps) {
   const [isActive, setIsActive] = useState(budget.isActive);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,15 +50,8 @@ export default function BudgetCard({
         </CardContent>
         <CardFooter>
           {error && <p style={{ color: "red" }}>{error}</p>}
-          <Button
-            onClick={handleActive}
-            disabled={budget.isActive || isLoading}
-          >
-            {budget.isActive
-              ? "Active"
-              : isLoading
-              ? "Activating..."
-              : "Activate Budget"}
+          <Button onClick={handleActive} disabled={budget.isActive || isLoading}>
+            {budget.isActive ? "Active" : isLoading ? "Activating..." : "Activate Budget"}
           </Button>
           <Button onClick={() => handleDelete()}>Delete</Button>
         </CardFooter>

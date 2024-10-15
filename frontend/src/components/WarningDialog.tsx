@@ -16,10 +16,7 @@ type WarningDialogProps = {
   children: React.ReactNode;
 };
 
-export default function WarningDialog({
-  onClick,
-  children,
-}: WarningDialogProps) {
+export default function WarningDialog({ onClick, children }: WarningDialogProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -32,9 +29,7 @@ export default function WarningDialog({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => onClick()}>
-              Continue
-            </AlertDialogAction>
+            <AlertDialogAction onClick={() => onClick()}>Continue</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
