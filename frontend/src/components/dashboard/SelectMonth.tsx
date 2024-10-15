@@ -3,7 +3,7 @@ import { months } from "@/lib/utils/consts";
 import { Value } from "@radix-ui/react-select";
 import { DateRange } from "react-day-picker";
 type SelectMonthProps = {
-  onChangeDate: (monthIndex: Number) => void;
+  onChangeDate: (monthIndex: number) => void;
   date: DateRange | undefined;
 };
 
