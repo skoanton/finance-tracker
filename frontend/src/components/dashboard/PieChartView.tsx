@@ -1,25 +1,10 @@
 "use client";
 import { Pie, PieChart } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-} from "@/components/ui/chart";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
 import { getTransactionsThisMonth } from "@/services/api/transactionService";
-import {
-  Category,
-  CategorySummary,
-  CategoryType,
-} from "@/models/generatedTypes";
+import { Category, CategorySummary, CategoryType } from "@/models/generatedTypes";
 import { DateRange } from "react-day-picker";
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 type PieChartViewProps = {
@@ -37,11 +22,7 @@ export default function PieChartView({ date, type, title }: PieChartViewProps) {
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true);
-      const response = await getTransactionsThisMonth(
-        date!.from!,
-        date!.to!,
-        type
-      );
+      const response = await getTransactionsThisMonth(date!.from!, date!.to!, type);
       console.log(response);
       setCategories(response);
       setIsLoading(false);
@@ -69,10 +50,7 @@ export default function PieChartView({ date, type, title }: PieChartViewProps) {
     });
     setChartConfig(newChartConfig);
 
-    const total = categories.reduce(
-      (acc, category) => acc + category.amount,
-      0
-    );
+    const total = categories.reduce((acc, category) => acc + category.amount, 0);
     const formattedTotal = new Intl.NumberFormat("se-SV", {
       style: "currency",
       currency: "SEK",
@@ -86,29 +64,16 @@ export default function PieChartView({ date, type, title }: PieChartViewProps) {
         <CardHeader className="items-center pb-0">
           <CardTitle>{title}</CardTitle>
         </CardHeader>
-        <CardDescription className="text-center mt-5">
-          Total: {totalAmount}
-        </CardDescription>
+        <CardDescription className="text-center mt-5">Total: {totalAmount}</CardDescription>
         {isLoading && <p className="animate-pulse">Loading...</p>}
         {categories.length === 0 ? (
           <div className="text-center font-bold my-5">No data available</div>
         ) : (
           <CardContent className="flex-1 pb-0">
-            <ChartContainer
-              config={chartConfig}
-              className="mx-auto aspect-square max-h-[300px]"
-            >
+            <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px]">
               <PieChart>
                 <Pie data={chartData} dataKey="amount" />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      labelKey="categories"
-                      nameKey="category"
-                      indicator="line"
-                    />
-                  }
-                />
+                <ChartTooltip content={<ChartTooltipContent labelKey="categories" nameKey="category" indicator="line" />} />
                 <ChartLegend
                   content={<ChartLegendContent nameKey="category" />}
                   className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
