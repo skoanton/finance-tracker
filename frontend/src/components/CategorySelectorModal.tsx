@@ -15,6 +15,8 @@ import { useCategoryStore } from "@/stores/useCategoryStore";
 import { useGetAllCategories } from "@/hooks/useGetAllCategories";
 import { get } from "http";
 import TransactionOverview from "./transactions/TransactionOverview";
+import CreateCategoryForm from "./categories/CreateCategoryForm";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const formSchema = z.object({
   categoryId: z.number().min(1),
@@ -52,8 +54,6 @@ export default function CategorySelectorModal({
       ? [CategoryType.Income, CategoryType.Saving, CategoryType.Transfer].includes(c.type) // Positive transactions
       : [CategoryType.Expense, CategoryType.Saving, CategoryType.Transfer].includes(c.type); // Negative transactions
   });
-
-  console.log("Currently selected transaction", selectedTransaction);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const categoryToChange = categories.find((x) => x.id == values.categoryId);
@@ -123,6 +123,14 @@ export default function CategorySelectorModal({
               </Button>
             </form>
           </Form>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Create a new category</AccordionTrigger>
+              <AccordionContent>
+                <CreateCategoryForm />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </DialogContent>
       </Dialog>
     </>
